@@ -15,6 +15,7 @@ export default defineConfig({
   reporter: [
     ['json', { outputFile: 'reports/results.json' }],
     ['list'],
+    ['./utils/DashboardReporter.ts'],
   ],
   use: {
     baseURL: process.env.SF_SANDBOX_URL,
