@@ -1,13 +1,13 @@
 /**
- * DashboardReporter — Live HTML dashboard for Playwright test runs
- * Generates reports/dashboard.html after every test with embedded data.
- * Open the HTML file in a browser — it auto-refreshes every 2s while running.
+ * DashboardReporter — Stunning live HTML dashboard for Playwright + Pipeline.
+ * Generates reports/dashboard.html after every test. Auto-refreshes every 2s.
  */
 import type {
   Reporter, FullConfig, Suite, TestCase, TestResult, FullResult,
 } from '@playwright/test/reporter';
 import * as fs from 'fs';
 import * as path from 'path';
+import { PipelineTracker, type StepState } from './PipelineTracker';
 
 interface TestInfo {
   id: string;
@@ -20,15 +20,15 @@ interface TestInfo {
 interface SuiteData {
   displayName: string;
   icon: string;
-  color: string;
+  accent: string;
   tests: TestInfo[];
 }
 
-const SUITE_META: Record<string, { displayName: string; icon: string; color: string }> = {
-  account:     { displayName: 'Account',     icon: '🏢', color: '#6366f1' },
-  contact:     { displayName: 'Contact',     icon: '👤', color: '#8b5cf6' },
-  opportunity: { displayName: 'Opportunity', icon: '💼', color: '#06b6d4' },
-  quote:       { displayName: 'Quote (CPQ)', icon: '📋', color: '#10b981' },
+const SUITE_META: Record<string, { displayName: string; icon: string; accent: string }> = {
+  account:     { displayName: 'Account',     icon: '🏢', accent: '#6366f1' },
+  contact:     { displayName: 'Contact',     icon: '👤', accent: '#a855f7' },
+  opportunity: { displayName: 'Opportunity', icon: '💼', accent: '#0ea5e9' },
+  quote:       { displayName: 'Quote (CPQ)', icon: '📋', accent: '#10b981' },
 };
 
 function extractSuiteKey(filePath: string): string {
@@ -37,469 +37,610 @@ function extractSuiteKey(filePath: string): string {
 }
 
 function extractTestId(title: string): string {
-  const match = title.match(/TC-[A-Z]+-\d+/);
-  return match ? match[0] : '';
+  return title.match(/TC-[A-Z]+-\d+/)?.[0] ?? '';
+}
+
+function esc(s: string): string {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 class DashboardReporter implements Reporter {
-  private suites: Map<string, SuiteData> = new Map();
+  private suites = new Map<string, SuiteData>();
   private startTime = Date.now();
   private isComplete = false;
   private overallStatus: 'running' | 'passed' | 'failed' = 'running';
-  private outputPath = path.join('reports', 'dashboard.html');
+  private activityLog: { time: string; msg: string; type: string }[] = [];
+  private readonly out = path.join('reports', 'dashboard.html');
 
-  onBegin(_config: FullConfig, rootSuite: Suite): void {
+  private log(msg: string, type = 'info') {
+    const t = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    this.activityLog.unshift({ time: t, msg, type });
+    if (this.activityLog.length > 40) this.activityLog.pop();
+  }
+
+  onBegin(_: FullConfig, root: Suite): void {
     fs.mkdirSync('reports', { recursive: true });
-    // Pre-populate all tests as pending
-    for (const suite of rootSuite.allTests().map(t => t.parent)) {
-      // no-op: handled per test below
-    }
-    for (const test of rootSuite.allTests()) {
+    PipelineTracker.start(3, `Running ${root.allTests().length} tests…`);
+    this.log(`Run started — ${root.allTests().length} tests queued`, 'start');
+
+    for (const test of root.allTests()) {
       const key = extractSuiteKey(test.location.file);
-      const meta = SUITE_META[key] ?? { displayName: key, icon: '🧪', color: '#64748b' };
-      if (!this.suites.has(key)) {
-        this.suites.set(key, { ...meta, tests: [] });
-      }
+      const meta = SUITE_META[key] ?? { displayName: key, icon: '🧪', accent: '#64748b' };
+      if (!this.suites.has(key)) this.suites.set(key, { ...meta, tests: [] });
       this.suites.get(key)!.tests.push({
-        id: extractTestId(test.title),
-        title: test.title,
-        status: 'pending',
-        duration: 0,
+        id: extractTestId(test.title), title: test.title, status: 'pending', duration: 0,
       });
     }
     this.render();
   }
 
   onTestBegin(test: TestCase): void {
-    const key = extractSuiteKey(test.location.file);
-    const suite = this.suites.get(key);
-    if (!suite) return;
-    const t = suite.tests.find(x => x.title === test.title);
+    const suite = this.suites.get(extractSuiteKey(test.location.file));
+    const t = suite?.tests.find(x => x.title === test.title);
     if (t) t.status = 'running';
+    this.log(`▶ ${extractTestId(test.title)} — ${test.title.replace(/^TC-[A-Z]+-\d+\s*[—-]\s*/,'')}`, 'run');
     this.render();
   }
 
   onTestEnd(test: TestCase, result: TestResult): void {
-    const key = extractSuiteKey(test.location.file);
-    const suite = this.suites.get(key);
-    if (!suite) return;
-    const t = suite.tests.find(x => x.title === test.title);
+    const suite = this.suites.get(extractSuiteKey(test.location.file));
+    const t = suite?.tests.find(x => x.title === test.title);
     if (t) {
-      t.status = result.status === 'passed' ? 'passed'
-               : result.status === 'skipped' ? 'skipped'
-               : 'failed';
+      t.status = result.status === 'passed' ? 'passed' : result.status === 'skipped' ? 'skipped' : 'failed';
       t.duration = result.duration;
-      if (result.status === 'failed' && result.errors?.length) {
-        t.error = result.errors[0].message?.split('\n')[0]?.substring(0, 120);
-      }
+      if (t.status === 'failed') t.error = result.errors?.[0]?.message?.split('\n')[0]?.substring(0, 100);
     }
+    const id = extractTestId(test.title);
+    const dur = `${(result.duration / 1000).toFixed(1)}s`;
+    this.log(
+      result.status === 'passed' ? `✅ ${id} passed (${dur})` : `❌ ${id} failed (${dur})`,
+      result.status === 'passed' ? 'pass' : 'fail',
+    );
     this.render();
   }
 
   onEnd(result: FullResult): void {
     this.isComplete = true;
     this.overallStatus = result.status === 'passed' ? 'passed' : 'failed';
+    const st = this.stats();
+    PipelineTracker[result.status === 'passed' ? 'complete' : 'fail'](
+      3, `${st.passed}/${st.total} tests passed`
+    );
+    this.log(
+      result.status === 'passed'
+        ? `🎉 All ${st.total} tests passed in ${st.elapsedStr}`
+        : `⚠ ${st.failed} test(s) failed — ${st.passed}/${st.total} passed`,
+      result.status === 'passed' ? 'done' : 'fail',
+    );
     this.render();
-    const dashPath = path.resolve(this.outputPath);
-    console.log(`\n📊 Dashboard: file:///${dashPath.replace(/\\/g, '/')}\n`);
+    console.log(`\n📊 Dashboard → file:///${path.resolve(this.out).replace(/\\/g,'/')}\n`);
   }
 
-  // ── HTML Generation ────────────────────────────────────────────────────────
-
-  private render(): void {
-    const html = this.buildHtml();
-    fs.writeFileSync(this.outputPath, html, 'utf8');
-  }
+  // ── Stats ─────────────────────────────────────────────────────────────────
 
   private stats() {
-    let total = 0, passed = 0, failed = 0, running = 0, pending = 0;
-    for (const s of this.suites.values()) {
+    let total=0, passed=0, failed=0, running=0, pending=0;
+    for (const s of this.suites.values())
       for (const t of s.tests) {
         total++;
-        if (t.status === 'passed')  passed++;
-        else if (t.status === 'failed')  failed++;
-        else if (t.status === 'running') running++;
-        else if (t.status === 'pending') pending++;
+        if (t.status==='passed') passed++;
+        else if (t.status==='failed') failed++;
+        else if (t.status==='running') running++;
+        else if (t.status==='pending') pending++;
       }
-    }
     const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
-    const mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
-    const ss = String(elapsed % 60).padStart(2, '0');
-    return { total, passed, failed, running, pending, elapsed, elapsedStr: `${mm}:${ss}` };
+    const mm = String(Math.floor(elapsed/60)).padStart(2,'0');
+    const ss = String(elapsed%60).padStart(2,'0');
+    return { total, passed, failed, running, pending, elapsed, elapsedStr:`${mm}:${ss}` };
   }
 
-  private buildHtml(): string {
-    const st = this.stats();
-    const passRate = st.total > 0 ? Math.round((st.passed / st.total) * 100) : 0;
-    const refreshMeta = this.isComplete ? '' : '<meta http-equiv="refresh" content="2">';
+  // ── Render ────────────────────────────────────────────────────────────────
+
+  private render(): void { fs.writeFileSync(this.out, this.html(), 'utf8'); }
+
+  // ── HTML ──────────────────────────────────────────────────────────────────
+
+  private html(): string {
+    const st      = this.stats();
+    const rate    = st.total > 0 ? Math.round((st.passed/st.total)*100) : 0;
+    const steps   = PipelineTracker.loadSteps();
+    const refresh = this.isComplete ? '' : '<meta http-equiv="refresh" content="2">';
+
     const statusLabel = this.isComplete
-      ? (this.overallStatus === 'passed' ? 'COMPLETED ✅' : 'COMPLETED WITH FAILURES ❌')
-      : 'RUNNING…';
-    const statusClass = this.isComplete
-      ? (this.overallStatus === 'passed' ? 'status-pass' : 'status-fail')
-      : 'status-running';
-
-    const suiteCards = [...this.suites.entries()].map(([, s]) => {
-      const tot = s.tests.length;
-      const pas = s.tests.filter(t => t.status === 'passed').length;
-      const fai = s.tests.filter(t => t.status === 'failed').length;
-      const run = s.tests.filter(t => t.status === 'running').length;
-      const pct = tot > 0 ? Math.round((pas / tot) * 100) : 0;
-      const cardClass = fai > 0 ? 'card-fail' : run > 0 ? 'card-running' : pas === tot ? 'card-pass' : 'card-idle';
-      return `
-        <div class="suite-card ${cardClass}">
-          <div class="suite-icon">${s.icon}</div>
-          <div class="suite-name">${s.displayName}</div>
-          <div class="suite-counts">
-            <span class="cnt-pass">${pas}</span>/<span class="cnt-total">${tot}</span>
-            ${fai > 0 ? `<span class="cnt-fail"> · ${fai} failed</span>` : ''}
-            ${run > 0 ? `<span class="cnt-run"> · ${run} running</span>` : ''}
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" style="width:${pct}%; background:${s.color}"></div>
-          </div>
-          <div class="suite-pct">${pct}%</div>
-        </div>`;
-    }).join('');
-
-    const testRows = [...this.suites.entries()].map(([, s]) => {
-      const rows = s.tests.map(t => {
-        const icon = t.status === 'passed'  ? '✅'
-                   : t.status === 'failed'  ? '❌'
-                   : t.status === 'running' ? '⟳'
-                   : t.status === 'skipped' ? '⏭'
-                   : '○';
-        const cls = `tile tile-${t.status}`;
-        const dur = t.duration > 0 ? `${(t.duration / 1000).toFixed(1)}s` : '';
-        const errHtml = t.error ? `<div class="tile-error">${escHtml(t.error)}</div>` : '';
-        return `
-          <div class="${cls}">
-            <span class="tile-icon">${icon}</span>
-            <div class="tile-body">
-              <div class="tile-id">${t.id}</div>
-              <div class="tile-title">${escHtml(t.title.replace(/^TC-[A-Z]+-\d+\s*[—-]\s*/, ''))}</div>
-              ${errHtml}
-            </div>
-            <div class="tile-dur">${dur}</div>
-          </div>`;
-      }).join('');
-      return `
-        <div class="suite-section">
-          <div class="section-header">
-            <span class="section-icon">${s.icon}</span>
-            <span class="section-title">${s.displayName}</span>
-            <span class="section-badge">${s.tests.filter(t => t.status === 'passed').length}/${s.tests.length}</span>
-          </div>
-          <div class="tile-grid">${rows}</div>
-        </div>`;
-    }).join('');
-
-    const runDate = new Date().toLocaleString('en-GB', {
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit', second: '2-digit',
-    });
+      ? (this.overallStatus==='passed' ? 'ALL TESTS PASSED' : 'FAILURES DETECTED')
+      : 'RUNNING';
+    const statusCls = this.isComplete
+      ? (this.overallStatus==='passed' ? 'badge-pass' : 'badge-fail')
+      : 'badge-run';
 
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-${refreshMeta}
-<title>SF CPQ QA Dashboard</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+${refresh}
+<title>SF CPQ · QA Dashboard</title>
 <style>
-  /* ── Reset & Base ───────────────────────────── */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg:        #050914;
-    --bg2:       #0d1225;
-    --bg3:       #111827;
-    --glass:     rgba(255,255,255,0.04);
-    --glass2:    rgba(255,255,255,0.07);
-    --border:    rgba(255,255,255,0.08);
-    --text:      #f1f5f9;
-    --muted:     #94a3b8;
-    --pass:      #10b981;
-    --fail:      #ef4444;
-    --run:       #f59e0b;
-    --skip:      #6366f1;
-    --pend:      #374151;
-    --accent1:   #7c3aed;
-    --accent2:   #2563eb;
-    --radius:    14px;
-    --shadow:    0 8px 32px rgba(0,0,0,0.4);
-  }
-  html { height: 100%; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 0 0 60px;
-  }
+/* ── Variables ───────────────────────────────── */
+:root{
+  --bg:#03060f;--bg2:#080d1a;--bg3:#0d1528;
+  --glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.12);
+  --text:#f0f4ff;--muted:#6b7fa3;--muted2:#4a5568;
+  --pass:#22d3a5;--fail:#f43f5e;--run:#f59e0b;--pend:#334155;--skip:#818cf8;
+  --p1:#7c3aed;--p2:#2563eb;--p3:#06b6d4;
+  --r:16px;--r2:12px;--r3:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{height:100%;scroll-behavior:smooth;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  overflow-x:hidden;
+}
 
-  /* ── Header ─────────────────────────────────── */
-  .header {
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    border-bottom: 1px solid var(--border);
-    padding: 28px 40px 24px;
-    position: sticky; top: 0; z-index: 100;
-    backdrop-filter: blur(20px);
-  }
-  .header-top {
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
-  }
-  .brand { display: flex; align-items: center; gap: 14px; }
-  .brand-logo {
-    width: 48px; height: 48px;
-    background: linear-gradient(135deg, var(--accent1), var(--accent2));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; box-shadow: 0 4px 20px rgba(124,58,237,0.5);
-  }
-  .brand-text h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
-  .brand-text p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .header-meta { font-size: 12px; color: var(--muted); text-align: right; line-height: 1.8; }
+/* ── Animated BG ─────────────────────────────── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%, rgba(124,58,237,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 10%, rgba(37,99,235,.10) 0%,transparent 60%),
+    radial-gradient(ellipse 70% 60% at 50% 90%, rgba(6,182,212,.07) 0%,transparent 60%);
+  animation:bgPulse 10s ease-in-out infinite alternate;
+}
+@keyframes bgPulse{0%{opacity:.7}100%{opacity:1}}
 
-  /* ── Status Pill ─────────────────────────────── */
-  .status-pill {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 600;
-    margin-top: 16px;
-  }
-  .status-running { background: rgba(245,158,11,0.15); color: var(--run); border: 1px solid rgba(245,158,11,0.3); }
-  .status-pass    { background: rgba(16,185,129,0.15); color: var(--pass); border: 1px solid rgba(16,185,129,0.3); }
-  .status-fail    { background: rgba(239,68,68,0.15);  color: var(--fail); border: 1px solid rgba(239,68,68,0.3); }
-  .pulse { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 1.2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+/* Floating orbs */
+body::after{
+  content:'';position:fixed;width:600px;height:600px;
+  top:-200px;right:-200px;border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(124,58,237,.06) 0%,transparent 70%);
+  animation:orbFloat 15s ease-in-out infinite;
+}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-60px,60px) scale(1.1)}}
 
-  /* ── Stat Bar ────────────────────────────────── */
-  .stat-bar {
-    display: flex; align-items: center; gap: 8px; margin-top: 20px; flex-wrap: wrap;
-  }
-  .stat-chip {
-    padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .chip-total   { background: var(--glass2); color: var(--text); }
-  .chip-pass    { background: rgba(16,185,129,0.15); color: var(--pass); }
-  .chip-fail    { background: rgba(239,68,68,0.15);  color: var(--fail); }
-  .chip-run     { background: rgba(245,158,11,0.15); color: var(--run); }
-  .chip-pend    { background: rgba(100,116,139,0.15); color: var(--muted); }
-  .chip-time    { background: rgba(99,102,241,0.15); color: #a5b4fc; }
-  .chip-rate    { background: linear-gradient(135deg,rgba(124,58,237,0.2),rgba(37,99,235,0.2)); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.3); }
-  .divider { width: 1px; height: 20px; background: var(--border); }
+/* ── Layout ──────────────────────────────────── */
+.wrap{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:0 32px 60px;}
 
-  /* ── Main Content ────────────────────────────── */
-  .main { max-width: 1400px; margin: 0 auto; padding: 32px 40px 0; }
+/* ── Header ──────────────────────────────────── */
+.header{
+  padding:28px 0 0;display:flex;align-items:flex-start;
+  justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:32px;
+}
+.brand{display:flex;align-items:center;gap:16px;}
+.brand-mark{
+  width:52px;height:52px;border-radius:14px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--p1),var(--p2));
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 0 30px rgba(124,58,237,.5),0 4px 20px rgba(0,0,0,.4);
+}
+.brand-info h1{font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1.2;}
+.brand-info p{font-size:12px;color:var(--muted);margin-top:4px;letter-spacing:.3px;}
+.header-right{text-align:right;font-size:12px;color:var(--muted);line-height:2;}
+.header-right strong{color:var(--text);}
 
-  /* ── Section Label ───────────────────────────── */
-  .label {
-    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-    color: var(--muted); text-transform: uppercase; margin-bottom: 16px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .label::after { content:''; flex:1; height:1px; background: var(--border); }
+/* ── Status Badge ────────────────────────────── */
+.status-wrap{display:flex;align-items:center;gap:10px;margin-top:20px;}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 20px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.8px;
+}
+.badge-run{background:rgba(245,158,11,.12);color:var(--run);border:1px solid rgba(245,158,11,.3);}
+.badge-pass{background:rgba(34,211,165,.12);color:var(--pass);border:1px solid rgba(34,211,165,.3);}
+.badge-fail{background:rgba(244,63,94,.12);color:var(--fail);border:1px solid rgba(244,63,94,.3);}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:dotPulse 1.2s ease-in-out infinite;}
+@keyframes dotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
 
-  /* ── Suite Cards ─────────────────────────────── */
-  .suite-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px; margin-bottom: 40px;
-  }
-  .suite-card {
-    background: var(--glass); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 22px 20px;
-    transition: transform .2s, box-shadow .2s;
-    position: relative; overflow: hidden;
-  }
-  .suite-card::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent);
-    pointer-events: none;
-  }
-  .suite-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
-  .card-pass    { border-color: rgba(16,185,129,0.25);  }
-  .card-fail    { border-color: rgba(239,68,68,0.35);   }
-  .card-running { border-color: rgba(245,158,11,0.3); animation: borderPulse 2s ease-in-out infinite; }
-  .card-idle    { border-color: var(--border); }
-  @keyframes borderPulse {
-    0%,100%{ border-color: rgba(245,158,11,0.3); }
-    50%    { border-color: rgba(245,158,11,0.7); }
-  }
-  .suite-icon   { font-size: 28px; margin-bottom: 8px; }
-  .suite-name   { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-  .suite-counts { font-size: 22px; font-weight: 800; margin-bottom: 14px; color: var(--text); }
-  .cnt-pass     { color: var(--pass); }
-  .cnt-total    { color: var(--muted); }
-  .cnt-fail     { font-size: 13px; color: var(--fail); font-weight: 600; }
-  .cnt-run      { font-size: 13px; color: var(--run);  font-weight: 600; }
-  .progress-track {
-    height: 6px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden; margin-bottom: 8px;
-  }
-  .progress-fill {
-    height: 100%; border-radius: 99px;
-    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
-    box-shadow: 0 0 8px currentColor;
-  }
-  .suite-pct { font-size: 12px; color: var(--muted); font-weight: 600; }
+/* ── Stat Chips ──────────────────────────────── */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto;}
+.chip{
+  display:flex;align-items:center;gap:7px;padding:8px 16px;
+  border-radius:var(--r3);font-size:13px;font-weight:600;
+  background:var(--glass2);border:1px solid var(--border);
+  transition:transform .15s;
+}
+.chip:hover{transform:translateY(-2px);}
+.chip.c-pass{color:var(--pass);}
+.chip.c-fail{color:var(--fail);}
+.chip.c-run {color:var(--run);}
+.chip.c-pend{color:var(--muted);}
+.chip.c-rate{
+  background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(37,99,235,.15));
+  color:#c4b5fd;border-color:rgba(124,58,237,.3);
+}
+.chip.c-time{color:#7dd3fc;}
 
-  /* ── Overall Progress Bar ────────────────────── */
-  .overall-bar { margin-bottom: 40px; }
-  .overall-track {
-    height: 10px; background: rgba(255,255,255,0.06); border-radius: 99px;
-    overflow: hidden; position: relative;
-  }
-  .overall-fill {
-    height: 100%; border-radius: 99px;
-    background: linear-gradient(90deg, var(--accent1), var(--accent2));
-    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
-    box-shadow: 0 0 12px rgba(124,58,237,0.6);
-  }
-  .overall-labels {
-    display: flex; justify-content: space-between;
-    font-size: 12px; color: var(--muted); margin-top: 8px;
-  }
+/* ── Section Title ───────────────────────────── */
+.sec{
+  font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);
+  text-transform:uppercase;margin-bottom:18px;
+  display:flex;align-items:center;gap:12px;
+}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
 
-  /* ── Suite Sections ──────────────────────────── */
-  .suite-section { margin-bottom: 36px; }
-  .section-header {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 14px;
-  }
-  .section-icon  { font-size: 20px; }
-  .section-title { font-size: 16px; font-weight: 700; }
-  .section-badge {
-    padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700;
-    background: var(--glass2); color: var(--pass);
-    border: 1px solid rgba(16,185,129,0.2);
-  }
+/* ── Pipeline Timeline ───────────────────────── */
+.pipeline{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r);padding:28px 32px;margin-bottom:36px;
+  position:relative;overflow:hidden;
+}
+.pipeline::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(124,58,237,.04),transparent 60%);
+  pointer-events:none;
+}
+.pipe-steps{display:flex;align-items:flex-start;gap:0;position:relative;}
+.pipe-step{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  position:relative;cursor:default;
+}
+/* connector line */
+.pipe-step:not(:last-child)::after{
+  content:'';position:absolute;top:22px;left:calc(50% + 22px);
+  right:calc(-50% + 22px);height:2px;
+  background:var(--border2);
+  transition:background .4s;
+}
+.pipe-step.done:not(:last-child)::after{
+  background:linear-gradient(90deg,var(--pass),rgba(34,211,165,.4));
+}
+.pipe-step.running:not(:last-child)::after{
+  background:linear-gradient(90deg,var(--run),var(--border2));
+}
+.step-circle{
+  width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;position:relative;z-index:1;
+  background:var(--bg3);border:2px solid var(--border2);
+  transition:all .3s;flex-shrink:0;
+}
+.pipe-step.done   .step-circle{
+  background:rgba(34,211,165,.15);border-color:var(--pass);
+  box-shadow:0 0 20px rgba(34,211,165,.25);
+}
+.pipe-step.running .step-circle{
+  background:rgba(245,158,11,.15);border-color:var(--run);
+  box-shadow:0 0 20px rgba(245,158,11,.3);
+  animation:stepGlow 2s ease-in-out infinite;
+}
+.pipe-step.failed  .step-circle{
+  background:rgba(244,63,94,.15);border-color:var(--fail);
+}
+@keyframes stepGlow{0%,100%{box-shadow:0 0 20px rgba(245,158,11,.3)}50%{box-shadow:0 0 40px rgba(245,158,11,.6)}}
+.step-num{
+  position:absolute;top:-6px;right:-6px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--bg3);border:1px solid var(--border2);
+  font-size:9px;font-weight:700;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;
+}
+.pipe-step.done  .step-num{background:var(--pass);color:#000;border-color:var(--pass);}
+.pipe-step.running .step-num{background:var(--run);color:#000;border-color:var(--run);}
+.step-label{
+  font-size:11px;font-weight:700;color:var(--text);
+  margin-top:10px;text-align:center;line-height:1.3;
+}
+.pipe-step.pending .step-label{color:var(--muted);}
+.step-detail{
+  font-size:10px;color:var(--muted);margin-top:4px;
+  text-align:center;line-height:1.3;min-height:14px;
+}
+.pipe-step.done   .step-detail{color:var(--pass);}
+.pipe-step.running .step-detail{color:var(--run);}
+.pipe-step.failed  .step-detail{color:var(--fail);}
+.step-time{font-size:9px;color:var(--muted2);margin-top:3px;text-align:center;}
 
-  /* ── Test Tiles ──────────────────────────────── */
-  .tile-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-    gap: 10px;
-  }
-  .tile {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 14px 16px; border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--glass);
-    transition: transform .15s, box-shadow .15s;
-    position: relative; overflow: hidden;
-  }
-  .tile:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-  .tile-passed  { border-color: rgba(16,185,129,0.2); }
-  .tile-failed  { border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
-  .tile-running {
-    border-color: rgba(245,158,11,0.4);
-    background: rgba(245,158,11,0.05);
-    animation: tileGlow 2s ease-in-out infinite;
-  }
-  .tile-skipped { border-color: rgba(99,102,241,0.2); opacity: 0.7; }
-  .tile-pending { opacity: 0.45; }
-  @keyframes tileGlow {
-    0%,100%{ box-shadow: 0 0 0 rgba(245,158,11,0); }
-    50%    { box-shadow: 0 0 16px rgba(245,158,11,0.2); }
-  }
-  .tile-running::before {
-    content: ''; position: absolute; top: 0; left: -100%;
-    width: 60%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(245,158,11,0.08), transparent);
-    animation: shimmer 1.6s ease-in-out infinite;
-  }
-  @keyframes shimmer { to { left: 200%; } }
-  .tile-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-  .tile-running .tile-icon { animation: spin 1.2s linear infinite; display: inline-block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .tile-body { flex: 1; min-width: 0; }
-  .tile-id    { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--muted); margin-bottom: 3px; }
-  .tile-title { font-size: 13px; font-weight: 500; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tile-error { font-size: 11px; color: var(--fail); margin-top: 5px; line-height: 1.4; opacity: 0.9; word-break: break-word; white-space: normal; }
-  .tile-dur   { font-size: 11px; color: var(--muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
+/* ── Main Grid ───────────────────────────────── */
+.main-grid{
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:24px;margin-bottom:32px;
+}
+@media(max-width:1024px){.main-grid{grid-template-columns:1fr;}}
 
-  /* ── Footer ──────────────────────────────────── */
-  .footer {
-    text-align: center; padding: 40px 20px 20px;
-    font-size: 12px; color: var(--muted);
-  }
-  .footer a { color: #7c3aed; text-decoration: none; }
+/* ── Suite Cards ─────────────────────────────── */
+.suite-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;margin-bottom:24px;
+}
+.suite-card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r);padding:24px 20px;
+  transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;
+}
+.suite-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.4);}
+.suite-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(255,255,255,.03) 0%,transparent 60%);
+  pointer-events:none;
+}
+.sc-pass{border-color:rgba(34,211,165,.2);}
+.sc-fail{border-color:rgba(244,63,94,.3);}
+.sc-run {border-color:rgba(245,158,11,.3);animation:cardBlink 2s ease-in-out infinite;}
+@keyframes cardBlink{0%,100%{border-color:rgba(245,158,11,.3)}50%{border-color:rgba(245,158,11,.7)}}
 
-  /* ── Responsive ──────────────────────────────── */
-  @media (max-width: 768px) {
-    .header { padding: 20px; }
-    .main   { padding: 20px; }
-    .tile-grid { grid-template-columns: 1fr; }
-  }
+/* Ring */
+.ring-wrap{position:relative;width:72px;height:72px;margin-bottom:16px;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-bg{fill:none;stroke:rgba(255,255,255,.06);stroke-width:5;}
+.ring-fg{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dasharray .6s cubic-bezier(.4,0,.2,1);}
+.ring-icon{
+  position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;font-size:26px;
+}
+.sc-name{font-size:14px;font-weight:700;margin-bottom:6px;}
+.sc-count{font-size:24px;font-weight:800;margin-bottom:2px;}
+.sc-sub{font-size:11px;color:var(--muted);}
+
+/* Overall bar */
+.overall{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px 24px;margin-bottom:24px;
+}
+.ov-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:10px;}
+.ov-label strong{color:var(--text);font-size:14px;}
+.ov-track{height:8px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;}
+.ov-fill{
+  height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--p1),var(--p2),var(--p3));
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 16px rgba(124,58,237,.5);
+}
+
+/* ── Activity Feed ───────────────────────────── */
+.feed{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;
+  max-height:420px;display:flex;flex-direction:column;
+}
+.feed-title{font-size:13px;font-weight:700;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;}
+.feed-title .live-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--run);
+  animation:dotPulse 1s ease-in-out infinite;
+}
+.feed-list{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:6px;}
+.feed-list::-webkit-scrollbar{width:4px;}
+.feed-list::-webkit-scrollbar-track{background:transparent;}
+.feed-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px;}
+.feed-item{
+  display:flex;gap:10px;padding:8px 10px;border-radius:var(--r3);
+  font-size:11px;line-height:1.4;
+  background:rgba(255,255,255,.02);
+  animation:feedIn .3s ease;
+}
+@keyframes feedIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.feed-time{color:var(--muted2);flex-shrink:0;font-variant-numeric:tabular-nums;padding-top:1px;}
+.feed-msg{color:var(--muted);flex:1;}
+.fi-pass .feed-msg{color:rgba(34,211,165,.9);}
+.fi-fail .feed-msg{color:rgba(244,63,94,.9);}
+.fi-run  .feed-msg{color:rgba(245,158,11,.8);}
+.fi-start .feed-msg,.fi-done .feed-msg{color:var(--text);}
+
+/* ── Test Case Tiles ─────────────────────────── */
+.suite-section{margin-bottom:32px;}
+.ss-header{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  padding-bottom:12px;border-bottom:1px solid var(--border);
+}
+.ss-icon{font-size:20px;}
+.ss-name{font-size:15px;font-weight:700;}
+.ss-badge{
+  padding:3px 12px;border-radius:99px;font-size:11px;font-weight:700;
+  background:rgba(34,211,165,.1);color:var(--pass);border:1px solid rgba(34,211,165,.2);
+  margin-left:auto;
+}
+.tile-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+  gap:8px;
+}
+.tile{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 14px;border-radius:var(--r3);
+  border:1px solid var(--border);background:var(--glass);
+  transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden;
+}
+.tile:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.t-pass{border-color:rgba(34,211,165,.18);}
+.t-fail{border-color:rgba(244,63,94,.3);background:rgba(244,63,94,.04);}
+.t-running{
+  border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.04);
+  animation:tileGlow 2s ease-in-out infinite;
+}
+.t-pending{opacity:.35;}
+@keyframes tileGlow{0%,100%{box-shadow:0 0 0 rgba(245,158,11,0)}50%{box-shadow:0 0 20px rgba(245,158,11,.15)}}
+/* shimmer on running */
+.t-running::before{
+  content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(245,158,11,.07),transparent);
+  animation:shimmer 1.8s ease-in-out infinite;
+}
+@keyframes shimmer{to{left:200%}}
+.t-icon{font-size:16px;flex-shrink:0;margin-top:2px;}
+.t-running .t-icon{animation:spin 1.2s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.t-body{flex:1;min-width:0;}
+.t-id{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;}
+.t-title{font-size:12px;font-weight:500;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.t-err{font-size:10px;color:rgba(244,63,94,.9);margin-top:4px;line-height:1.4;word-break:break-word;white-space:normal;}
+.t-dur{font-size:10px;color:var(--muted);flex-shrink:0;font-variant-numeric:tabular-nums;margin-top:3px;}
+
+/* ── Footer ──────────────────────────────────── */
+.footer{text-align:center;padding:32px 0 0;font-size:11px;color:var(--muted2);}
+.footer a{color:var(--p1);text-decoration:none;}
+.footer a:hover{color:#a78bfa;}
 </style>
 </head>
 <body>
+<div class="wrap">
 
+<!-- ── Header ───────────────────────────────────── -->
 <div class="header">
-  <div class="header-top">
-    <div class="brand">
-      <div class="brand-logo">🚀</div>
-      <div class="brand-text">
-        <h1>Salesforce CPQ — QA Dashboard</h1>
-        <p>Playwright E2E · Chromium · ${st.total} Tests across 4 Objects</p>
+  <div class="brand">
+    <div class="brand-mark">🚀</div>
+    <div class="brand-info">
+      <h1>Salesforce CPQ — QA Dashboard</h1>
+      <p>Playwright E2E · Chromium · ${st.total} Tests across Account · Contact · Opportunity · Quote (CPQ)</p>
+      <div class="status-wrap">
+        <div class="badge ${statusCls}">
+          ${!this.isComplete ? '<div class="dot"></div>' : ''}
+          ${statusLabel}
+        </div>
+        <div class="chips">
+          <div class="chip">📦 ${st.total}</div>
+          <div class="chip c-pass">✅ ${st.passed} Passed</div>
+          ${st.failed>0 ? `<div class="chip c-fail">❌ ${st.failed} Failed</div>` : ''}
+          ${st.running>0 ? `<div class="chip c-run">⟳ ${st.running} Running</div>` : ''}
+          ${st.pending>0 ? `<div class="chip c-pend">○ ${st.pending} Pending</div>` : ''}
+          <div class="chip c-time">⏱ ${st.elapsedStr}</div>
+          <div class="chip c-rate">📈 ${rate}%</div>
+        </div>
       </div>
     </div>
-    <div class="header-meta">
-      <div>Run started: ${runDate}</div>
-      <div>Elapsed: <strong>${st.elapsedStr}</strong></div>
-    </div>
   </div>
-
-  <div class="stat-bar">
-    <div class="status-pill ${statusClass}">
-      ${!this.isComplete ? '<div class="pulse"></div>' : ''}
-      ${statusLabel}
-    </div>
-    <div class="divider"></div>
-    <div class="stat-chip chip-total">📦 ${st.total} Total</div>
-    <div class="stat-chip chip-pass">✅ ${st.passed} Passed</div>
-    ${st.failed  > 0 ? `<div class="stat-chip chip-fail">❌ ${st.failed} Failed</div>` : ''}
-    ${st.running > 0 ? `<div class="stat-chip chip-run">⟳ ${st.running} Running</div>` : ''}
-    ${st.pending > 0 ? `<div class="stat-chip chip-pend">○ ${st.pending} Pending</div>` : ''}
-    <div class="divider"></div>
-    <div class="stat-chip chip-time">⏱ ${st.elapsedStr}</div>
-    <div class="stat-chip chip-rate">📈 ${passRate}% Pass Rate</div>
+  <div class="header-right">
+    <div>Run: <strong>${new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</strong></div>
+    <div>Engine: <strong>Playwright ${st.total > 0 ? 'v1.58' : '—'}</strong></div>
+    <div>Browser: <strong>Chromium</strong></div>
   </div>
 </div>
 
-<div class="main">
+<!-- ── Pipeline Steps ────────────────────────────── -->
+<div class="sec">QA Pipeline — 6 Steps</div>
+<div class="pipeline">
+  <div class="pipe-steps">
+    ${steps.map(s => this.renderStep(s)).join('')}
+  </div>
+</div>
 
-  <div class="label">Overall Progress</div>
-  <div class="overall-bar">
-    <div class="overall-track">
-      <div class="overall-fill" style="width:${passRate}%"></div>
-    </div>
-    <div class="overall-labels">
-      <span>${st.passed} / ${st.total} tests completed</span>
-      <span>${passRate}%</span>
+<!-- ── Overall Progress ───────────────────────────── -->
+<div class="overall">
+  <div class="ov-label">
+    <span>Overall Test Progress</span>
+    <strong>${st.passed} / ${st.total} tests passing</strong>
+  </div>
+  <div class="ov-track"><div class="ov-fill" style="width:${rate}%"></div></div>
+</div>
+
+<!-- ── Main Grid: Suites + Activity ──────────────── -->
+<div class="sec">Test Suites</div>
+<div class="main-grid">
+  <div>
+    <div class="suite-grid">
+      ${[...this.suites.entries()].map(([,s]) => this.renderSuiteCard(s)).join('')}
     </div>
   </div>
-
-  <div class="label">Test Suites</div>
-  <div class="suite-grid">${suiteCards}</div>
-
-  <div class="label">Test Cases</div>
-  ${testRows}
-
+  <div>
+    <div class="feed">
+      <div class="feed-title">
+        ${!this.isComplete ? '<div class="live-dot"></div>' : ''}
+        Activity Feed
+      </div>
+      <div class="feed-list">
+        ${this.activityLog.map(a => `
+          <div class="feed-item fi-${a.type}">
+            <span class="feed-time">${a.time}</span>
+            <span class="feed-msg">${esc(a.msg)}</span>
+          </div>`).join('')}
+        ${this.activityLog.length===0 ? '<div style="color:var(--muted2);font-size:11px;padding:8px">Waiting for test execution…</div>' : ''}
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- ── Test Cases ─────────────────────────────────── -->
+<div class="sec">Test Cases</div>
+${[...this.suites.entries()].map(([,s]) => this.renderSuiteSection(s)).join('')}
 
 <div class="footer">
-  Auto-refreshes every 2s while running · Generated by DashboardReporter ·
+  ${this.isComplete ? '✅ Run complete' : '⟳ Auto-refreshes every 2s'} ·
+  Generated by DashboardReporter ·
   <a href="https://playwright.dev" target="_blank">Playwright</a>
 </div>
 
-</body>
-</html>`;
+</div><!-- /wrap -->
+</body></html>`;
   }
-}
 
-function escHtml(str: string): string {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  // ── Sub-renderers ─────────────────────────────────────────────────────────
+
+  private renderStep(s: StepState): string {
+    const cls = s.status === 'completed' ? 'done'
+              : s.status === 'running'   ? 'running'
+              : s.status === 'failed'    ? 'failed'
+              : 'pending';
+    const icon = s.status === 'completed' ? '✅'
+               : s.status === 'running'   ? '⟳'
+               : s.status === 'failed'    ? '❌'
+               : s.icon;
+    return `
+      <div class="pipe-step ${cls}">
+        <div class="step-circle">
+          ${icon}
+          <div class="step-num">${s.n}</div>
+        </div>
+        <div class="step-label">${esc(s.label)}</div>
+        <div class="step-detail">${esc(s.detail || (s.status==='pending'?'Waiting…':''))}</div>
+        <div class="step-time">${s.timestamp||''}</div>
+      </div>`;
+  }
+
+  private renderSuiteCard(s: SuiteData): string {
+    const tot = s.tests.length;
+    const pas = s.tests.filter(t=>t.status==='passed').length;
+    const fai = s.tests.filter(t=>t.status==='failed').length;
+    const run = s.tests.filter(t=>t.status==='running').length;
+    const pct = tot>0 ? Math.round((pas/tot)*100) : 0;
+    const dash = `${pct}, 100`;
+    const cls  = fai>0 ? 'sc-fail' : run>0 ? 'sc-run' : pas===tot&&tot>0 ? 'sc-pass' : '';
+    const ringColor = fai>0 ? '#f43f5e' : run>0 ? '#f59e0b' : s.accent;
+    return `
+      <div class="suite-card ${cls}">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 36 36" width="72" height="72">
+            <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
+            <circle class="ring-fg" cx="18" cy="18" r="15.9"
+              stroke="${ringColor}" stroke-dasharray="${dash}" stroke-dashoffset="0"/>
+          </svg>
+          <div class="ring-icon">${s.icon}</div>
+        </div>
+        <div class="sc-name">${s.displayName}</div>
+        <div class="sc-count" style="color:${ringColor}">${pas}<span style="font-size:14px;color:var(--muted)">/${tot}</span></div>
+        <div class="sc-sub">
+          ${fai>0?`<span style="color:var(--fail)">${fai} failed · </span>`:''}
+          ${run>0?`<span style="color:var(--run)">${run} running · </span>`:''}
+          ${pct}% complete
+        </div>
+      </div>`;
+  }
+
+  private renderSuiteSection(s: SuiteData): string {
+    const pas = s.tests.filter(t=>t.status==='passed').length;
+    const tiles = s.tests.map(t => {
+      const icon = t.status==='passed'?'✅':t.status==='failed'?'❌':t.status==='running'?'⟳':t.status==='skipped'?'⏭':'○';
+      const dur  = t.duration>0 ? `${(t.duration/1000).toFixed(1)}s` : '';
+      return `
+        <div class="tile t-${t.status}">
+          <span class="t-icon">${icon}</span>
+          <div class="t-body">
+            <div class="t-id">${t.id}</div>
+            <div class="t-title" title="${esc(t.title)}">${esc(t.title.replace(/^TC-[A-Z]+-\d+\s*[—-]\s*/,''))}</div>
+            ${t.error?`<div class="t-err">${esc(t.error)}</div>`:''}
+          </div>
+          <div class="t-dur">${dur}</div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="suite-section">
+        <div class="ss-header">
+          <span class="ss-icon">${s.icon}</span>
+          <span class="ss-name">${s.displayName}</span>
+          <span class="ss-badge">${pas} / ${s.tests.length}</span>
+        </div>
+        <div class="tile-grid">${tiles}</div>
+      </div>`;
+  }
 }
 
 export default DashboardReporter;

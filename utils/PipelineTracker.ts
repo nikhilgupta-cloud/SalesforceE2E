@@ -1,0 +1,96 @@
+/**
+ * PipelineTracker — Call from pipeline scripts to update step status in the dashboard.
+ * Usage:
+ *   import { PipelineTracker } from './utils/PipelineTracker';
+ *   PipelineTracker.start(1, 'Reading user stories…');
+ *   PipelineTracker.complete(1, '44 scenarios generated');
+ *   PipelineTracker.fail(2, 'File not found');
+ */
+import * as fs from 'fs';
+import * as path from 'path';
+
+export interface StepState {
+  n: number;
+  label: string;
+  icon: string;
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+  detail: string;
+  timestamp: string;
+}
+
+export interface PipelineState {
+  runDate: string;
+  steps: StepState[];
+}
+
+const STATE_FILE = path.join('reports', 'pipeline-state.json');
+
+const STEP_DEFAULTS: Omit<StepState, 'status' | 'detail' | 'timestamp'>[] = [
+  { n: 1, label: 'Generate Test Scenarios', icon: '📋' },
+  { n: 2, label: 'Create Test Plan',        icon: '📄' },
+  { n: 3, label: 'Execute E2E Tests',       icon: '🧪' },
+  { n: 4, label: 'Self-Heal Failures',      icon: '🔧' },
+  { n: 5, label: 'Generate Final Scripts',  icon: '⚙️'  },
+  { n: 6, label: 'Push to GitHub',          icon: '🚀' },
+];
+
+function load(): PipelineState {
+  try {
+    if (fs.existsSync(STATE_FILE)) return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
+  } catch {}
+  return {
+    runDate: new Date().toISOString(),
+    steps: STEP_DEFAULTS.map(s => ({ ...s, status: 'pending', detail: '', timestamp: '' })),
+  };
+}
+
+function save(state: PipelineState): void {
+  fs.mkdirSync('reports', { recursive: true });
+  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
+}
+
+function now(): string {
+  return new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+export const PipelineTracker = {
+  init(): void {
+    const state: PipelineState = {
+      runDate: new Date().toISOString(),
+      steps: STEP_DEFAULTS.map(s => ({ ...s, status: 'pending', detail: '', timestamp: '' })),
+    };
+    save(state);
+  },
+
+  start(stepN: number, detail = ''): void {
+    const state = load();
+    const step = state.steps.find(s => s.n === stepN);
+    if (step) { step.status = 'running'; step.detail = detail; step.timestamp = now(); }
+    save(state);
+  },
+
+  complete(stepN: number, detail = ''): void {
+    const state = load();
+    const step = state.steps.find(s => s.n === stepN);
+    if (step) { step.status = 'completed'; step.detail = detail; step.timestamp = now(); }
+    save(state);
+  },
+
+  fail(stepN: number, detail = ''): void {
+    const state = load();
+    const step = state.steps.find(s => s.n === stepN);
+    if (step) { step.status = 'failed'; step.detail = detail; step.timestamp = now(); }
+    save(state);
+  },
+
+  skip(stepN: number, detail = ''): void {
+    const state = load();
+    const step = state.steps.find(s => s.n === stepN);
+    if (step) { step.status = 'skipped'; step.detail = detail; step.timestamp = now(); }
+    save(state);
+  },
+
+  loadSteps(): StepState[] {
+    return load().steps;
+  },
+};
