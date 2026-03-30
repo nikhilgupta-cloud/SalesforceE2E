@@ -1,29 +1,37 @@
 {
-  "runDate": "2026-03-30T03:51:11.062Z",
+  "runDate": "2026-03-30T05:06:34.467Z",
   "steps": [
     {
+      "n": 0,
+      "label": "AI Test Generation",
+      "icon": "🤖",
+      "status": "completed",
+      "detail": "ANTHROPIC_API_KEY not set — skipping AI generation",
+      "timestamp": "10:36:34"
+    },
+    {
       "n": 1,
-      "label": "Generate Test Scenarios",
+      "label": "Verify Scenarios",
       "icon": "📋",
       "status": "completed",
-      "detail": "44 scenarios confirmed across Account · Contact · Opportunity · Quote",
-      "timestamp": "09:21:11"
+      "detail": "44 scenarios confirmed across Account · Contact · Opportunity · Quote (CPQ)",
+      "timestamp": "10:36:34"
     },
     {
       "n": 2,
-      "label": "Create Test Plan",
+      "label": "Verify Test Plan",
       "icon": "📄",
       "status": "completed",
       "detail": "Test plan confirmed — 44 tests · 12 user stories · 4 objects",
-      "timestamp": "09:21:11"
+      "timestamp": "10:36:34"
     },
     {
       "n": 3,
       "label": "Execute E2E Tests",
       "icon": "🧪",
-      "status": "completed",
-      "detail": "44/44 tests passed",
-      "timestamp": "09:39:45"
+      "status": "failed",
+      "detail": "0/0 tests passed",
+      "timestamp": "10:36:48"
     },
     {
       "n": 4,
@@ -31,7 +39,7 @@
       "icon": "🔧",
       "status": "completed",
       "detail": "No failures — healing not required",
-      "timestamp": "09:39:46"
+      "timestamp": "10:36:48"
     },
     {
       "n": 5,
@@ -39,15 +47,15 @@
       "icon": "⚙️",
       "status": "completed",
       "detail": "4 production scripts saved → generated/scripts/",
-      "timestamp": "09:39:46"
+      "timestamp": "10:36:48"
     },
     {
       "n": 6,
       "label": "Push to GitHub",
       "icon": "🚀",
-      "status": "completed",
-      "detail": "Pushed — \"chore: QA run 2026-03-30 — 44/44 tests passing\"",
-      "timestamp": "09:39:53"
+      "status": "running",
+      "detail": "Committing and pushing to GitHub…",
+      "timestamp": "10:36:48"
     }
   ]
 }

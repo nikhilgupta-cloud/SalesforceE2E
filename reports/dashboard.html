@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>SF CPQ · QA Dashboard</title>
+<meta http-equiv="refresh" content="3">
+<title>Salesforce CPQ · QA Dashboard</title>
 <style>
 /* ── Variables ───────────────────────────────── */
 :root{
@@ -259,7 +259,7 @@ body::after{
 .feed-msg{color:var(--muted);flex:1;}
 .fi-pass .feed-msg{color:rgba(34,211,165,.9);}
 .fi-fail .feed-msg{color:rgba(244,63,94,.9);}
-.fi-run  .feed-msg{color:rgba(245,158,11,.8);}
+.fi-run  .feed-msg{color:var(--muted);}
 .fi-start .feed-msg,.fi-done .feed-msg{color:var(--text);}
 
 /* ── Test Case Tiles ─────────────────────────── */
@@ -326,32 +326,32 @@ body::after{
     <div class="brand-mark">🚀</div>
     <div class="brand-info">
       <h1>Salesforce CPQ — QA Dashboard</h1>
-      <p>Playwright E2E · Chromium · 44 Tests across Account · Contact · Opportunity · Quote (CPQ)</p>
+      <p>Playwright E2E · Chromium · 0 Tests across Account · Contact · Opportunity · Quote (CPQ)</p>
       <div class="status-wrap">
 <!-- BADGE-START -->
-        <div class="badge badge-pass">ALL TESTS PASSED</div>
+        <div class="badge badge-fail">FAILURES DETECTED</div>
 <!-- BADGE-END -->
         <div class="chips">
-          <div class="chip">📦 44</div>
-          <div class="chip c-pass">✅ 44 Passed</div>
+          <div class="chip">📦 0</div>
+          <div class="chip c-pass">✅ 0 Passed</div>
           
           
           
-          <div class="chip c-time">⏱ 18:28</div>
-          <div class="chip c-rate">📈 100%</div>
+          <div class="chip c-time">⏱ 00:00</div>
+          <div class="chip c-rate">📈 0%</div>
         </div>
       </div>
     </div>
   </div>
   <div class="header-right">
-    <div>Run: <strong>30 Mar 2026, 09:39</strong></div>
-    <div>Engine: <strong>Playwright v1.58</strong></div>
+    <div>Run: <strong>30 Mar 2026, 10:36</strong></div>
+    <div>Engine: <strong>Playwright —</strong></div>
     <div>Browser: <strong>Chromium</strong></div>
   </div>
 </div>
 
 <!-- ── Pipeline Steps ────────────────────────────── -->
-<div class="sec">QA Pipeline — 6 Steps</div>
+<div class="sec">QA Pipeline — 7 Steps</div>
 <div class="pipeline">
   <div class="pipe-steps">
 <!-- PIPE-STEPS-START -->
@@ -359,29 +359,38 @@ body::after{
       <div class="pipe-step done">
         <div class="step-circle">
           ✅
+          <div class="step-num">0</div>
+        </div>
+        <div class="step-label">AI Test Generation</div>
+        <div class="step-detail">ANTHROPIC_API_KEY not set — skipping AI generation</div>
+        <div class="step-time">10:36:34</div>
+      </div>
+      <div class="pipe-step done">
+        <div class="step-circle">
+          ✅
           <div class="step-num">1</div>
         </div>
-        <div class="step-label">Generate Test Scenarios</div>
-        <div class="step-detail">44 scenarios confirmed across Account · Contact · Opportunity · Quote</div>
-        <div class="step-time">09:21:11</div>
+        <div class="step-label">Verify Scenarios</div>
+        <div class="step-detail">44 scenarios confirmed across Account · Contact · Opportunity · Quote (CPQ)</div>
+        <div class="step-time">10:36:34</div>
       </div>
       <div class="pipe-step done">
         <div class="step-circle">
           ✅
           <div class="step-num">2</div>
         </div>
-        <div class="step-label">Create Test Plan</div>
+        <div class="step-label">Verify Test Plan</div>
         <div class="step-detail">Test plan confirmed — 44 tests · 12 user stories · 4 objects</div>
-        <div class="step-time">09:21:11</div>
+        <div class="step-time">10:36:34</div>
       </div>
-      <div class="pipe-step done">
+      <div class="pipe-step failed">
         <div class="step-circle">
-          ✅
+          ❌
           <div class="step-num">3</div>
         </div>
         <div class="step-label">Execute E2E Tests</div>
-        <div class="step-detail">44/44 tests passed</div>
-        <div class="step-time">09:39:45</div>
+        <div class="step-detail">0/0 tests passed</div>
+        <div class="step-time">10:36:48</div>
       </div>
       <div class="pipe-step done">
         <div class="step-circle">
@@ -390,7 +399,7 @@ body::after{
         </div>
         <div class="step-label">Self-Heal Failures</div>
         <div class="step-detail">No failures — healing not required</div>
-        <div class="step-time">09:39:46</div>
+        <div class="step-time">10:36:48</div>
       </div>
       <div class="pipe-step done">
         <div class="step-circle">
@@ -399,16 +408,16 @@ body::after{
         </div>
         <div class="step-label">Generate Final Scripts</div>
         <div class="step-detail">4 production scripts saved → generated/scripts/</div>
-        <div class="step-time">09:39:46</div>
+        <div class="step-time">10:36:48</div>
       </div>
-      <div class="pipe-step done">
+      <div class="pipe-step pending">
         <div class="step-circle">
-          ✅
+          🚀
           <div class="step-num">6</div>
         </div>
         <div class="step-label">Push to GitHub</div>
-        <div class="step-detail">Pushed — &quot;chore: QA run 2026-03-30 — 44/44 tests passing&quot;</div>
-        <div class="step-time">09:39:53</div>
+        <div class="step-detail">Waiting…</div>
+        <div class="step-time"></div>
       </div>
 <!-- PIPE-STEPS-END -->
   </div>
@@ -418,9 +427,9 @@ body::after{
 <div class="overall">
   <div class="ov-label">
     <span>Overall Test Progress</span>
-    <strong>44 / 44 tests passing</strong>
+    <strong>0 / 0 tests passing</strong>
   </div>
-  <div class="ov-track"><div class="ov-fill" style="width:100%"></div></div>
+  <div class="ov-track"><div class="ov-fill" style="width:0%"></div></div>
 </div>
 
 <!-- ── Main Grid: Suites + Activity ──────────────── -->
@@ -429,74 +438,6 @@ body::after{
   <div>
     <div class="suite-grid">
       
-      <div class="suite-card sc-pass">
-        <div class="ring-wrap">
-          <svg viewBox="0 0 36 36" width="72" height="72">
-            <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
-            <circle class="ring-fg" cx="18" cy="18" r="15.9"
-              stroke="#6366f1" stroke-dasharray="100, 100" stroke-dashoffset="0"/>
-          </svg>
-          <div class="ring-icon">🏢</div>
-        </div>
-        <div class="sc-name">Account</div>
-        <div class="sc-count" style="color:#6366f1">13<span style="font-size:14px;color:var(--muted)">/13</span></div>
-        <div class="sc-sub">
-          
-          
-          100% complete
-        </div>
-      </div>
-      <div class="suite-card sc-pass">
-        <div class="ring-wrap">
-          <svg viewBox="0 0 36 36" width="72" height="72">
-            <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
-            <circle class="ring-fg" cx="18" cy="18" r="15.9"
-              stroke="#a855f7" stroke-dasharray="100, 100" stroke-dashoffset="0"/>
-          </svg>
-          <div class="ring-icon">👤</div>
-        </div>
-        <div class="sc-name">Contact</div>
-        <div class="sc-count" style="color:#a855f7">10<span style="font-size:14px;color:var(--muted)">/10</span></div>
-        <div class="sc-sub">
-          
-          
-          100% complete
-        </div>
-      </div>
-      <div class="suite-card sc-pass">
-        <div class="ring-wrap">
-          <svg viewBox="0 0 36 36" width="72" height="72">
-            <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
-            <circle class="ring-fg" cx="18" cy="18" r="15.9"
-              stroke="#0ea5e9" stroke-dasharray="100, 100" stroke-dashoffset="0"/>
-          </svg>
-          <div class="ring-icon">💼</div>
-        </div>
-        <div class="sc-name">Opportunity</div>
-        <div class="sc-count" style="color:#0ea5e9">11<span style="font-size:14px;color:var(--muted)">/11</span></div>
-        <div class="sc-sub">
-          
-          
-          100% complete
-        </div>
-      </div>
-      <div class="suite-card sc-pass">
-        <div class="ring-wrap">
-          <svg viewBox="0 0 36 36" width="72" height="72">
-            <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
-            <circle class="ring-fg" cx="18" cy="18" r="15.9"
-              stroke="#10b981" stroke-dasharray="100, 100" stroke-dashoffset="0"/>
-          </svg>
-          <div class="ring-icon">📋</div>
-        </div>
-        <div class="sc-name">Quote (CPQ)</div>
-        <div class="sc-count" style="color:#10b981">10<span style="font-size:14px;color:var(--muted)">/10</span></div>
-        <div class="sc-sub">
-          
-          
-          100% complete
-        </div>
-      </div>
     </div>
   </div>
   <div>
@@ -507,165 +448,13 @@ body::after{
       </div>
       <div class="feed-list">
         
-          <div class="feed-item fi-done">
-            <span class="feed-time">09:39:45</span>
-            <span class="feed-msg">🎉 All 44 tests passed in 18:28</span>
+          <div class="feed-item fi-fail">
+            <span class="feed-time">10:36:48</span>
+            <span class="feed-msg">⚠ 0 test(s) failed — 0/0 passed</span>
           </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:39:43</span>
-            <span class="feed-msg">✅ TC-QTE-038 passed (39.7s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:39:03</span>
-            <span class="feed-msg">▶ TC-QTE-038 — Primary Quote checkbox available on Quote form</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:39:03</span>
-            <span class="feed-msg">✅ TC-QTE-035 passed (41.4s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:38:22</span>
-            <span class="feed-msg">▶ TC-QTE-035 — Quote detail page loads with header visible</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:38:22</span>
-            <span class="feed-msg">✅ TC-QTE-030 passed (60.9s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:37:21</span>
-            <span class="feed-msg">▶ TC-QTE-030 — Generate Document button visible on Quote</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:37:21</span>
-            <span class="feed-msg">✅ TC-QTE-021 passed (45.2s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:36:36</span>
-            <span class="feed-msg">▶ TC-QTE-021 — Discount percent field editable in QLE</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:36:36</span>
-            <span class="feed-msg">✅ TC-QTE-012 passed (81.0s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:35:15</span>
-            <span class="feed-msg">▶ TC-QTE-012 — Product catalog search in QLE</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:35:15</span>
-            <span class="feed-msg">✅ TC-QTE-009 passed (43.9s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:34:31</span>
-            <span class="feed-msg">▶ TC-QTE-009 — Edit Lines button opens Quote Line Editor</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:34:31</span>
-            <span class="feed-msg">✅ TC-QTE-007 passed (48.8s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:33:42</span>
-            <span class="feed-msg">▶ TC-QTE-007 — Saved Quote appears in Opportunity related list</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:33:42</span>
-            <span class="feed-msg">✅ TC-QTE-004 passed (40.1s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:33:02</span>
-            <span class="feed-msg">▶ TC-QTE-004 — Create Quote directly with required fields</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:33:02</span>
-            <span class="feed-msg">✅ TC-QTE-003 passed (36.5s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:32:25</span>
-            <span class="feed-msg">▶ TC-QTE-003 — Quote inherits Opportunity data</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:32:25</span>
-            <span class="feed-msg">✅ TC-QTE-001 passed (36.9s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:31:48</span>
-            <span class="feed-msg">▶ TC-QTE-001 — New Quote button accessible from Opportunity detail page</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:31:48</span>
-            <span class="feed-msg">✅ TC-OPP-027 passed (22.3s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:31:26</span>
-            <span class="feed-msg">▶ TC-OPP-027 — Changing Stage recalculates Forecast Category</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:31:26</span>
-            <span class="feed-msg">✅ TC-OPP-024 passed (5.7s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:31:20</span>
-            <span class="feed-msg">▶ TC-OPP-024 — Forecast Category visible on Opportunities list view</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:31:20</span>
-            <span class="feed-msg">✅ TC-OPP-021 passed (21.7s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:30:58</span>
-            <span class="feed-msg">▶ TC-OPP-021 — Forecast Category auto-populated based on Stage</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:30:58</span>
-            <span class="feed-msg">✅ TC-OPP-017 passed (32.2s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:30:26</span>
-            <span class="feed-msg">▶ TC-OPP-017 — Close Won requires Amount and Close Date</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:30:26</span>
-            <span class="feed-msg">✅ TC-OPP-014 passed (23.6s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:30:03</span>
-            <span class="feed-msg">▶ TC-OPP-014 — Update Opportunity Stage via detail page</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:30:03</span>
-            <span class="feed-msg">✅ TC-OPP-012 passed (20.1s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:29:43</span>
-            <span class="feed-msg">▶ TC-OPP-012 — Create Opportunity without Amount (optional)</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:29:43</span>
-            <span class="feed-msg">✅ TC-OPP-010 passed (28.3s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:29:14</span>
-            <span class="feed-msg">▶ TC-OPP-010 — Saved Opportunity appears in Account related list</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:29:14</span>
-            <span class="feed-msg">✅ TC-OPP-007 passed (5.9s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:29:08</span>
-            <span class="feed-msg">▶ TC-OPP-007 — Stage picklist contains expected values</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:29:08</span>
-            <span class="feed-msg">✅ TC-OPP-005 passed (7.4s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">09:29:01</span>
-            <span class="feed-msg">▶ TC-OPP-005 — Save Opportunity without required fields shows validation error</span>
-          </div>
-          <div class="feed-item fi-pass">
-            <span class="feed-time">09:29:01</span>
-            <span class="feed-msg">✅ TC-OPP-004 passed (20.4s)</span>
+          <div class="feed-item fi-start">
+            <span class="feed-time">10:36:48</span>
+            <span class="feed-msg">Run started — 0 tests queued</span>
           </div>
         
       </div>
@@ -676,434 +465,6 @@ body::after{
 <!-- ── Test Cases ─────────────────────────────────── -->
 <div class="sec">Test Cases</div>
 
-      <div class="suite-section">
-        <div class="ss-header">
-          <span class="ss-icon">🏢</span>
-          <span class="ss-name">Account</span>
-          <span class="ss-badge">13 / 13</span>
-        </div>
-        <div class="tile-grid">
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-001</div>
-            <div class="t-title" title="TC-ACC-001 — Navigate to Accounts list and click New">Navigate to Accounts list and click New</div>
-            
-          </div>
-          <div class="t-dur">11.8s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-004</div>
-            <div class="t-title" title="TC-ACC-004 — Create Account with all required fields">Create Account with all required fields</div>
-            
-          </div>
-          <div class="t-dur">12.8s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-005</div>
-            <div class="t-title" title="TC-ACC-005 — Save Account without name shows validation error">Save Account without name shows validation error</div>
-            
-          </div>
-          <div class="t-dur">9.9s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-010</div>
-            <div class="t-title" title="TC-ACC-010 — Saved Account appears in list view">Saved Account appears in list view</div>
-            
-          </div>
-          <div class="t-dur">16.1s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-013</div>
-            <div class="t-title" title="TC-ACC-013 — Account Type picklist contains Prospect, Customer">Account Type picklist contains Prospect, Customer</div>
-            
-          </div>
-          <div class="t-dur">6.3s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-016</div>
-            <div class="t-title" title="TC-ACC-016 — Open Account and click Edit, modify Phone, Save">Open Account and click Edit, modify Phone, Save</div>
-            
-          </div>
-          <div class="t-dur">12.3s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-019</div>
-            <div class="t-title" title="TC-ACC-019 — All editable fields modified and saved">All editable fields modified and saved</div>
-            
-          </div>
-          <div class="t-dur">13.1s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-020</div>
-            <div class="t-title" title="TC-ACC-020 — Clear required Account Name shows validation error">Clear required Account Name shows validation error</div>
-            
-          </div>
-          <div class="t-dur">14.3s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-022</div>
-            <div class="t-title" title="TC-ACC-022 — Changes reflected on detail page immediately after Save">Changes reflected on detail page immediately after Save</div>
-            
-          </div>
-          <div class="t-dur">14.0s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-025</div>
-            <div class="t-title" title="TC-ACC-025 — Last Modified By updates after Save">Last Modified By updates after Save</div>
-            
-          </div>
-          <div class="t-dur">15.6s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-028</div>
-            <div class="t-title" title="TC-ACC-028 — Global search returns Account by name">Global search returns Account by name</div>
-            
-          </div>
-          <div class="t-dur">42.4s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-034</div>
-            <div class="t-title" title="TC-ACC-034 — Account detail page shows Name, Phone, and page header">Account detail page shows Name, Phone, and page header</div>
-            
-          </div>
-          <div class="t-dur">11.8s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-ACC-035</div>
-            <div class="t-title" title="TC-ACC-035 — New Account detail page loads with empty related lists">New Account detail page loads with empty related lists</div>
-            
-          </div>
-          <div class="t-dur">10.9s</div>
-        </div></div>
-      </div>
-      <div class="suite-section">
-        <div class="ss-header">
-          <span class="ss-icon">👤</span>
-          <span class="ss-name">Contact</span>
-          <span class="ss-badge">10 / 10</span>
-        </div>
-        <div class="tile-grid">
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-001</div>
-            <div class="t-title" title="TC-CON-001 — Navigate to Contacts list and click New">Navigate to Contacts list and click New</div>
-            
-          </div>
-          <div class="t-dur">6.6s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-004</div>
-            <div class="t-title" title="TC-CON-004 — Create Contact with required fields">Create Contact with required fields</div>
-            
-          </div>
-          <div class="t-dur">20.8s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-005</div>
-            <div class="t-title" title="TC-CON-005 — Account Name lookup resolves to existing account">Account Name lookup resolves to existing account</div>
-            
-          </div>
-          <div class="t-dur">20.2s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-008</div>
-            <div class="t-title" title="TC-CON-008 — Saved Contact appears in Account related Contacts list">Saved Contact appears in Account related Contacts list</div>
-            
-          </div>
-          <div class="t-dur">26.8s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-009</div>
-            <div class="t-title" title="TC-CON-009 — Duplicate email triggers duplicate alert">Duplicate email triggers duplicate alert</div>
-            
-          </div>
-          <div class="t-dur">33.5s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-013</div>
-            <div class="t-title" title="TC-CON-013 — Edit Contact Phone, Title, Email">Edit Contact Phone, Title, Email</div>
-            
-          </div>
-          <div class="t-dur">26.1s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-016</div>
-            <div class="t-title" title="TC-CON-016 — Changes persist after navigating away and back">Changes persist after navigating away and back</div>
-            
-          </div>
-          <div class="t-dur">31.9s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-018</div>
-            <div class="t-title" title="TC-CON-018 — Clear required Last Name shows validation error">Clear required Last Name shows validation error</div>
-            
-          </div>
-          <div class="t-dur">23.0s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-020</div>
-            <div class="t-title" title="TC-CON-020 — Add Contact Role from Opportunity related list">Add Contact Role from Opportunity related list</div>
-            
-          </div>
-          <div class="t-dur">29.9s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-CON-022</div>
-            <div class="t-title" title="TC-CON-022 — Contact Role includes Role value">Contact Role includes Role value</div>
-            
-          </div>
-          <div class="t-dur">21.1s</div>
-        </div></div>
-      </div>
-      <div class="suite-section">
-        <div class="ss-header">
-          <span class="ss-icon">💼</span>
-          <span class="ss-name">Opportunity</span>
-          <span class="ss-badge">11 / 11</span>
-        </div>
-        <div class="tile-grid">
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-001</div>
-            <div class="t-title" title="TC-OPP-001 — Navigate to Opportunities list and click New">Navigate to Opportunities list and click New</div>
-            
-          </div>
-          <div class="t-dur">6.9s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-004</div>
-            <div class="t-title" title="TC-OPP-004 — Create Opportunity with all required fields">Create Opportunity with all required fields</div>
-            
-          </div>
-          <div class="t-dur">20.4s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-005</div>
-            <div class="t-title" title="TC-OPP-005 — Save Opportunity without required fields shows validation error">Save Opportunity without required fields shows validation error</div>
-            
-          </div>
-          <div class="t-dur">7.4s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-007</div>
-            <div class="t-title" title="TC-OPP-007 — Stage picklist contains expected values">Stage picklist contains expected values</div>
-            
-          </div>
-          <div class="t-dur">5.9s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-010</div>
-            <div class="t-title" title="TC-OPP-010 — Saved Opportunity appears in Account related list">Saved Opportunity appears in Account related list</div>
-            
-          </div>
-          <div class="t-dur">28.3s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-012</div>
-            <div class="t-title" title="TC-OPP-012 — Create Opportunity without Amount (optional)">Create Opportunity without Amount (optional)</div>
-            
-          </div>
-          <div class="t-dur">20.1s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-014</div>
-            <div class="t-title" title="TC-OPP-014 — Update Opportunity Stage via detail page">Update Opportunity Stage via detail page</div>
-            
-          </div>
-          <div class="t-dur">23.6s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-017</div>
-            <div class="t-title" title="TC-OPP-017 — Close Won requires Amount and Close Date">Close Won requires Amount and Close Date</div>
-            
-          </div>
-          <div class="t-dur">32.2s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-021</div>
-            <div class="t-title" title="TC-OPP-021 — Forecast Category auto-populated based on Stage">Forecast Category auto-populated based on Stage</div>
-            
-          </div>
-          <div class="t-dur">21.7s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-024</div>
-            <div class="t-title" title="TC-OPP-024 — Forecast Category visible on Opportunities list view">Forecast Category visible on Opportunities list view</div>
-            
-          </div>
-          <div class="t-dur">5.7s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-OPP-027</div>
-            <div class="t-title" title="TC-OPP-027 — Changing Stage recalculates Forecast Category">Changing Stage recalculates Forecast Category</div>
-            
-          </div>
-          <div class="t-dur">22.3s</div>
-        </div></div>
-      </div>
-      <div class="suite-section">
-        <div class="ss-header">
-          <span class="ss-icon">📋</span>
-          <span class="ss-name">Quote (CPQ)</span>
-          <span class="ss-badge">10 / 10</span>
-        </div>
-        <div class="tile-grid">
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-001</div>
-            <div class="t-title" title="TC-QTE-001 — New Quote button accessible from Opportunity detail page">New Quote button accessible from Opportunity detail page</div>
-            
-          </div>
-          <div class="t-dur">36.9s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-003</div>
-            <div class="t-title" title="TC-QTE-003 — Quote inherits Opportunity data">Quote inherits Opportunity data</div>
-            
-          </div>
-          <div class="t-dur">36.5s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-004</div>
-            <div class="t-title" title="TC-QTE-004 — Create Quote directly with required fields">Create Quote directly with required fields</div>
-            
-          </div>
-          <div class="t-dur">40.1s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-007</div>
-            <div class="t-title" title="TC-QTE-007 — Saved Quote appears in Opportunity related list">Saved Quote appears in Opportunity related list</div>
-            
-          </div>
-          <div class="t-dur">48.8s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-009</div>
-            <div class="t-title" title="TC-QTE-009 — Edit Lines button opens Quote Line Editor">Edit Lines button opens Quote Line Editor</div>
-            
-          </div>
-          <div class="t-dur">43.9s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-012</div>
-            <div class="t-title" title="TC-QTE-012 — Product catalog search in QLE">Product catalog search in QLE</div>
-            
-          </div>
-          <div class="t-dur">81.0s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-021</div>
-            <div class="t-title" title="TC-QTE-021 — Discount percent field editable in QLE">Discount percent field editable in QLE</div>
-            
-          </div>
-          <div class="t-dur">45.2s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-030</div>
-            <div class="t-title" title="TC-QTE-030 — Generate Document button visible on Quote">Generate Document button visible on Quote</div>
-            
-          </div>
-          <div class="t-dur">60.9s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-035</div>
-            <div class="t-title" title="TC-QTE-035 — Quote detail page loads with header visible">Quote detail page loads with header visible</div>
-            
-          </div>
-          <div class="t-dur">41.4s</div>
-        </div>
-        <div class="tile t-passed">
-          <span class="t-icon">✅</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-038</div>
-            <div class="t-title" title="TC-QTE-038 — Primary Quote checkbox available on Quote form">Primary Quote checkbox available on Quote form</div>
-            
-          </div>
-          <div class="t-dur">39.7s</div>
-        </div></div>
-      </div>
 
 <div class="footer">
   ✅ Run complete ·
