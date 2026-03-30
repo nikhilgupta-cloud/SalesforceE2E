@@ -2,7 +2,7 @@
 **Project:** SalesforceE2E
 **Environment:** Salesforce Sandbox (Lightning Experience)
 **Framework:** Playwright + TypeScript
-**Generated:** 2026-03-27
+**Generated:** 2026-03-29
 **Auth:** `auth/session.json` (storageState)
 
 ---

@@ -1,6 +1,6 @@
 # Test Scenarios — Quote Object (Salesforce CPQ)
 **User Stories:** US-010 (Create), US-011 (Quote Line Editor), US-012 (Primary Quote)
-**Generated:** 2026-03-27
+**Generated:** 2026-03-29
 
 ---
 

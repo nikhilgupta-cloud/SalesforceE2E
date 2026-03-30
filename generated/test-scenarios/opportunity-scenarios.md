@@ -1,6 +1,6 @@
 # Test Scenarios — Opportunity Object
 **User Stories:** US-007 (Create), US-008 (Update Stage), US-009 (Forecast Category)
-**Generated:** 2026-03-27
+**Generated:** 2026-03-29
 
 ---
 
