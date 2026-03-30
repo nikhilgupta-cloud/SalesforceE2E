@@ -8,6 +8,7 @@ import type {
 import * as fs from 'fs';
 import * as path from 'path';
 import { PipelineTracker, type StepState } from './PipelineTracker';
+import { getSuiteMeta, loadConfig } from './FrameworkConfig';
 
 interface TestInfo {
   id: string;
@@ -24,12 +25,8 @@ interface SuiteData {
   tests: TestInfo[];
 }
 
-const SUITE_META: Record<string, { displayName: string; icon: string; accent: string }> = {
-  account:     { displayName: 'Account',     icon: '🏢', accent: '#6366f1' },
-  contact:     { displayName: 'Contact',     icon: '👤', accent: '#a855f7' },
-  opportunity: { displayName: 'Opportunity', icon: '💼', accent: '#0ea5e9' },
-  quote:       { displayName: 'Quote (CPQ)', icon: '📋', accent: '#10b981' },
-};
+// Loaded from prompts/framework-config.json — add/remove objects there, not here.
+const SUITE_META: Record<string, { displayName: string; icon: string; accent: string }> = getSuiteMeta();
 
 function extractSuiteKey(filePath: string): string {
   const base = path.basename(filePath, '.spec.ts').toLowerCase();
@@ -144,7 +141,9 @@ class DashboardReporter implements Reporter {
     const st      = this.stats();
     const rate    = st.total > 0 ? Math.round((st.passed/st.total)*100) : 0;
     const steps   = PipelineTracker.loadSteps();
-    const refresh = this.isComplete ? '' : '<meta http-equiv="refresh" content="2">';
+    // Keep refresh alive even after Playwright finishes — steps 4/5/6 still run after onEnd().
+    // patchPipelineSteps() removes the tag once every pipeline step is complete/failed.
+    const refresh = '<meta http-equiv="refresh" content="3">';
 
     const statusLabel = this.isComplete
       ? (this.overallStatus==='passed' ? 'ALL TESTS PASSED' : 'FAILURES DETECTED')
@@ -158,7 +157,7 @@ class DashboardReporter implements Reporter {
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 ${refresh}
-<title>SF CPQ · QA Dashboard</title>
+<title>${loadConfig().appName} · QA Dashboard</title>
 <style>
 /* ── Variables ───────────────────────────────── */
 :root{
@@ -414,7 +413,7 @@ body::after{
 .feed-msg{color:var(--muted);flex:1;}
 .fi-pass .feed-msg{color:rgba(34,211,165,.9);}
 .fi-fail .feed-msg{color:rgba(244,63,94,.9);}
-.fi-run  .feed-msg{color:rgba(245,158,11,.8);}
+.fi-run  .feed-msg{color:var(--muted);}
 .fi-start .feed-msg,.fi-done .feed-msg{color:var(--text);}
 
 /* ── Test Case Tiles ─────────────────────────── */
@@ -480,13 +479,15 @@ body::after{
   <div class="brand">
     <div class="brand-mark">🚀</div>
     <div class="brand-info">
-      <h1>Salesforce CPQ — QA Dashboard</h1>
-      <p>Playwright E2E · Chromium · ${st.total} Tests across Account · Contact · Opportunity · Quote (CPQ)</p>
+      <h1>${loadConfig().dashboardTitle}</h1>
+      <p>${loadConfig().dashboardSubtitle} · ${st.total} Tests across ${loadConfig().objects.map(o => o.displayName).join(' · ')}</p>
       <div class="status-wrap">
+<!-- BADGE-START -->
         <div class="badge ${statusCls}">
           ${!this.isComplete ? '<div class="dot"></div>' : ''}
           ${statusLabel}
         </div>
+<!-- BADGE-END -->
         <div class="chips">
           <div class="chip">📦 ${st.total}</div>
           <div class="chip c-pass">✅ ${st.passed} Passed</div>
@@ -507,10 +508,12 @@ body::after{
 </div>
 
 <!-- ── Pipeline Steps ────────────────────────────── -->
-<div class="sec">QA Pipeline — 6 Steps</div>
+<div class="sec">QA Pipeline — ${steps.length} Steps</div>
 <div class="pipeline">
   <div class="pipe-steps">
-    ${steps.map(s => this.renderStep(s)).join('')}
+<!-- PIPE-STEPS-START -->
+${steps.map(s => this.renderStep(s)).join('')}
+<!-- PIPE-STEPS-END -->
   </div>
 </div>
 
@@ -641,6 +644,115 @@ ${[...this.suites.entries()].map(([,s]) => this.renderSuiteSection(s)).join('')}
         <div class="tile-grid">${tiles}</div>
       </div>`;
   }
+}
+
+/**
+ * Write a fresh dashboard.html BEFORE tests run.
+ * Pre-populates all 44 test tiles as "pending" from the last results.json so
+ * suite cards are immediately visible — Playwright then fills them in live.
+ */
+export function initDashboardForRun(): void {
+  const r = new DashboardReporter() as any;
+
+  const resultsPath = path.join('reports', 'results.json');
+  if (fs.existsSync(resultsPath)) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+
+      function walk(suite: any) {
+        const file  = suite.file ?? '';
+        const key   = extractSuiteKey(file) ||
+          (Object.keys(SUITE_META).find(k =>
+            (suite.title ?? '').toLowerCase().includes(k)) ?? '');
+        for (const spec of suite.specs ?? []) {
+          if (key && SUITE_META[key]) {
+            if (!r.suites.has(key)) r.suites.set(key, { ...SUITE_META[key], tests: [] });
+            r.suites.get(key).tests.push({
+              id: (spec.title.match(/TC-[A-Z]+-\d+/) ?? [])[0] ?? '',
+              title: spec.title,
+              status: 'pending',
+              duration: 0,
+            });
+          }
+        }
+        for (const child of suite.suites ?? []) walk(child);
+      }
+      (raw.suites ?? []).forEach(walk);
+    } catch { /* no prior results — render empty */ }
+  }
+
+  r.render();
+}
+
+/**
+ * Call from outside Playwright BEFORE Playwright runs (steps 1 & 2 only).
+ * Writes a blank dashboard with updated pipeline steps.
+ */
+export function refreshDashboard(): void {
+  (new DashboardReporter() as any).render();
+}
+
+/**
+ * Patch pipeline-steps AND the status badge in an existing dashboard.html
+ * WITHOUT touching test data, suite cards, or the activity feed.
+ * Call this after steps 4, 5, 6 to keep the full Playwright output intact.
+ */
+export function patchPipelineSteps(): void {
+  const htmlPath = path.join('reports', 'dashboard.html');
+  if (!fs.existsSync(htmlPath)) return;
+
+  const steps  = PipelineTracker.loadSteps();
+  const r      = new DashboardReporter() as any;
+  let   html   = fs.readFileSync(htmlPath, 'utf8');
+
+  // ── 1. Patch pipeline steps bar ─────────────────────────────────────────
+  const PS = '<!-- PIPE-STEPS-START -->';
+  const PE = '<!-- PIPE-STEPS-END -->';
+  const psi = html.indexOf(PS);
+  const pei = html.indexOf(PE);
+
+  if (psi === -1 || pei === -1) {
+    // Markers missing (old HTML) — fall back to full rewrite
+    refreshDashboard();
+    return;
+  }
+
+  const newSteps = steps.map((s: any) => r.renderStep(s)).join('');
+  html = html.slice(0, psi + PS.length) + '\n' + newSteps + '\n' + html.slice(pei);
+
+  // ── 2. Patch status badge ────────────────────────────────────────────────
+  const BS = '<!-- BADGE-START -->';
+  const BE = '<!-- BADGE-END -->';
+  const bsi = html.indexOf(BS);
+  const bei = html.indexOf(BE);
+
+  if (bsi !== -1 && bei !== -1) {
+    const step3 = steps.find((s: any) => s.n === 3);
+    let badgeHtml = '';
+
+    if (step3?.status === 'completed') {
+      badgeHtml = `\n        <div class="badge badge-pass">ALL TESTS PASSED</div>\n`;
+    } else if (step3?.status === 'failed') {
+      badgeHtml = `\n        <div class="badge badge-fail">FAILURES DETECTED</div>\n`;
+    } else if (step3?.status === 'pending' || step3?.status === 'skipped') {
+      // Playwright never ran or was aborted
+      badgeHtml = `\n        <div class="badge badge-fail">ABORTED</div>\n`;
+    }
+
+    if (badgeHtml) {
+      html = html.slice(0, bsi + BS.length) + badgeHtml + html.slice(bei);
+    }
+  }
+
+  // ── 3. Remove auto-refresh once every step is settled (complete/failed/skipped) ──
+  const allSettled = steps.every(
+    (s: any) => s.status === 'completed' || s.status === 'failed' || s.status === 'skipped',
+  );
+  if (allSettled) {
+    html = html.replace(/<meta http-equiv="refresh"[^>]*>\n?/gi, '');
+  }
+
+  fs.writeFileSync(htmlPath, html, 'utf8');
 }
 
 export default DashboardReporter;

@@ -1,0 +1,46 @@
+{
+  "_comment": "Edit this file when porting to a new app. Everything else (pipeline, dashboard, AI generation) reads from here.",
+
+  "appName": "Salesforce CPQ",
+  "dashboardTitle": "Salesforce CPQ — QA Dashboard",
+  "dashboardSubtitle": "Playwright E2E · Chromium",
+
+  "objects": [
+    {
+      "key":          "account",
+      "prefix":       "ACC",
+      "displayName":  "Account",
+      "icon":         "🏢",
+      "accent":       "#6366f1",
+      "specFile":     "account.spec.ts",
+      "scenarioFile": "account-scenarios.md"
+    },
+    {
+      "key":          "contact",
+      "prefix":       "CON",
+      "displayName":  "Contact",
+      "icon":         "👤",
+      "accent":       "#a855f7",
+      "specFile":     "contact.spec.ts",
+      "scenarioFile": "contact-scenarios.md"
+    },
+    {
+      "key":          "opportunity",
+      "prefix":       "OPP",
+      "displayName":  "Opportunity",
+      "icon":         "💼",
+      "accent":       "#0ea5e9",
+      "specFile":     "opportunity.spec.ts",
+      "scenarioFile": "opportunity-scenarios.md"
+    },
+    {
+      "key":          "quote",
+      "prefix":       "QTE",
+      "displayName":  "Quote (CPQ)",
+      "icon":         "📋",
+      "accent":       "#10b981",
+      "specFile":     "quote.spec.ts",
+      "scenarioFile": "quote-scenarios.md"
+    }
+  ]
+}

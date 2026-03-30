@@ -94,7 +94,7 @@ Read PQ_User_stories.md. For every AC, generate Positive, Negative, and Edge Cas
 STEP 2 — Create the Test Plan
 Produce a consolidated test plan including scope, summary table, test data strategy, and risks. Save to: generated/test-plan.md
 STEP 3 — Execute End-to-End Tests
-Ensure SF_SANDBOX_URL is loaded. Run tests with: npx playwright test --reporter=list Run in this order: Account, Contact, Opportunity, Quote. Report results (Passed/Failed/Skipped).
+Ensure SF_SANDBOX_URL is loaded. Run tests with: npx playwright test --headed --reporter=list Run in this order: Account, Contact, Opportunity, Quote. Report results (Passed/Failed/Skipped).
 Before writing specs, apply ALL rules from the SALESFORCE + PLAYWRIGHT GROUND RULES section — do not wait for failures to apply them.
 STEP 4 — Self-Heal Failed Tests
 For every failed test:
@@ -118,3 +118,44 @@ ENVIRONMENT VARIABLES
 SF_SANDBOX_URL : Full Salesforce Sandbox URL
 SF_USERNAME / SF_PASSWORD : Credentials
 GITHUB_TOKEN / GITHUB_REPO / GITHUB_BRANCH : Version control details
+ANTHROPIC_API_KEY : Required for Step 0 AI test generation
+
+═══════════════════════════════════════════════════════════════
+PORTING THIS FRAMEWORK TO A NEW APP — WHAT TO CHANGE
+═══════════════════════════════════════════════════════════════
+
+This pipeline is app-agnostic. Only 3 files need editing to target a different app:
+
+1. prompts/framework-config.json  ← ALWAYS update first
+   - appName, dashboardTitle, dashboardSubtitle
+   - objects array: add/remove modules (key, prefix, displayName, icon, accent, specFile, scenarioFile)
+   - Everything else (dashboard, pipeline, AI generation) reads from this file automatically.
+
+2. prompts/MasterPrompt.md (this file)  ← Replace the 5 Salesforce-specific sections:
+   SECTION                  SALESFORCE VERSION              REPLACE WITH
+   ─────────────────────────────────────────────────────────────────────
+   Timing & Waiting         networkidle never works         App's loading indicators / spinner selectors
+   Modal / Dialog           auraError overlay pattern       App's dialog selectors and error overlay
+   Locator strategy         LWC shadow DOM, slds-* classes  App's DOM structure and CSS framework
+   Authentication           storageState / session.json     App's auth (OAuth, cookie, API key)
+   Utility helpers          SalesforceFormHandler           App's form interaction utility (or remove)
+
+3. .env  ← Update credentials and base URL for the new app.
+   Rename SF_SANDBOX_URL → BASE_URL (or whatever your app uses).
+
+WHAT YOU DO NOT NEED TO CHANGE:
+   utils/DashboardReporter.ts    — reads config, fully generic
+   utils/PipelineTracker.ts      — fully generic
+   scripts/run-pipeline.ts       — reads config, fully generic
+   scripts/generate-tests.ts     — reads config, bootstrap mode creates spec files from scratch
+   prompts/user-stories/         — drop new .md files, pipeline picks them up automatically
+
+BOOTSTRAP FLOW FOR A BRAND NEW PROJECT:
+   1. Edit framework-config.json with your app's objects/modules
+   2. Rewrite this MasterPrompt with your app's ground rules
+   3. Update .env with new credentials
+   4. Drop user story .md files into prompts/user-stories/
+   5. Set ANTHROPIC_API_KEY in .env
+   6. Run: npm run pipeline
+      → Step 0 detects no spec files exist → bootstraps them from scratch via Claude
+      → Steps 1-6 run as normal
