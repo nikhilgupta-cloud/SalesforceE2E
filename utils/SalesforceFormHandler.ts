@@ -196,6 +196,7 @@ export class SalesforceFormHandler {
         } catch (error: unknown) {
             const msg = error instanceof Error ? error.message : String(error);
             console.log(`      ❌ fillLookup: ${msg}`);
+            throw error;
         }
     }
 

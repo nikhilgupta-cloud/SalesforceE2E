@@ -448,6 +448,7 @@ body::after{
   animation:tileGlow 2s ease-in-out infinite;
 }
 .t-pending{opacity:.35;}
+.t-healed{border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.05);}
 @keyframes tileGlow{0%,100%{box-shadow:0 0 0 rgba(245,158,11,0)}50%{box-shadow:0 0 20px rgba(245,158,11,.15)}}
 /* shimmer on running */
 .t-running::before{
@@ -624,7 +625,7 @@ ${[...this.suites.entries()].map(([,s]) => this.renderSuiteSection(s)).join('')}
       const icon = t.status==='passed'?'✅':t.status==='failed'?'❌':t.status==='running'?'⟳':t.status==='skipped'?'⏭':'○';
       const dur  = t.duration>0 ? `${(t.duration/1000).toFixed(1)}s` : '';
       return `
-        <div class="tile t-${t.status}">
+        <div class="tile t-${t.status}" data-tc="${t.id}">
           <span class="t-icon">${icon}</span>
           <div class="t-body">
             <div class="t-id">${t.id}</div>
@@ -750,6 +751,78 @@ export function patchPipelineSteps(): void {
   );
   if (allSettled) {
     html = html.replace(/<meta http-equiv="refresh"[^>]*>\n?/gi, '');
+  }
+
+  fs.writeFileSync(htmlPath, html, 'utf8');
+}
+
+/**
+ * Patch healed tests in the dashboard after step 4.
+ * For each healed title:
+ *   - Flips tile class from t-fail → t-healed (amber)
+ *   - Swaps the ❌ icon to 🔧
+ *   - Removes the inline error message
+ * Also updates the stats chips (passed / failed counts).
+ */
+export function patchHealedTests(healedTitles: string[]): void {
+  if (healedTitles.length === 0) return;
+  const htmlPath = path.join('reports', 'dashboard.html');
+  if (!fs.existsSync(htmlPath)) return;
+
+  let html = fs.readFileSync(htmlPath, 'utf8');
+  let count = 0;
+
+  for (const title of healedTitles) {
+    const tcId = title.match(/^(TC-[A-Z]+-\d+)/)?.[1];
+    if (!tcId) continue;
+
+    // 1. Flip tile class t-fail → t-healed
+    const before = html;
+    html = html.replace(
+      new RegExp(`class="tile t-fail" data-tc="${tcId}"`),
+      `class="tile t-healed" data-tc="${tcId}"`,
+    );
+    if (html === before) continue; // tile not found — skip
+
+    // 2. Swap ❌ icon → 🔧 (first occurrence after the tile's data-tc marker)
+    const anchorIdx = html.indexOf(`data-tc="${tcId}"`);
+    if (anchorIdx !== -1) {
+      const iconStart = html.indexOf('<span class="t-icon">❌</span>', anchorIdx);
+      const nextTile  = html.indexOf('<div class="tile', anchorIdx + 10);
+      if (iconStart !== -1 && (nextTile === -1 || iconStart < nextTile)) {
+        html = html.slice(0, iconStart)
+          + '<span class="t-icon">🔧</span>'
+          + html.slice(iconStart + '<span class="t-icon">❌</span>'.length);
+      }
+
+      // 3. Remove inline error div (if present) within this tile
+      const anchorIdx2 = html.indexOf(`data-tc="${tcId}"`);
+      const errStart   = html.indexOf('<div class="t-err">', anchorIdx2);
+      const nextTile2  = html.indexOf('<div class="tile', anchorIdx2 + 10);
+      if (errStart !== -1 && (nextTile2 === -1 || errStart < nextTile2)) {
+        const errEnd = html.indexOf('</div>', errStart) + '</div>'.length;
+        html = html.slice(0, errStart) + html.slice(errEnd);
+      }
+    }
+
+    count++;
+  }
+
+  if (count === 0) { fs.writeFileSync(htmlPath, html, 'utf8'); return; }
+
+  // 4. Update stats chips: bump Passed, reduce Failed
+  const passMatch = html.match(/<div class="chip c-pass">✅ (\d+) Passed<\/div>/);
+  const failMatch = html.match(/<div class="chip c-fail">❌ (\d+) Failed<\/div>/);
+  if (passMatch) {
+    html = html.replace(passMatch[0],
+      `<div class="chip c-pass">✅ ${parseInt(passMatch[1]) + count} Passed</div>`);
+  }
+  if (failMatch) {
+    const newFailed = parseInt(failMatch[1]) - count;
+    html = html.replace(failMatch[0],
+      newFailed > 0
+        ? `<div class="chip c-fail">❌ ${newFailed} Failed</div>`
+        : `<div class="chip c-heal">🔧 ${count} Healed</div>`);
   }
 
   fs.writeFileSync(htmlPath, html, 'utf8');

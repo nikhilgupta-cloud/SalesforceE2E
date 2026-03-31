@@ -14,6 +14,7 @@ Acceptance Criteria:
 •	AC-001-03: Account Name must be unique; duplicate names must trigger a warning
 •	AC-001-04: On Save, the Account record is created and visible in the list view
 •	AC-001-05: Account Type picklist must accept: Prospect, Customer, Partner
+•	AC-001-06: User should be able to view all the fields on the account record
 ## US-002 — Edit an Existing Account
 As a Sales Representative
 I want to edit an Account record

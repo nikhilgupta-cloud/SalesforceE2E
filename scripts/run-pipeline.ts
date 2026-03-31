@@ -15,8 +15,9 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { PipelineTracker } from '../utils/PipelineTracker';
-import { refreshDashboard, initDashboardForRun, patchPipelineSteps } from '../utils/DashboardReporter';
+import { refreshDashboard, initDashboardForRun, patchPipelineSteps, patchHealedTests } from '../utils/DashboardReporter';
 import { generateTestsFromUserStories } from './generate-tests';
+import { selfHeal } from './self-heal';
 import { loadConfig } from '../utils/FrameworkConfig';
 
 // ── tiny logger ───────────────────────────────────────────────────────────────
@@ -117,7 +118,7 @@ function step3(): boolean {
   //       DashboardReporter.onEnd  calls PipelineTracker.complete/fail(3)
   //       Do NOT call PipelineTracker for step 3 here.
   const specFiles = loadConfig().objects
-    .map(o => path.join('tests', o.specFile))
+    .map(o => `tests/${o.specFile}`)           // forward slashes — Playwright requires them
     .filter(sp => fs.existsSync(sp));
 
   const result = spawnSync(
@@ -130,8 +131,8 @@ function step3(): boolean {
   return passed;
 }
 
-// ── STEP 4 — Self-heal / log failures ────────────────────────────────────────
-function step4(allPassed: boolean): void {
+// ── STEP 4 — Self-heal failures ──────────────────────────────────────────────
+async function step4(allPassed: boolean): Promise<void> {
   PipelineTracker.start(4, allPassed ? 'No failures detected' : 'Analysing failures…');
   log('STEP 4 — Self-heal check');
 
@@ -142,15 +143,15 @@ function step4(allPassed: boolean): void {
     return;
   }
 
-  // Collect failed test titles
+  // Collect initially-failed test titles
   const raw = JSON.parse(fs.readFileSync(resultsFile, 'utf8'));
-  const failed: string[] = [];
+  const initialFailed: string[] = [];
 
   function collect(suite: any) {
     for (const spec of suite.specs  ?? []) {
       for (const test of spec.tests ?? []) {
         if (test.results?.some((r: any) => r.status === 'failed')) {
-          failed.push(spec.title);
+          initialFailed.push(spec.title);
         }
       }
     }
@@ -158,31 +159,58 @@ function step4(allPassed: boolean): void {
   }
   (raw.suites ?? []).forEach(collect);
 
-  if (failed.length === 0) {
+  if (initialFailed.length === 0) {
     PipelineTracker.complete(4, 'No failures — healing not required');
     log('STEP 4 — Done ✅ (nothing to heal)');
     return;
   }
 
+  log(`STEP 4 — ${initialFailed.length} failure(s) detected — attempting AI healing…`);
+
+  // Run AI healer
+  const healResult = await selfHeal();
+  const { healed, failed, skipped } = healResult;
+
+  // Patch dashboard tiles for healed tests immediately
+  if (healResult.healed.length > 0) patchHealedTests(healResult.healed);
+
   // Write healing report
   const today = new Date().toLocaleDateString('en-GB');
-  const report = [
-    `# Healing Report — ${today}`,
-    `**Failed tests (${failed.length}):**`,
-    '',
-    ...failed.map(f => `- ${f}`),
-    '',
-    '**Next steps:**',
-    '1. Classify each failure: selector_failure | timing_failure | data_failure | environment_failure',
-    '2. For selector/timing: re-probe DOM, update SalesforceFormHandler or spec locator.',
-    '3. Re-run: `npx playwright test --headed --grep "<TC-ID>"`',
-    '4. Repeat up to 3 rounds before escalating.',
-  ].join('\n');
+  const lines: string[] = [`# Healing Report — ${today}`, ''];
+
+  if (healed.length > 0) {
+    lines.push(`**Healed (${healed.length}):**`, ...healed.map(f => `- ✅ ${f}`), '');
+  }
+  if (failed.length > 0) {
+    lines.push(`**Still failing (${failed.length}):**`, ...failed.map(f => `- ❌ ${f}`), '');
+  }
+  if (skipped.length > 0) {
+    lines.push(`**Skipped — ANTHROPIC_API_KEY not set (${skipped.length}):**`, ...skipped.map(f => `- ⚠ ${f}`), '');
+  }
+  if (failed.length > 0 || skipped.length > 0) {
+    lines.push(
+      '**Next steps for remaining failures:**',
+      '1. Classify each failure: selector_failure | timing_failure | data_failure | environment_failure',
+      '2. For selector/timing: re-probe DOM, update SalesforceFormHandler or spec locator.',
+      '3. Re-run: `npx playwright test --headed --grep "<TC-ID>"`',
+      '4. Repeat up to 3 rounds before escalating.',
+    );
+  }
 
   fs.mkdirSync('reports', { recursive: true });
-  fs.writeFileSync(path.join('reports', 'healing-report.md'), report);
-  PipelineTracker.fail(4, `${failed.length} failure(s) — see reports/healing-report.md`);
-  log(`STEP 4 — ${failed.length} failure(s) logged to reports/healing-report.md`);
+  fs.writeFileSync(path.join('reports', 'healing-report.md'), lines.join('\n'));
+
+  const remaining = failed.length + skipped.length;
+  if (remaining === 0) {
+    PipelineTracker.complete(4, `All ${healed.length} failure(s) healed ✅`);
+    log(`STEP 4 — Done ✅ (healed ${healed.length}/${initialFailed.length})`);
+  } else if (healed.length > 0) {
+    PipelineTracker.fail(4, `Healed ${healed.length} · ${remaining} remaining — see reports/healing-report.md`);
+    log(`STEP 4 — Partial heal (${healed.length} fixed, ${remaining} remaining)`);
+  } else {
+    PipelineTracker.fail(4, `${initialFailed.length} failure(s) unhealed — see reports/healing-report.md`);
+    log(`STEP 4 — ${initialFailed.length} failure(s) could not be healed`);
+  }
 }
 
 // ── STEP 5 — Copy final scripts ───────────────────────────────────────────────
@@ -275,8 +303,8 @@ async function main() {
     refreshDashboard();        // Step 1 result → HTML
     step2();                   // Verify test plan
     initDashboardForRun();     // Step 2 result → HTML with test tiles pre-populated as pending
-    const allPassed = step3(); // Run Playwright (DashboardReporter drives Step 3)
-    step4(allPassed);          // Self-heal / log failures
+    const allPassed = step3();        // Run Playwright (DashboardReporter drives Step 3)
+    await step4(allPassed);           // Self-heal failures with AI
     patchPipelineSteps();      // Step 4 result → patch pipeline bar only
     step5();                   // Copy final scripts
     patchPipelineSteps();      // Step 5 result → patch pipeline bar only
