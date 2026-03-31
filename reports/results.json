@@ -10,14 +10,18 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {},
+    "metadata": {
+      "actualWorkers": 1
+    },
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "D:/SalesforceE2E/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 1
+        },
         "id": "chromium",
         "name": "chromium",
         "testDir": "D:/SalesforceE2E/tests",
@@ -58,17 +62,1882 @@
     "workers": 1,
     "webServer": null
   },
-  "suites": [],
-  "errors": [
+  "suites": [
     {
-      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
-      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
+      "title": "account.spec.ts",
+      "file": "account.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Account Tests",
+          "file": "account.spec.ts",
+          "line": 35,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC-ACC-001 — Navigate to Accounts list and click New",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13513,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:56:29.047Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-faa00065f4e052872cbb",
+              "file": "account.spec.ts",
+              "line": 42,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-004 — Create Account with all required fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15429,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:56:44.681Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-b51b3f24069ce95784fd",
+              "file": "account.spec.ts",
+              "line": 54,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-005 — Save Account without name shows validation error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9312,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:57:00.173Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-b69d3820f765735cb973",
+              "file": "account.spec.ts",
+              "line": 70,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-010 — Saved Account appears in list view",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19190,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:57:09.557Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-31b29d5ae67d19f3dfd6",
+              "file": "account.spec.ts",
+              "line": 82,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-013 — Account Type picklist contains Prospect, Customer",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8306,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:57:28.849Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-f6b3f6720a7ac730a05c",
+              "file": "account.spec.ts",
+              "line": 97,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-016 — Open Account and click Edit, modify Phone, Save",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14850,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:57:37.233Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-bbe2e1e6bcb2cd5db18d",
+              "file": "account.spec.ts",
+              "line": 112,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-019 — All editable fields modified and saved",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19245,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:57:52.129Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-604721448c0acb96b188",
+              "file": "account.spec.ts",
+              "line": 131,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-020 — Clear required Account Name shows validation error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14829,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:58:11.483Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-b76bedf52177d23b93ce",
+              "file": "account.spec.ts",
+              "line": 149,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-022 — Changes reflected on detail page immediately after Save",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15423,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:58:26.356Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-ac633286124e13889db3",
+              "file": "account.spec.ts",
+              "line": 172,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-025 — Last Modified By updates after Save",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 13852,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:58:41.823Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-8ec471b1c7680ebadbac",
+              "file": "account.spec.ts",
+              "line": 190,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-028 — Global search returns Account by name",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 41451,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:58:55.713Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-ccdec4d67243d0e88ef0",
+              "file": "account.spec.ts",
+              "line": 214,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-034 — Account detail page shows Name, Phone, and page header",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12231,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:59:37.207Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-30d63575adb027a1caa5",
+              "file": "account.spec.ts",
+              "line": 243,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-035 — New Account detail page loads with empty related lists",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 11113,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T05:59:49.494Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-15d9beb7c13ceaa30edf",
+              "file": "account.spec.ts",
+              "line": 258,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "contact.spec.ts",
+      "file": "contact.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Contact Tests",
+          "file": "contact.spec.ts",
+          "line": 45,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC-CON-001 — Navigate to Contacts list and click New",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6815,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:00:00.767Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-d027bb9541637c77039e",
+              "file": "contact.spec.ts",
+              "line": 52,
+              "column": 7
+            },
+            {
+              "title": "TC-CON-004 — Create Contact with required fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 27352,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774936808547\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774936808547\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:00:07.644Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-998977df77e79884d7aa",
+              "file": "contact.spec.ts",
+              "line": 64,
+              "column": 7
+            },
+            {
+              "title": "TC-CON-005 — Account Name lookup resolves to existing account",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 21746,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774936836000\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774936836000\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:00:35.037Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-4a5556f329b983f5d5ff",
+              "file": "contact.spec.ts",
+              "line": 84,
+              "column": 7
+            },
+            {
+              "title": "TC-CON-008 — Saved Contact appears in Account related Contacts list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 30591,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774936858028\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774936858028\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:00:56.844Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-7c4ee4ee307040812c87",
+              "file": "contact.spec.ts",
+              "line": 109,
+              "column": 7
+            },
+            {
+              "title": "TC-CON-009 — Duplicate email triggers duplicate alert",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 36457,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774936888562\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774936888562\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774936888562\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774936888562\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:01:27.481Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-91e161deb925523c899f",
+              "file": "contact.spec.ts",
+              "line": 135,
+              "column": 7
+            },
+            {
+              "title": "TC-CON-013 — Edit Contact Phone, Title, Email",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26828,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774936925034\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774936925034\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:02:03.981Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-fb77fa79a9810fbfa7c6",
+              "file": "contact.spec.ts",
+              "line": 175,
+              "column": 7
+            },
+            {
+              "title": "TC-CON-016 — Changes persist after navigating away and back",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 34603,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774936952665\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774936952665\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:02:30.879Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-a47ca5535214f316adce",
+              "file": "contact.spec.ts",
+              "line": 200,
+              "column": 7
+            },
+            {
+              "title": "TC-CON-018 — Clear required Last Name shows validation error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 24879,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774936986692\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774936986692\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:03:05.573Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-3a720bc380a901f26610",
+              "file": "contact.spec.ts",
+              "line": 231,
+              "column": 7
+            },
+            {
+              "title": "TC-CON-020 — Add Contact Role from Opportunity related list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 42346,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774937011594\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774937011594\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774937011594\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774937011594\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:03:30.513Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-50291e34b28a76ef2e64",
+              "file": "contact.spec.ts",
+              "line": 258,
+              "column": 7
+            },
+            {
+              "title": "TC-CON-022 — Contact Role includes Role value",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 33229,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1774937054466\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForContact-1774937054466\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:04:12.967Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c37ec27874a4649dbe8b-11107bcfd4c17c479ce1",
+              "file": "contact.spec.ts",
+              "line": 296,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "opportunity.spec.ts",
+      "file": "opportunity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Opportunity Tests",
+          "file": "opportunity.spec.ts",
+          "line": 44,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC-OPP-001 — Navigate to Opportunities list and click New",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 27880,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:04:48.154Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-80d337f02676d9f46bdd",
+              "file": "opportunity.spec.ts",
+              "line": 51,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-004 — Create Opportunity with all required fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 27694,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1774937118257\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForOpp-1774937118257\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:05:16.209Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-4304a8415daf960f539b",
+              "file": "opportunity.spec.ts",
+              "line": 63,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-005 — Save Opportunity without required fields shows validation error",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9176,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:05:43.997Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-db7a557da898cce8980a",
+              "file": "opportunity.spec.ts",
+              "line": 83,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-007 — Stage picklist contains expected values",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8970,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:05:53.264Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-837900c53a5e291ba3da",
+              "file": "opportunity.spec.ts",
+              "line": 94,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-010 — Saved Opportunity appears in Account related list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 32785,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1774937163410\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForOpp-1774937163410\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:06:02.274Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-e5c8ce10782b5d038b6c",
+              "file": "opportunity.spec.ts",
+              "line": 109,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-012 — Create Opportunity without Amount (optional)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 22439,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1774937196206\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForOpp-1774937196206\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:06:35.094Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-04032454ae92ab5d10d6",
+              "file": "opportunity.spec.ts",
+              "line": 135,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-014 — Update Opportunity Stage via detail page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 26603,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1774937218407\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForOpp-1774937218407\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Qualification\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:06:57.588Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-9a9485720112b1af0b36",
+              "file": "opportunity.spec.ts",
+              "line": 154,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-017 — Close Won requires Amount and Close Date",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 35707,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1774937245681\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForOpp-1774937245681\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Closed Won\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:07:24.240Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-3bf16199e1732ace2172",
+              "file": "opportunity.spec.ts",
+              "line": 187,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-021 — Forecast Category auto-populated based on Stage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 23270,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1774937281313\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForOpp-1774937281313\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:07:59.996Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-fe92c6b7d13aa414ca38",
+              "file": "opportunity.spec.ts",
+              "line": 206,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-024 — Forecast Category visible on Opportunities list view",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7059,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:08:23.309Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-2556912136fcf8a3aa2b",
+              "file": "opportunity.spec.ts",
+              "line": 234,
+              "column": 7
+            },
+            {
+              "title": "TC-OPP-027 — Changing Stage recalculates Forecast Category",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 29363,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1774937311343\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForOpp-1774937311343\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Qualification\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:08:30.429Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b4a9d6efff0ad567622-143a644fcabda25cce48",
+              "file": "opportunity.spec.ts",
+              "line": 244,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "quote.spec.ts",
+      "file": "quote.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Quote Tests",
+          "file": "quote.spec.ts",
+          "line": 66,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC-QTE-001 — New Quote button accessible from Opportunity detail page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 41595,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937341921\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937341921\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:09:00.108Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-60f09cf99694c2ae20b9",
+              "file": "quote.spec.ts",
+              "line": 73,
+              "column": 7
+            },
+            {
+              "title": "TC-QTE-003 — Quote inherits Opportunity data",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 38112,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937382845\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937382845\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:09:41.742Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-8327cf329ebb14ca11b4",
+              "file": "quote.spec.ts",
+              "line": 98,
+              "column": 7
+            },
+            {
+              "title": "TC-QTE-004 — Create Quote directly with required fields",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 54170,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937420977\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937420977\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1774937430249\"\n"
+                        },
+                        {
+                          "text": "      ❌ fillLookup: Could not find \"AutoOppForQuote-1774937430249\" in suggestion dropdown.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:10:19.895Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-5fd5a875e0daac92782d",
+              "file": "quote.spec.ts",
+              "line": 128,
+              "column": 7
+            },
+            {
+              "title": "TC-QTE-007 — Saved Quote appears in Opportunity related list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 90562,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937475393\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937475393\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1774937487105\"\n"
+                        },
+                        {
+                          "text": "      ❌ fillLookup: Could not find \"AutoOppForQuote-1774937487105\" in suggestion dropdown.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:11:14.124Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-591c653fdf8d01eda2f0",
+              "file": "quote.spec.ts",
+              "line": 150,
+              "column": 7
+            },
+            {
+              "title": "TC-QTE-009 — Edit Lines button opens Quote Line Editor",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 50405,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937566183\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937566183\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1774937578410\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoOppForQuote-1774937578410\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:12:44.774Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-1514b431b624bb0ae553",
+              "file": "quote.spec.ts",
+              "line": 179,
+              "column": 7
+            },
+            {
+              "title": "TC-QTE-012 — Product catalog search in QLE",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 48926,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937616586\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937616586\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1774937627126\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoOppForQuote-1774937627126\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:13:35.271Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-5b17c940e888efab607b",
+              "file": "quote.spec.ts",
+              "line": 218,
+              "column": 7
+            },
+            {
+              "title": "TC-QTE-021 — Discount percent field editable in QLE",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 89754,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937665403\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937665403\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1774937675384\"\n"
+                        },
+                        {
+                          "text": "      ❌ fillLookup: Could not find \"AutoOppForQuote-1774937675384\" in suggestion dropdown.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:14:24.280Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-f96525093f76e59a0fc5",
+              "file": "quote.spec.ts",
+              "line": 264,
+              "column": 7
+            },
+            {
+              "title": "TC-QTE-030 — Generate Document button visible on Quote",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 65839,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937755497\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937755497\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1774937766158\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoOppForQuote-1774937766158\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:15:54.101Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-6a337fbcbcc04edbc529",
+              "file": "quote.spec.ts",
+              "line": 298,
+              "column": 7
+            },
+            {
+              "title": "TC-QTE-035 — Quote detail page loads with header visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 41439,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937821196\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937821196\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1774937830881\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoOppForQuote-1774937830881\"\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:17:00.015Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-fea3dc646b2c6c912f9d",
+              "file": "quote.spec.ts",
+              "line": 343,
+              "column": 7
+            },
+            {
+              "title": "TC-QTE-038 — Primary Quote checkbox available on Quote form",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 52072,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1774937862669\"\n"
+                        },
+                        {
+                          "text": "      ✅ Selected \"AutoAccForQuote-1774937862669\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
+                        },
+                        {
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1774937872259\"\n"
+                        },
+                        {
+                          "text": "      ❌ fillLookup: Could not find \"AutoOppForQuote-1774937872259\" in suggestion dropdown.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-31T06:17:41.505Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9056fc4f94c24a29ec09-4758154e3df224b25be4",
+              "file": "quote.spec.ts",
+              "line": 362,
+              "column": 7
+            }
+          ]
+        }
+      ]
     }
   ],
+  "errors": [],
   "stats": {
-    "startTime": "2026-03-30T05:06:48.635Z",
-    "duration": 40.215000000000146,
-    "expected": 0,
+    "startTime": "2026-03-31T05:56:25.610Z",
+    "duration": 1331032.256,
+    "expected": 44,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
