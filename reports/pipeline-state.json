@@ -1,5 +1,5 @@
 {
-  "runDate": "2026-03-31T05:56:14.619Z",
+  "runDate": "2026-04-01T03:29:21.888Z",
   "steps": [
     {
       "n": 0,
@@ -7,7 +7,7 @@
       "icon": "🤖",
       "status": "completed",
       "detail": "ANTHROPIC_API_KEY not set — skipping AI generation",
-      "timestamp": "11:26:14"
+      "timestamp": "08:59:21"
     },
     {
       "n": 1,
@@ -15,7 +15,7 @@
       "icon": "📋",
       "status": "completed",
       "detail": "44 scenarios confirmed across Account · Contact · Opportunity · Quote (CPQ)",
-      "timestamp": "11:26:14"
+      "timestamp": "08:59:21"
     },
     {
       "n": 2,
@@ -23,23 +23,23 @@
       "icon": "📄",
       "status": "completed",
       "detail": "Test plan confirmed — 44 tests · 12 user stories · 4 objects",
-      "timestamp": "11:26:14"
+      "timestamp": "08:59:21"
     },
     {
       "n": 3,
       "label": "Execute E2E Tests",
       "icon": "🧪",
-      "status": "completed",
-      "detail": "44/44 tests passed",
-      "timestamp": "11:48:36"
+      "status": "failed",
+      "detail": "43/44 tests passed",
+      "timestamp": "09:20:33"
     },
     {
       "n": 4,
       "label": "Self-Heal Failures",
       "icon": "🔧",
-      "status": "completed",
-      "detail": "No failures — healing not required",
-      "timestamp": "11:48:37"
+      "status": "failed",
+      "detail": "1 failure(s) unhealed — see reports/healing-report.md",
+      "timestamp": "09:20:34"
     },
     {
       "n": 5,
@@ -47,7 +47,7 @@
       "icon": "⚙️",
       "status": "completed",
       "detail": "4 production scripts saved → generated/scripts/",
-      "timestamp": "11:48:37"
+      "timestamp": "09:20:34"
     },
     {
       "n": 6,
@@ -55,7 +55,7 @@
       "icon": "🚀",
       "status": "running",
       "detail": "Committing and pushing to GitHub…",
-      "timestamp": "11:48:37"
+      "timestamp": "09:20:34"
     }
   ]
 }

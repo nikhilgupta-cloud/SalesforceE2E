@@ -1,13 +1,9 @@
-# Healing Report — 30/03/2026
-**Failed tests (5):**
+# Healing Report — 01/04/2026
 
-- TC-ACC-005 — Save Account without name shows validation error
-- TC-ACC-010 — Saved Account appears in list view
-- TC-CON-001 — Navigate to Contacts list and click New
-- TC-OPP-001 — Navigate to Opportunities list and click New
-- TC-QTE-001 — New Quote button accessible from Opportunity detail page
+**Skipped — ANTHROPIC_API_KEY not set (1):**
+- ⚠ TC-CON-008 — Saved Contact appears in Account related Contacts list
 
-**Next steps:**
+**Next steps for remaining failures:**
 1. Classify each failure: selector_failure | timing_failure | data_failure | environment_failure
 2. For selector/timing: re-probe DOM, update SalesforceFormHandler or spec locator.
 3. Re-run: `npx playwright test --headed --grep "<TC-ID>"`
