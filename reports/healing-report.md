@@ -1,7 +1,8 @@
-# Healing Report — 01/04/2026
+# Healing Report — 03/04/2026
 
-**Skipped — ANTHROPIC_API_KEY not set (1):**
-- ⚠ TC-CON-008 — Saved Contact appears in Account related Contacts list
+**Skipped — ANTHROPIC_API_KEY not set (2):**
+- ⚠ TC-QTE-009 — Edit Lines button opens Quote Line Editor
+- ⚠ TC-QTE-012 — Product catalog search in QLE
 
 **Next steps for remaining failures:**
 1. Classify each failure: selector_failure | timing_failure | data_failure | environment_failure

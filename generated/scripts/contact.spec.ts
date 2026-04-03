@@ -99,8 +99,6 @@ test.describe('Contact Tests', () => {
       expect(val.length).toBeGreaterThan(0);
     }
     // Alternatively check the selected pill
-    const pill = page.locator('.slds-pill, [class*="pill"]').filter({ hasText: accName });
-    const pillVisible = await pill.isVisible({ timeout: 3000 }).catch(() => false);
     // At minimum modal should still be open (lookup did not fail catastrophically)
     await expect(page.locator(MODAL).first()).toBeVisible();
   });
@@ -127,7 +125,8 @@ test.describe('Contact Tests', () => {
     const accLink = page.getByText(accName, { exact: false }).first();
     await accLink.waitFor({ state: 'visible', timeout: 30000 });
     await accLink.click();
-    await waitForDetail(page);
+    // Wait for the Account detail header specifically — avoid picking hidden list-page header
+    await page.locator('.slds-page-header').filter({ hasText: accName }).waitFor({ state: 'visible', timeout: 45000 });
     await expect(page.getByText(lastName, { exact: false }).first()).toBeVisible({ timeout: 30000 });
   });
 

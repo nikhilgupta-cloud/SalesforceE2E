@@ -92,12 +92,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18803,
+                      "duration": 9782,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:29:38.834Z",
+                      "startTime": "2026-04-03T07:09:19.266Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -126,12 +126,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 16001,
+                      "duration": 11087,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:30:03.852Z",
+                      "startTime": "2026-04-03T07:09:30.657Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -160,12 +160,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10232,
+                      "duration": 10786,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:30:19.913Z",
+                      "startTime": "2026-04-03T07:09:41.767Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -194,12 +194,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 16668,
+                      "duration": 19482,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:30:30.196Z",
+                      "startTime": "2026-04-03T07:09:52.585Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -228,12 +228,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7534,
+                      "duration": 7388,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:30:46.929Z",
+                      "startTime": "2026-04-03T07:10:12.869Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -262,12 +262,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 21895,
+                      "duration": 15123,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:30:54.499Z",
+                      "startTime": "2026-04-03T07:10:20.469Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -296,12 +296,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 15934,
+                      "duration": 14439,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:31:16.431Z",
+                      "startTime": "2026-04-03T07:10:35.641Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -330,12 +330,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13939,
+                      "duration": 14848,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:31:32.399Z",
+                      "startTime": "2026-04-03T07:10:50.146Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -364,12 +364,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 13626,
+                      "duration": 15337,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:31:46.377Z",
+                      "startTime": "2026-04-03T07:11:05.033Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -398,12 +398,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12586,
+                      "duration": 16987,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:32:00.042Z",
+                      "startTime": "2026-04-03T07:11:20.443Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -432,12 +432,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 41779,
+                      "duration": 43419,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:32:12.655Z",
+                      "startTime": "2026-04-03T07:11:37.572Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -466,12 +466,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 10799,
+                      "duration": 12191,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:32:54.462Z",
+                      "startTime": "2026-04-03T07:12:21.186Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -500,12 +500,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12103,
+                      "duration": 13622,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:33:05.297Z",
+                      "startTime": "2026-04-03T07:12:33.432Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -551,12 +551,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7241,
+                      "duration": 7564,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:33:17.711Z",
+                      "startTime": "2026-04-03T07:12:47.230Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -585,19 +585,19 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 22578,
+                      "duration": 32562,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014405764\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200375684\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014405764\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200375684\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:33:24.978Z",
+                      "startTime": "2026-04-03T07:12:54.847Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -626,19 +626,19 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 20588,
+                      "duration": 20028,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014428338\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200408288\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014428338\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200408288\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:33:47.579Z",
+                      "startTime": "2026-04-03T07:13:27.440Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -653,7 +653,7 @@
             },
             {
               "title": "TC-CON-008 — Saved Contact appears in Account related Contacts list",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -666,65 +666,30 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 82485,
-                      "error": {
-                        "message": "TimeoutError: locator.waitFor: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.slds-page-header').first() to be visible\u001b[22m\n\u001b[2m    90 × locator resolved to hidden <div lwc-bbqdsgjtbq=\"\" class=\"slds-page-header slds-page-header_joined slds-page-header_bleed slds-page-header--object-home slds-page-header_object-home slds-shrink-none test-headerRegion slds-is-relative\">…</div>\u001b[22m\n",
-                        "stack": "TimeoutError: locator.waitFor: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.slds-page-header').first() to be visible\u001b[22m\n\u001b[2m    90 × locator resolved to hidden <div lwc-bbqdsgjtbq=\"\" class=\"slds-page-header slds-page-header_joined slds-page-header_bleed slds-page-header--object-home slds-page-header_object-home slds-shrink-none test-headerRegion slds-is-relative\">…</div>\u001b[22m\n\n    at waitForDetail (D:\\SalesforceE2E\\tests\\contact.spec.ts:22:51)\n    at D:\\SalesforceE2E\\tests\\contact.spec.ts:130:11",
-                        "location": {
-                          "file": "D:\\SalesforceE2E\\tests\\contact.spec.ts",
-                          "column": 51,
-                          "line": 22
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 20 |\u001b[39m\n \u001b[90m 21 |\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m waitForDetail(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 22 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'.slds-page-header'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m45000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 23 |\u001b[39m }\n \u001b[90m 24 |\u001b[39m\n \u001b[90m 25 |\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m dismissAuraError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E\\tests\\contact.spec.ts",
-                            "column": 51,
-                            "line": 22
-                          },
-                          "message": "TimeoutError: locator.waitFor: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.slds-page-header').first() to be visible\u001b[22m\n\u001b[2m    90 × locator resolved to hidden <div lwc-bbqdsgjtbq=\"\" class=\"slds-page-header slds-page-header_joined slds-page-header_bleed slds-page-header--object-home slds-page-header_object-home slds-shrink-none test-headerRegion slds-is-relative\">…</div>\u001b[22m\n\n\n\u001b[0m \u001b[90m 20 |\u001b[39m\n \u001b[90m 21 |\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m waitForDetail(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 22 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'.slds-page-header'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m45000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 23 |\u001b[39m }\n \u001b[90m 24 |\u001b[39m\n \u001b[90m 25 |\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m dismissAuraError(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m) {\u001b[0m\n\u001b[2m    at waitForDetail (D:\\SalesforceE2E\\tests\\contact.spec.ts:22:51)\u001b[22m\n\u001b[2m    at D:\\SalesforceE2E\\tests\\contact.spec.ts:130:11\u001b[22m"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 29709,
+                      "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014448899\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200428365\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014448899\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200428365\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:34:08.193Z",
+                      "startTime": "2026-04-03T07:13:47.497Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E\\test-results\\contact-Contact-Tests-TC-C-69fb6-count-related-Contacts-list-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "D:\\SalesforceE2E\\test-results\\contact-Contact-Tests-TC-C-69fb6-count-related-Contacts-list-chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\SalesforceE2E\\tests\\contact.spec.ts",
-                        "column": 51,
-                        "line": 22
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "c37ec27874a4649dbe8b-7c4ee4ee307040812c87",
               "file": "contact.spec.ts",
-              "line": 109,
+              "line": 107,
               "column": 7
             },
             {
@@ -740,28 +705,28 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 39911,
+                      "duration": 32275,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014537762\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200458125\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014537762\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200458125\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014537762\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200458125\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014537762\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200458125\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:35:34.550Z",
+                      "startTime": "2026-04-03T07:14:17.257Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -771,7 +736,7 @@
               ],
               "id": "c37ec27874a4649dbe8b-91e161deb925523c899f",
               "file": "contact.spec.ts",
-              "line": 135,
+              "line": 134,
               "column": 7
             },
             {
@@ -787,22 +752,22 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 26166,
+                      "duration": 27230,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014576639\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200490569\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014576639\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200490569\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:36:15.649Z",
+                      "startTime": "2026-04-03T07:14:49.562Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -812,7 +777,7 @@
               ],
               "id": "c37ec27874a4649dbe8b-fb77fa79a9810fbfa7c6",
               "file": "contact.spec.ts",
-              "line": 175,
+              "line": 174,
               "column": 7
             },
             {
@@ -828,22 +793,22 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 32293,
+                      "duration": 32232,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014602521\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200517752\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014602521\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200517752\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:36:41.849Z",
+                      "startTime": "2026-04-03T07:15:16.835Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -853,7 +818,7 @@
               ],
               "id": "c37ec27874a4649dbe8b-a47ca5535214f316adce",
               "file": "contact.spec.ts",
-              "line": 200,
+              "line": 199,
               "column": 7
             },
             {
@@ -869,22 +834,22 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 28164,
+                      "duration": 26989,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014635509\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200550032\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014635509\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200550032\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:37:14.316Z",
+                      "startTime": "2026-04-03T07:15:49.126Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -894,7 +859,7 @@
               ],
               "id": "c37ec27874a4649dbe8b-3a720bc380a901f26610",
               "file": "contact.spec.ts",
-              "line": 231,
+              "line": 230,
               "column": 7
             },
             {
@@ -910,23 +875,23 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 43706,
+                      "duration": 38211,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014663559\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200577164\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014663559\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200577164\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014663559\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200577164\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014663559\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200577164\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -934,7 +899,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:37:42.517Z",
+                      "startTime": "2026-04-03T07:16:16.192Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -944,7 +909,7 @@
               ],
               "id": "c37ec27874a4649dbe8b-50291e34b28a76ef2e64",
               "file": "contact.spec.ts",
-              "line": 258,
+              "line": 257,
               "column": 7
             },
             {
@@ -960,17 +925,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 29665,
+                      "duration": 24315,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775014707742\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForContact-1775200615520\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForContact-1775014707742\"\n"
+                          "text": "      ✅ Selected \"AutoAccForContact-1775200615520\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -978,7 +943,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:38:26.258Z",
+                      "startTime": "2026-04-03T07:16:54.434Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -988,7 +953,7 @@
               ],
               "id": "c37ec27874a4649dbe8b-11107bcfd4c17c479ce1",
               "file": "contact.spec.ts",
-              "line": 296,
+              "line": 295,
               "column": 7
             }
           ]
@@ -1021,15 +986,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 12187,
+                      "duration": 7933,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:38:56.384Z",
+                      "startTime": "2026-04-03T07:17:18.898Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1055,17 +1020,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 59078,
+                      "duration": 26200,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775014751688\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775200647656\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForOpp-1775014751688\"\n"
+                          "text": "      ✅ Selected \"AutoAccForOpp-1775200647656\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -1073,7 +1038,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:39:08.764Z",
+                      "startTime": "2026-04-03T07:17:26.861Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1099,15 +1064,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8458,
+                      "duration": 9063,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:40:07.935Z",
+                      "startTime": "2026-04-03T07:17:53.109Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1133,15 +1098,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7317,
+                      "duration": 6046,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:40:16.477Z",
+                      "startTime": "2026-04-03T07:18:02.195Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1167,17 +1132,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 31507,
+                      "duration": 31527,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775014824530\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775200689155\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForOpp-1775014824530\"\n"
+                          "text": "      ✅ Selected \"AutoAccForOpp-1775200689155\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -1185,7 +1150,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:40:23.849Z",
+                      "startTime": "2026-04-03T07:18:08.280Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1211,17 +1176,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 23653,
+                      "duration": 25038,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775014857487\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775200721663\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForOpp-1775014857487\"\n"
+                          "text": "      ✅ Selected \"AutoAccForOpp-1775200721663\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -1229,7 +1194,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:40:55.406Z",
+                      "startTime": "2026-04-03T07:18:39.865Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1255,17 +1220,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 23345,
+                      "duration": 25044,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775014879879\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775200746048\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForOpp-1775014879879\"\n"
+                          "text": "      ✅ Selected \"AutoAccForOpp-1775200746048\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -1276,7 +1241,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:41:19.139Z",
+                      "startTime": "2026-04-03T07:19:04.958Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1302,17 +1267,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 33775,
+                      "duration": 34772,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775014903229\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775200770946\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForOpp-1775014903229\"\n"
+                          "text": "      ✅ Selected \"AutoAccForOpp-1775200770946\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Closed Won\"\n"
@@ -1320,7 +1285,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:41:42.508Z",
+                      "startTime": "2026-04-03T07:19:30.041Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1346,17 +1311,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 23770,
+                      "duration": 22931,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775014937093\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775200806351\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForOpp-1775014937093\"\n"
+                          "text": "      ✅ Selected \"AutoAccForOpp-1775200806351\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -1364,7 +1329,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:42:16.324Z",
+                      "startTime": "2026-04-03T07:20:04.859Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1390,15 +1355,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6637,
+                      "duration": 8113,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:42:40.142Z",
+                      "startTime": "2026-04-03T07:20:27.852Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1424,17 +1389,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 24214,
+                      "duration": 31591,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775014967503\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForOpp-1775200837479\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForOpp-1775014967503\"\n"
+                          "text": "      ✅ Selected \"AutoAccForOpp-1775200837479\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -1445,7 +1410,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:42:46.808Z",
+                      "startTime": "2026-04-03T07:20:36.014Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1488,17 +1453,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 38476,
+                      "duration": 44009,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775014992006\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775200869375\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775014992006\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775200869375\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -1506,7 +1471,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:43:11.163Z",
+                      "startTime": "2026-04-03T07:21:07.993Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1532,17 +1497,17 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 36880,
+                      "duration": 39245,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775015030757\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775200913150\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775015030757\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775200913150\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
@@ -1550,7 +1515,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:43:49.651Z",
+                      "startTime": "2026-04-03T07:21:52.035Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1576,31 +1541,31 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 40253,
+                      "duration": 43417,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775015067320\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775200952597\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775015067320\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775200952597\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775015077674\"\n"
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775200961182\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoOppForQuote-1775015077674\"\n"
+                          "text": "      ✅ Selected \"AutoOppForQuote-1775200961182\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:44:26.570Z",
+                      "startTime": "2026-04-03T07:22:31.312Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1626,31 +1591,31 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 50176,
+                      "duration": 52615,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775015107632\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775200995840\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775015107632\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775200995840\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775015116814\"\n"
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775201005857\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoOppForQuote-1775015116814\"\n"
+                          "text": "      ✅ Selected \"AutoOppForQuote-1775201005857\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:45:06.874Z",
+                      "startTime": "2026-04-03T07:23:14.770Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1665,7 +1630,7 @@
             },
             {
               "title": "TC-QTE-009 — Edit Lines button opens Quote Line Editor",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1676,36 +1641,71 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 42537,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 56858,
+                      "error": {
+                        "message": "Error: Could not find \"AutoOppForQuote-1775201058109\" in suggestion dropdown.",
+                        "stack": "Error: Could not find \"AutoOppForQuote-1775201058109\" in suggestion dropdown.\n    at SalesforceFormHandler.fillLookup (D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts:193:27)\n    at D:\\SalesforceE2E\\tests\\quote.spec.ts:188:5",
+                        "location": {
+                          "file": "D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts",
+                          "column": 27,
+                          "line": 193
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SalesforceFormHandler.ts:193\n\n\u001b[0m \u001b[90m 191 |\u001b[39m                     console\u001b[33m.\u001b[39mlog(\u001b[32m`      ✅ Selected \"${value}\" (retry)`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m                 } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 193 |\u001b[39m                     \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Could not find \"${value}\" in suggestion dropdown.`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 194 |\u001b[39m                 }\n \u001b[90m 195 |\u001b[39m             }\n \u001b[90m 196 |\u001b[39m         } \u001b[36mcatch\u001b[39m (error\u001b[33m:\u001b[39m unknown) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts",
+                            "column": 27,
+                            "line": 193
+                          },
+                          "message": "Error: Could not find \"AutoOppForQuote-1775201058109\" in suggestion dropdown.\n\n\u001b[90m   at \u001b[39m..\\utils\\SalesforceFormHandler.ts:193\n\n\u001b[0m \u001b[90m 191 |\u001b[39m                     console\u001b[33m.\u001b[39mlog(\u001b[32m`      ✅ Selected \"${value}\" (retry)`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m                 } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 193 |\u001b[39m                     \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Could not find \"${value}\" in suggestion dropdown.`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 194 |\u001b[39m                 }\n \u001b[90m 195 |\u001b[39m             }\n \u001b[90m 196 |\u001b[39m         } \u001b[36mcatch\u001b[39m (error\u001b[33m:\u001b[39m unknown) {\u001b[0m\n\u001b[2m    at SalesforceFormHandler.fillLookup (D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts:193:27)\u001b[22m\n\u001b[2m    at D:\\SalesforceE2E\\tests\\quote.spec.ts:188:5\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775015158202\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775201048503\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775015158202\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775201048503\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775015167361\"\n"
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775201058109\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoOppForQuote-1775015167361\"\n"
+                          "text": "      ❌ fillLookup: Could not find \"AutoOppForQuote-1775201058109\" in suggestion dropdown.\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:45:57.107Z",
+                      "startTime": "2026-04-03T07:24:07.444Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\SalesforceE2E\\test-results\\quote-Quote-Tests-TC-QTE-0-97afb-ton-opens-Quote-Line-Editor-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\SalesforceE2E\\test-results\\quote-Quote-Tests-TC-QTE-0-97afb-ton-opens-Quote-Line-Editor-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts",
+                        "column": 27,
+                        "line": 193
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "9056fc4f94c24a29ec09-1514b431b624bb0ae553",
@@ -1715,7 +1715,7 @@
             },
             {
               "title": "TC-QTE-012 — Product catalog search in QLE",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -1728,34 +1728,69 @@
                     {
                       "workerIndex": 1,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 43734,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 57452,
+                      "error": {
+                        "message": "Error: Could not find \"AutoOppForQuote-1775201124170\" in suggestion dropdown.",
+                        "stack": "Error: Could not find \"AutoOppForQuote-1775201124170\" in suggestion dropdown.\n    at SalesforceFormHandler.fillLookup (D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts:193:27)\n    at D:\\SalesforceE2E\\tests\\quote.spec.ts:227:5",
+                        "location": {
+                          "file": "D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts",
+                          "column": 27,
+                          "line": 193
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SalesforceFormHandler.ts:193\n\n\u001b[0m \u001b[90m 191 |\u001b[39m                     console\u001b[33m.\u001b[39mlog(\u001b[32m`      ✅ Selected \"${value}\" (retry)`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m                 } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 193 |\u001b[39m                     \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Could not find \"${value}\" in suggestion dropdown.`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 194 |\u001b[39m                 }\n \u001b[90m 195 |\u001b[39m             }\n \u001b[90m 196 |\u001b[39m         } \u001b[36mcatch\u001b[39m (error\u001b[33m:\u001b[39m unknown) {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts",
+                            "column": 27,
+                            "line": 193
+                          },
+                          "message": "Error: Could not find \"AutoOppForQuote-1775201124170\" in suggestion dropdown.\n\n\u001b[90m   at \u001b[39m..\\utils\\SalesforceFormHandler.ts:193\n\n\u001b[0m \u001b[90m 191 |\u001b[39m                     console\u001b[33m.\u001b[39mlog(\u001b[32m`      ✅ Selected \"${value}\" (retry)`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 192 |\u001b[39m                 } \u001b[36melse\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 193 |\u001b[39m                     \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Could not find \"${value}\" in suggestion dropdown.`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 194 |\u001b[39m                 }\n \u001b[90m 195 |\u001b[39m             }\n \u001b[90m 196 |\u001b[39m         } \u001b[36mcatch\u001b[39m (error\u001b[33m:\u001b[39m unknown) {\u001b[0m\n\u001b[2m    at SalesforceFormHandler.fillLookup (D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts:193:27)\u001b[22m\n\u001b[2m    at D:\\SalesforceE2E\\tests\\quote.spec.ts:227:5\u001b[22m"
+                        }
+                      ],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775015200667\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775201115468\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775015200667\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775201115468\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775015208800\"\n"
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775201124170\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoOppForQuote-1775015208800\"\n"
+                          "text": "      ❌ fillLookup: Could not find \"AutoOppForQuote-1775201124170\" in suggestion dropdown.\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:46:39.684Z",
+                      "startTime": "2026-04-03T07:25:11.385Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\SalesforceE2E\\test-results\\quote-Quote-Tests-TC-QTE-012-—-Product-catalog-search-in-QLE-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\SalesforceE2E\\test-results\\quote-Quote-Tests-TC-QTE-012-—-Product-catalog-search-in-QLE-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\SalesforceE2E\\utils\\SalesforceFormHandler.ts",
+                        "column": 27,
+                        "line": 193
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
               "id": "9056fc4f94c24a29ec09-5b17c940e888efab607b",
@@ -1776,31 +1811,31 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 43064,
+                      "duration": 55589,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775015244288\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775201178083\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775015244288\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775201178083\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775015252900\"\n"
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775201190258\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoOppForQuote-1775015252900\"\n"
+                          "text": "      ✅ Selected \"AutoOppForQuote-1775201190258\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:47:23.458Z",
+                      "startTime": "2026-04-03T07:26:15.095Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1826,31 +1861,31 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 57863,
+                      "duration": 62951,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775015287479\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775201232848\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775015287479\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775201232848\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775015296266\"\n"
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775201241706\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoOppForQuote-1775015296266\"\n"
+                          "text": "      ✅ Selected \"AutoOppForQuote-1775201241706\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:48:06.549Z",
+                      "startTime": "2026-04-03T07:27:11.773Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1876,31 +1911,31 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 44024,
+                      "duration": 46437,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775015345184\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775201295887\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775015345184\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775201295887\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775015355395\"\n"
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775201306354\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoOppForQuote-1775015355395\"\n"
+                          "text": "      ✅ Selected \"AutoOppForQuote-1775201306354\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:49:04.451Z",
+                      "startTime": "2026-04-03T07:28:14.771Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1926,31 +1961,31 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 43457,
+                      "duration": 46924,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775015389411\"\n"
+                          "text": "   -> Filling Lookup: \"Account Name\" with \"AutoAccForQuote-1775201342316\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoAccForQuote-1775015389411\"\n"
+                          "text": "      ✅ Selected \"AutoAccForQuote-1775201342316\"\n"
                         },
                         {
                           "text": "   -> Filling Picklist: \"Stage\" with \"Prospecting\"\n"
                         },
                         {
-                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775015399065\"\n"
+                          "text": "   -> Filling Lookup: \"Opportunity Name\" with \"AutoOppForQuote-1775201354217\"\n"
                         },
                         {
-                          "text": "      ✅ Selected \"AutoOppForQuote-1775015399065\"\n"
+                          "text": "      ✅ Selected \"AutoOppForQuote-1775201354217\"\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-01T03:49:48.506Z",
+                      "startTime": "2026-04-03T07:29:01.255Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1970,11 +2005,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-01T03:29:31.352Z",
-    "duration": 1261945.6970000002,
-    "expected": 43,
+    "startTime": "2026-04-03T07:09:16.469Z",
+    "duration": 1233412.609,
+    "expected": 42,
     "skipped": 0,
-    "unexpected": 1,
+    "unexpected": 2,
     "flaky": 0
   }
 }
