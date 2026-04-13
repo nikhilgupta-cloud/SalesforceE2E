@@ -1,61 +1,86 @@
 {
-  "runDate": "2026-04-03T07:09:10.284Z",
+  "runDate": "2026-04-13T06:53:45.962Z",
   "steps": [
     {
       "n": 0,
-      "label": "AI Test Generation",
-      "icon": "🤖",
-      "status": "completed",
-      "detail": "ANTHROPIC_API_KEY not set — skipping AI generation",
-      "timestamp": "12:39:10"
+      "label": "Scrape Locators",
+      "icon": "🔍",
+      "status": "skipped",
+      "detail": "Locator map is 89m old (< 24h) — using cache",
+      "timestamp": "12:23:47",
+      "startedAtMs": 1776063227938,
+      "durationMs": 9
     },
     {
       "n": 1,
-      "label": "Verify Scenarios",
-      "icon": "📋",
+      "label": "AI Test Generation",
+      "icon": "🤖",
       "status": "completed",
-      "detail": "44 scenarios confirmed across Account · Contact · Opportunity · Quote (CPQ)",
-      "timestamp": "12:39:10"
+      "detail": "All 1 user stories unchanged — nothing to regenerate",
+      "timestamp": "12:23:47",
+      "startedAtMs": 1776063227955,
+      "durationMs": 30
     },
     {
       "n": 2,
-      "label": "Verify Test Plan",
-      "icon": "📄",
+      "label": "Verify Scenarios",
+      "icon": "📋",
       "status": "completed",
-      "detail": "Test plan confirmed — 44 tests · 12 user stories · 4 objects",
-      "timestamp": "12:39:10"
+      "detail": "4 scenarios confirmed across Account · Contact · Opportunity · Quote (CPQ)",
+      "timestamp": "12:23:48",
+      "startedAtMs": 1776063227999,
+      "durationMs": 11
     },
     {
       "n": 3,
-      "label": "Execute E2E Tests",
-      "icon": "🧪",
-      "status": "failed",
-      "detail": "42/44 tests passed",
-      "timestamp": "12:59:50"
+      "label": "Draft Test Plan",
+      "icon": "📄",
+      "status": "completed",
+      "detail": "Confirmed — 4 tests · 1 user stories · 4 objects",
+      "timestamp": "12:23:48",
+      "startedAtMs": 1776063228039,
+      "durationMs": 27
     },
     {
       "n": 4,
-      "label": "Self-Heal Failures",
-      "icon": "🔧",
+      "label": "Execute E2E Tests",
+      "icon": "🧪",
       "status": "failed",
-      "detail": "2 failure(s) unhealed — see reports/healing-report.md",
-      "timestamp": "12:59:50"
+      "detail": "0/1 tests passed",
+      "timestamp": "12:28:17",
+      "startedAtMs": 1776063471808,
+      "durationMs": 25903
     },
     {
       "n": 5,
+      "label": "Self-Heal Failures",
+      "icon": "🔧",
+      "status": "failed",
+      "detail": "1 failure(s) unhealed — see reports/healing-report.md",
+      "timestamp": "12:28:17",
+      "startedAtMs": 1776063264673,
+      "tokensIn": 9,
+      "tokensOut": 7358,
+      "durationMs": 233315
+    },
+    {
+      "n": 6,
       "label": "Generate Final Scripts",
       "icon": "⚙️",
       "status": "completed",
       "detail": "4 production scripts saved → generated/scripts/",
-      "timestamp": "12:59:50"
+      "timestamp": "12:28:18",
+      "startedAtMs": 1776063498110,
+      "durationMs": 57
     },
     {
-      "n": 6,
+      "n": 7,
       "label": "Push to GitHub",
       "icon": "🚀",
       "status": "running",
       "detail": "Committing and pushing to GitHub…",
-      "timestamp": "12:59:50"
+      "timestamp": "12:28:18",
+      "startedAtMs": 1776063498185
     }
   ]
 }

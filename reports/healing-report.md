@@ -1,8 +1,7 @@
-# Healing Report — 03/04/2026
+# Healing Report — 13/04/2026
 
-**Skipped — ANTHROPIC_API_KEY not set (2):**
-- ⚠ TC-QTE-009 — Edit Lines button opens Quote Line Editor
-- ⚠ TC-QTE-012 — Product catalog search in QLE
+**Still failing (1):**
+- ❌ TC-QTE-001 — Ready For Acceptance action visible on Approved quote and launches screenflow
 
 **Next steps for remaining failures:**
 1. Classify each failure: selector_failure | timing_failure | data_failure | environment_failure

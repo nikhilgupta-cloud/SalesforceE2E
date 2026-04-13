@@ -1,16 +1,21 @@
 /**
  * Quote Tests — Salesforce CPQ (RCA)
- * Covers: US-010 (AC-010-01→05), US-011 (AC-011-01→06), US-012 (AC-012-01→05), US-013 (AC-013-01→05)
+ * Active Jira story: US-005 (AC-005-01→26) — Quote Execution Status acceptance flow
+ * Other Quote stories (Create, QLE, Discount, Document) will be auto-generated
+ * here when their Jira stories are fetched via: npm run fetch:stories
  * Auth: auth/session.json
  */
 import { test, expect, type Page } from '@playwright/test';
-import { SalesforceFormHandler } from '../utils/SalesforceFormHandler';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 const SF = process.env.SF_SANDBOX_URL!;
 
 const MODAL = '[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])';
+
+// Existing account used as the parent for all test Opportunities.
+// This avoids creating a new Account on every pipeline run.
+const EXISTING_ACCOUNT = 'Autotest1';
 
 async function goTo(page: Page, path: string) {
   await page.goto(`${SF}${path}`, { waitUntil: 'domcontentloaded' });
@@ -30,358 +35,321 @@ async function dismissAuraError(page: Page) {
   }
 }
 
-/** Wait for CPQ loading spinners to disappear */
-async function waitForCpqLoad(page: Page) {
-  await page.locator('.sb-loading-mask, .blockUI, .slds-spinner').first()
-    .waitFor({ state: 'hidden', timeout: 60000 }).catch(() => {});
-}
-
-/** Create Account + Opportunity and return { accName, oppName, oppUrl } */
-async function createAccountAndOpportunity(page: Page): Promise<{ accName: string; oppName: string; oppUrl: string }> {
-  const accName = `AutoAccForQuote-${Date.now()}`;
-  await goTo(page, '/lightning/o/Account/new');
-  await dismissAuraError(page);
-  await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-  await new SalesforceFormHandler(page).fillText('Account Name', accName);
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-  await waitForDetail(page);
-
+/**
+ * Create a fresh Opportunity linked to the given existing account.
+ * Returns the relative Opportunity URL (e.g. /lightning/r/Opportunity/006xxx/view).
+ */
+async function createOpportunity(page: Page, accountName: string): Promise<string> {
   const oppName = `AutoOppForQuote-${Date.now()}`;
+
   await goTo(page, '/lightning/o/Opportunity/new');
   await dismissAuraError(page);
-  await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-  const sfHandler = new SalesforceFormHandler(page);
-  await sfHandler.fillText('Opportunity Name', oppName);
-  await sfHandler.fillLookup('Account Name', accName);
-  await sfHandler.fillText('Close Date', '12/31/2025');
-  await sfHandler.fillText('Amount', '50000');
-  await sfHandler.selectCombobox('Stage', 'Prospecting');
+  const oppModal = page.locator(MODAL).first();
+  await oppModal.waitFor({ state: 'visible', timeout: 30000 });
+
+  // Opportunity Name
+  const oppNameField = oppModal.locator('[data-field-api-name="Name"] input');
+  await oppNameField.waitFor({ state: 'visible', timeout: 15000 });
+  await oppNameField.fill(oppName);
+
+  // Account lookup — use the provided existing account
+  const accLookupInput = oppModal.locator('lightning-lookup').filter({ hasText: /Account Name/i }).locator('input');
+  await accLookupInput.fill(accountName);
+  const accOption = page.locator('[role="option"]').filter({ hasText: accountName }).first();
+  await accOption.waitFor({ state: 'visible', timeout: 15000 });
+  await accOption.click();
+
+  // Close Date — ISO format, Tab to trigger validation
+  const closeDateField = oppModal.locator('[data-field-api-name="CloseDate"] input');
+  await closeDateField.waitFor({ state: 'visible', timeout: 10000 });
+  await closeDateField.fill('2026-12-31');
+  await closeDateField.press('Tab');
+
+  // Amount — optional; skip if not on layout
+  const amountField = oppModal.locator('[data-field-api-name="Amount"] input');
+  if (await amountField.count() > 0) await amountField.fill('50000');
+
+  // Stage picklist
+  const stageTrigger = oppModal.locator('lightning-combobox').filter({ hasText: /Stage/i }).locator('button').first();
+  await stageTrigger.click({ force: true });
+  const stageOption = page.locator('[role="option"]').filter({ hasText: /Prospecting/i }).last();
+  await stageOption.waitFor({ state: 'visible', timeout: 10000 });
+  await stageOption.click();
+
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await waitForDetail(page);
 
-  const oppUrl = page.url();
-  return { accName, oppName, oppUrl };
+  return page.url().replace(SF, '');
+}
+
+/**
+ * Navigate to oppPath, click New Quote, fill name, save.
+ * Each test gets a fresh, unmodified Quote created here in beforeEach.
+ * After this function the page is on the Quote detail page.
+ */
+async function createQuoteOnOpp(page: Page, oppPath: string): Promise<void> {
+  await goTo(page, oppPath);
+  await dismissAuraError(page);
+  await waitForDetail(page);
+
+  const newQuoteBtn = page.getByRole('button', { name: 'New Quote', exact: true });
+  await newQuoteBtn.waitFor({ state: 'visible', timeout: 30000 });
+  await newQuoteBtn.click();
+  await dismissAuraError(page);
+
+  // Handle modal-based OR full-page quote creation
+  const quoteModal = page.locator(MODAL).first();
+  const modalVisible = await quoteModal.waitFor({ state: 'visible', timeout: 10000 })
+    .then(() => true).catch(() => false);
+
+  const nameField = modalVisible
+    ? quoteModal.locator('[data-field-api-name="Name"] input')
+    : page.locator('[data-field-api-name="Name"] input').first();
+
+  if (await nameField.count() > 0) {
+    await nameField.waitFor({ state: 'visible', timeout: 15000 });
+    await nameField.fill(`AutoQuote-${Date.now()}`);
+  }
+
+  const saveBtn = modalVisible
+    ? quoteModal.getByRole('button', { name: 'Save', exact: true })
+    : page.getByRole('button', { name: 'Save', exact: true }).first();
+
+  await saveBtn.click();
+  await waitForDetail(page);
+  await dismissAuraError(page);
 }
 
 test.describe('Quote Tests', () => {
 
+  // Shared Opportunity path — created once against EXISTING_ACCOUNT, never mutated
+  let oppRelPath = '';
+
+  // ── Create ONE Opportunity under the existing "Autotest1" account ────────
+  // No Account creation — EXISTING_ACCOUNT already exists in the org.
+  test.beforeAll(async ({ browser }) => {
+    const context = await browser.newContext({ storageState: 'auth/session.json' });
+    const page    = await context.newPage();
+    try {
+      oppRelPath = await createOpportunity(page, EXISTING_ACCOUNT);
+    } finally {
+      await context.close();
+    }
+  });
+
+  // ── Each test gets a fresh Quote so mutations in one test don't affect others
+  // After beforeEach the page is already on the Quote detail page.
   test.beforeEach(async ({ page }) => {
     await dismissAuraError(page);
+    await createQuoteOnOpp(page, oppRelPath);
   });
 
-  // TC-QTE-001 | AC Reference: AC-010-01
-  test('TC-QTE-001 — New Quote button accessible from Opportunity detail page', async ({ page }) => {
-    const { oppUrl } = await createAccountAndOpportunity(page);
-    await page.goto(oppUrl, { waitUntil: 'domcontentloaded' });
+  // ── US-005 START ─────────────────────────────────────────────────────
+
+  // TC-QTE-001 | AC Reference: AC-005-01, AC-005-02
+  test('TC-QTE-001 — Ready For Acceptance action visible on Approved quote and launches screenflow', async ({ page }) => {
+    // beforeEach already landed on the Quote detail page — no navigation needed
+
+    // Button may appear in the page header or inside the 'Show more actions' overflow menu
+    const rfaButton = page.getByRole('button', { name: 'Ready For Acceptance', exact: true });
+    if ((await rfaButton.count()) === 0) {
+      const moreActions = page.getByRole('button', { name: 'Show more actions', exact: true });
+      await moreActions.waitFor({ state: 'visible', timeout: 30000 });
+      await moreActions.click();
+      const menuItem = page.getByRole('menuitem', { name: 'Ready For Acceptance', exact: true });
+      await menuItem.waitFor({ state: 'visible', timeout: 30000 });
+      await menuItem.click();
+    } else {
+      await rfaButton.first().waitFor({ state: 'visible', timeout: 30000 });
+      await rfaButton.first().click();
+    }
+
+    // System runs RCA create-order validations then launches the screen flow
+    const flowModal = page.locator(MODAL).first();
+    await flowModal.waitFor({ state: 'visible', timeout: 30000 });
+    await expect(flowModal).toBeVisible();
+
+    // Dismiss the flow so subsequent tests start from a clean state
+    const cancelBtn = flowModal.getByRole('button', { name: 'Cancel', exact: true });
+    if ((await cancelBtn.count()) > 0) {
+      await cancelBtn.click();
+      await flowModal.waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+    }
+  });
+
+  // TC-QTE-002 | AC Reference: AC-005-03, AC-005-04, AC-005-06, AC-005-08, AC-005-10
+  test('TC-QTE-002 — Screenflow displays all four mandatory document capture fields', async ({ page }) => {
+    // beforeEach already landed on the Quote detail page — no navigation needed
+
+    const rfaButton = page.getByRole('button', { name: 'Ready For Acceptance', exact: true });
+    if ((await rfaButton.count()) === 0) {
+      const moreActions = page.getByRole('button', { name: 'Show more actions', exact: true });
+      await moreActions.waitFor({ state: 'visible', timeout: 30000 });
+      await moreActions.click();
+      const menuItem = page.getByRole('menuitem', { name: 'Ready For Acceptance', exact: true });
+      await menuItem.waitFor({ state: 'visible', timeout: 30000 });
+      await menuItem.click();
+    } else {
+      await rfaButton.first().waitFor({ state: 'visible', timeout: 30000 });
+      await rfaButton.first().click();
+    }
+
+    const flowModal = page.locator(MODAL).first();
+    await flowModal.waitFor({ state: 'visible', timeout: 30000 });
+
+    // AC-005-04/05: Primary Order Form attachment field label
+    const primaryOrderFormLabel = flowModal
+      .locator('label, legend, .slds-form-element__label, span')
+      .filter({ hasText: /Primary Order Form/i })
+      .first();
+    await primaryOrderFormLabel.waitFor({ state: 'visible', timeout: 30000 });
+    await expect(primaryOrderFormLabel).toBeVisible();
+
+    // AC-005-06/07: Order Form Not Required checkbox
+    const orderFormNotRequired = flowModal
+      .locator('lightning-input')
+      .filter({ hasText: /Order Form Not Required/i })
+      .first();
+    await orderFormNotRequired.waitFor({ state: 'visible', timeout: 30000 });
+    await expect(orderFormNotRequired).toBeVisible();
+
+    // AC-005-08/09: Primary Purchase Order attachment field label
+    const primaryPOLabel = flowModal
+      .locator('label, legend, .slds-form-element__label, span')
+      .filter({ hasText: /Primary Purchase Order/i })
+      .first();
+    await primaryPOLabel.waitFor({ state: 'visible', timeout: 30000 });
+    await expect(primaryPOLabel).toBeVisible();
+
+    // AC-005-10/11: Purchase Order Not Required checkbox
+    const poNotRequired = flowModal
+      .locator('lightning-input')
+      .filter({ hasText: /Purchase Order Not Required/i })
+      .first();
+    await poNotRequired.waitFor({ state: 'visible', timeout: 30000 });
+    await expect(poNotRequired).toBeVisible();
+
+    const cancelBtn = flowModal.getByRole('button', { name: 'Cancel', exact: true });
+    if ((await cancelBtn.count()) > 0) {
+      await cancelBtn.click();
+      await flowModal.waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+    }
+  });
+
+  // TC-QTE-003 | AC Reference: AC-005-26
+  test('TC-QTE-003 — Execution Status becomes Ready for Acceptance when Order Form Not Required and PO Not Required are both TRUE', async ({ page }) => {
+    // beforeEach already landed on the Quote detail page — no navigation needed
+
+    const rfaButton = page.getByRole('button', { name: 'Ready For Acceptance', exact: true });
+    if ((await rfaButton.count()) === 0) {
+      const moreActions = page.getByRole('button', { name: 'Show more actions', exact: true });
+      await moreActions.waitFor({ state: 'visible', timeout: 30000 });
+      await moreActions.click();
+      const menuItem = page.getByRole('menuitem', { name: 'Ready For Acceptance', exact: true });
+      await menuItem.waitFor({ state: 'visible', timeout: 30000 });
+      await menuItem.click();
+    } else {
+      await rfaButton.first().waitFor({ state: 'visible', timeout: 30000 });
+      await rfaButton.first().click();
+    }
+
+    const flowModal = page.locator(MODAL).first();
+    await flowModal.waitFor({ state: 'visible', timeout: 30000 });
+
+    // Check 'Order Form Not Required' checkbox
+    const orderFormNotReqCheckbox = flowModal
+      .locator('lightning-input')
+      .filter({ hasText: /Order Form Not Required/i })
+      .locator('input[type="checkbox"]')
+      .first();
+    await orderFormNotReqCheckbox.waitFor({ state: 'visible', timeout: 30000 });
+    await orderFormNotReqCheckbox.check();
+
+    // Check 'Purchase Order Not Required' checkbox
+    const poNotReqCheckbox = flowModal
+      .locator('lightning-input')
+      .filter({ hasText: /Purchase Order Not Required/i })
+      .locator('input[type="checkbox"]')
+      .first();
+    await poNotReqCheckbox.waitFor({ state: 'visible', timeout: 30000 });
+    await poNotReqCheckbox.check();
+
+    // Advance through the flow — click Next if present, then Finish
+    const nextBtn = flowModal.getByRole('button', { name: 'Next', exact: true });
+    if ((await nextBtn.count()) > 0) {
+      await nextBtn.waitFor({ state: 'visible', timeout: 15000 });
+      await nextBtn.click();
+    }
+    const finishBtn = flowModal.getByRole('button', { name: 'Finish', exact: true });
+    await finishBtn.waitFor({ state: 'visible', timeout: 30000 });
+    await finishBtn.click();
+    await flowModal.waitFor({ state: 'hidden', timeout: 30000 });
+
+    // Reload and assert Execution Status = 'Ready for Acceptance'
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await dismissAuraError(page);
     await waitForDetail(page);
-    await dismissAuraError(page);
-
-    // Look for New Quote button in the Quotes related list
-    const newQuoteBtn = page.getByRole('button', { name: 'New Quote' })
-      .or(page.locator('a[title="New Quote"], button[title="New Quote"]'))
-      .or(page.locator('[data-target-selection-name*="Quote"] button').filter({ hasText: 'New' }))
+    const execStatusDisplay = page
+      .locator('.slds-form-element')
+      .filter({ hasText: /Execution Status/i })
+      .locator('.slds-form-element__static, lightning-formatted-text')
       .first();
-
-    // Scroll down to find related lists
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(2000);
-
-    const btnVisible = await newQuoteBtn.isVisible({ timeout: 15000 }).catch(() => false);
-    // Verify either the button is visible or the Quotes related list exists
-    const quotesSection = page.getByText('Quotes', { exact: false }).first();
-    const sectionVisible = await quotesSection.isVisible({ timeout: 5000 }).catch(() => false);
-
-    expect(btnVisible || sectionVisible).toBe(true);
+    await execStatusDisplay.waitFor({ state: 'visible', timeout: 30000 });
+    await expect(execStatusDisplay).toHaveText(/Ready for Acceptance/i);
   });
 
-  // TC-QTE-003 | AC Reference: AC-010-02
-  test('TC-QTE-003 — Quote inherits Opportunity data', async ({ page }) => {
-    const { accName, oppName, oppUrl } = await createAccountAndOpportunity(page);
-    await page.goto(oppUrl, { waitUntil: 'domcontentloaded' });
+  // TC-QTE-004 | AC Reference: AC-005-12, AC-005-13, AC-005-14
+  test('TC-QTE-004 — Create Order enabled when Execution Status is Ready for Acceptance; sets status to Accepted and creates Order', async ({ page }) => {
+    // beforeEach already landed on the Quote detail page — no navigation needed
+
+    // AC-005-13: 'Create Order' action must be visible and enabled
+    const createOrderDirect = page.getByRole('button', { name: 'Create Order', exact: true });
+    if ((await createOrderDirect.count()) === 0) {
+      const moreActions = page.getByRole('button', { name: 'Show more actions', exact: true });
+      await moreActions.waitFor({ state: 'visible', timeout: 30000 });
+      await moreActions.click();
+      const createOrderMenuItem = page.getByRole('menuitem', { name: 'Create Order', exact: true });
+      await createOrderMenuItem.waitFor({ state: 'visible', timeout: 30000 });
+      await expect(createOrderMenuItem).toBeVisible();
+      await createOrderMenuItem.click();
+    } else {
+      await createOrderDirect.first().waitFor({ state: 'visible', timeout: 30000 });
+      await expect(createOrderDirect.first()).toBeEnabled();
+      await createOrderDirect.first().click();
+    }
+
+    // Handle any confirmation dialog that precedes order creation
+    const confirmModal = page.locator(MODAL).first();
+    if ((await confirmModal.count()) > 0) {
+      const confirmBtn = confirmModal
+        .getByRole('button', { name: /Confirm|OK|Yes/i })
+        .first();
+      if ((await confirmBtn.count()) > 0) {
+        await confirmBtn.waitFor({ state: 'visible', timeout: 15000 });
+        await confirmBtn.click();
+      }
+    }
+
+    // AC-005-12: Execution Status must update to 'Accepted'
+    await dismissAuraError(page);
     await waitForDetail(page);
-    await dismissAuraError(page);
-
-    // Try to navigate to Quote creation from Opportunity
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(2000);
-
-    const newQuoteBtn = page.getByRole('button', { name: 'New Quote' })
-      .or(page.locator('button[title="New Quote"], a[title="New Quote"]'))
+    const execStatusDisplay = page
+      .locator('.slds-form-element')
+      .filter({ hasText: /Execution Status/i })
+      .locator('.slds-form-element__static, lightning-formatted-text')
       .first();
+    await execStatusDisplay.waitFor({ state: 'visible', timeout: 30000 });
+    await expect(execStatusDisplay).toHaveText(/Accepted/i);
 
-    const btnVisible = await newQuoteBtn.isVisible({ timeout: 10000 }).catch(() => false);
-    if (btnVisible) {
-      await newQuoteBtn.click();
-      await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-
-      // Check that Opportunity Name is pre-filled
-      const oppField = page.getByText(oppName, { exact: false }).first();
-      const fieldVisible = await oppField.isVisible({ timeout: 5000 }).catch(() => false);
-      expect(fieldVisible).toBe(true);
-    } else {
-      // Navigate via URL if button not found
-      await expect(page.locator('.slds-page-header').first()).toBeVisible();
-    }
-  });
-
-  // TC-QTE-004 | AC Reference: AC-010-03
-  test('TC-QTE-004 — Create Quote directly with required fields', async ({ page }) => {
-    const { oppName } = await createAccountAndOpportunity(page);
-    const quoteName = `AutoQuote-${Date.now()}`;
-
-    await goTo(page, '/lightning/o/Quote/new');
-    await dismissAuraError(page);
-    await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-
-    const sfHandler = new SalesforceFormHandler(page);
-    await sfHandler.fillText('Quote Name', quoteName);
-    await sfHandler.fillLookup('Opportunity Name', oppName);
-    await sfHandler.fillText('Expiration Date', '12/31/2025');
-
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-
-    // Either success or error - just verify we got a response
-    const detailOrError = page.locator('.slds-page-header, .slds-has-error, [role="alert"]').first();
-    await detailOrError.waitFor({ state: 'visible', timeout: 30000 });
-    await expect(detailOrError).toBeVisible();
-  });
-
-  // TC-QTE-007 | AC Reference: AC-010-05
-  test('TC-QTE-007 — Saved Quote appears in Opportunity related list', async ({ page }) => {
-    const { oppName, oppUrl } = await createAccountAndOpportunity(page);
-    const quoteName = `AutoQuoteList-${Date.now()}`;
-
-    await goTo(page, '/lightning/o/Quote/new');
-    await dismissAuraError(page);
-    await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-    const sfHandler = new SalesforceFormHandler(page);
-    await sfHandler.fillText('Quote Name', quoteName);
-    await sfHandler.fillLookup('Opportunity Name', oppName);
-    await sfHandler.fillText('Expiration Date', '12/31/2025');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-
-    const saved = await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 30000 }).then(() => true).catch(() => false);
-    if (saved) {
-      // Navigate to Opportunity and verify quote in related list
-      await page.goto(oppUrl, { waitUntil: 'domcontentloaded' });
-      await waitForDetail(page);
-      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-      await page.waitForTimeout(2000);
-      const quoteInList = await page.getByText(quoteName, { exact: false }).first().waitFor({ state: 'visible', timeout: 15000 }).then(() => true).catch(() => false);
-      expect(quoteInList).toBe(true);
-    } else {
-      // Save may have failed - still a valid test outcome to check
-      await expect(page.locator('.slds-page-header, .slds-has-error').first()).toBeVisible();
-    }
-  });
-
-  // TC-QTE-009 | AC Reference: AC-011-01
-  test('TC-QTE-009 — Edit Lines button opens Quote Line Editor', async ({ page }) => {
-    const { oppName } = await createAccountAndOpportunity(page);
-    const quoteName = `AutoQuoteQLE-${Date.now()}`;
-
-    await goTo(page, '/lightning/o/Quote/new');
-    await dismissAuraError(page);
-    await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-    const sfHandler = new SalesforceFormHandler(page);
-    await sfHandler.fillText('Quote Name', quoteName);
-    await sfHandler.fillLookup('Opportunity Name', oppName);
-    await sfHandler.fillText('Expiration Date', '12/31/2025');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-
-    const saved = await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 30000 }).then(() => true).catch(() => false);
-    if (saved) {
-      await dismissAuraError(page);
-      const editLinesBtn = page.getByRole('button', { name: 'Edit Lines' })
-        .or(page.locator('a[title="Edit Lines"], button[title="Edit Lines"]'))
-        .first();
-      const btnVisible = await editLinesBtn.isVisible({ timeout: 15000 }).catch(() => false);
-      if (btnVisible) {
-        await editLinesBtn.click();
-        await waitForCpqLoad(page);
-        // QLE should have loaded - check for CPQ-specific elements
-        const qleContainer = page.locator('.sbQleBig, .sb-page-content, [class*="qle"], .SBQQ__LineEditor')
-          .or(page.locator('div[role="grid"]'))
-          .first();
-        await qleContainer.waitFor({ state: 'visible', timeout: 45000 }).catch(() => {});
-        await expect(page.locator('body')).toBeTruthy();
-      } else {
-        // Button not visible - log and pass (org config dependent)
-        await expect(page.locator('.slds-page-header').first()).toBeVisible();
-      }
-    } else {
-      await expect(page.locator('.slds-page-header, .slds-has-error').first()).toBeVisible();
-    }
-  });
-
-  // TC-QTE-012 | AC Reference: AC-011-02
-  test('TC-QTE-012 — Product catalog search in QLE', async ({ page }) => {
-    const { oppName } = await createAccountAndOpportunity(page);
-    const quoteName = `AutoQuoteProd-${Date.now()}`;
-
-    await goTo(page, '/lightning/o/Quote/new');
-    await dismissAuraError(page);
-    await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-    const sfHandler = new SalesforceFormHandler(page);
-    await sfHandler.fillText('Quote Name', quoteName);
-    await sfHandler.fillLookup('Opportunity Name', oppName);
-    await sfHandler.fillText('Expiration Date', '12/31/2025');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-
-    const saved = await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 30000 }).then(() => true).catch(() => false);
-    if (saved) {
-      await dismissAuraError(page);
-      const editLinesBtn = page.getByRole('button', { name: 'Edit Lines' })
-        .or(page.locator('a[title="Edit Lines"]'))
-        .first();
-      const btnVisible = await editLinesBtn.isVisible({ timeout: 10000 }).catch(() => false);
-      if (btnVisible) {
-        await editLinesBtn.click();
-        await waitForCpqLoad(page);
-        // Look for Add Products button or search box in QLE
-        const addProducts = page.getByRole('button', { name: 'Add Products' })
-          .or(page.locator('button[title="Add Products"]'))
-          .first();
-        const addVisible = await addProducts.isVisible({ timeout: 30000 }).catch(() => false);
-        if (addVisible) {
-          await addProducts.click();
-          await waitForCpqLoad(page);
-          const searchBox = page.locator('input[placeholder*="Search"], input[placeholder*="search"]').first();
-          const searchVisible = await searchBox.isVisible({ timeout: 15000 }).catch(() => false);
-          expect(searchVisible).toBe(true);
-        } else {
-          await expect(page.locator('body')).toBeTruthy();
-        }
-      } else {
-        await expect(page.locator('.slds-page-header').first()).toBeVisible();
-      }
-    } else {
-      await expect(page.locator('.slds-page-header, .slds-has-error').first()).toBeVisible();
-    }
-  });
-
-  // TC-QTE-021 | AC Reference: AC-012-01
-  test('TC-QTE-021 — Discount percent field editable in QLE', async ({ page }) => {
-    const { oppName } = await createAccountAndOpportunity(page);
-    const quoteName = `AutoQuoteDisc-${Date.now()}`;
-
-    await goTo(page, '/lightning/o/Quote/new');
-    await dismissAuraError(page);
-    await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-    const sfHandler = new SalesforceFormHandler(page);
-    await sfHandler.fillText('Quote Name', quoteName);
-    await sfHandler.fillLookup('Opportunity Name', oppName);
-    await sfHandler.fillText('Expiration Date', '12/31/2025');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-
-    const saved = await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 30000 }).then(() => true).catch(() => false);
-    if (saved) {
-      await dismissAuraError(page);
-      const editLinesBtn = page.getByRole('button', { name: 'Edit Lines' })
-        .or(page.locator('a[title="Edit Lines"]'))
-        .first();
-      const btnVisible = await editLinesBtn.isVisible({ timeout: 10000 }).catch(() => false);
-      if (btnVisible) {
-        await editLinesBtn.click();
-        await waitForCpqLoad(page);
-        // Verify QLE loaded — discount field would be in a line item row
-        await expect(page.locator('body')).toBeTruthy();
-      } else {
-        await expect(page.locator('.slds-page-header').first()).toBeVisible();
-      }
-    } else {
-      await expect(page.locator('.slds-page-header, .slds-has-error').first()).toBeVisible();
-    }
-  });
-
-  // TC-QTE-030 | AC Reference: AC-013-01
-  test('TC-QTE-030 — Generate Document button visible on Quote', async ({ page }) => {
-    const { oppName } = await createAccountAndOpportunity(page);
-    const quoteName = `AutoQuoteDoc-${Date.now()}`;
-
-    await goTo(page, '/lightning/o/Quote/new');
-    await dismissAuraError(page);
-    await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-    const sfHandler = new SalesforceFormHandler(page);
-    await sfHandler.fillText('Quote Name', quoteName);
-    await sfHandler.fillLookup('Opportunity Name', oppName);
-    await sfHandler.fillText('Expiration Date', '12/31/2025');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-
-    const saved = await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 30000 }).then(() => true).catch(() => false);
-    if (saved) {
-      await dismissAuraError(page);
-      const genDocBtn = page.getByRole('button', { name: 'Generate Document' })
-        .or(page.locator('button[title="Generate Document"], a[title="Generate Document"]'))
-        .first();
-      const btnVisible = await genDocBtn.waitFor({ state: 'visible', timeout: 10000 }).then(() => true).catch(() => false);
-      // Check in action menu if not directly visible
-      if (!btnVisible) {
-        const actionsBtn = page.locator('button').filter({ hasText: /show more actions/i }).first();
-        const actionsVisible = await actionsBtn.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
-        if (actionsVisible) {
-          await actionsBtn.click();
-          await page.waitForTimeout(1000);
-          const genDocInMenu = page.getByText('Generate Document', { exact: false }).first();
-          const menuItemVisible = await genDocInMenu.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false);
-          // Generate Document is a CPQ configured feature; pass if either found or quote detail loaded
-          if (!menuItemVisible) {
-            await page.keyboard.press('Escape');
-          }
-        }
-        // Soft assertion: quote detail page loaded regardless of feature availability
-        await expect(page.locator('.slds-page-header').first()).toBeVisible();
-      } else {
-        await expect(genDocBtn).toBeVisible();
-      }
-    } else {
-      await expect(page.locator('.slds-page-header, .slds-has-error').first()).toBeVisible();
-    }
-  });
-
-  // TC-QTE-035 | AC Reference: AC-013-04
-  test('TC-QTE-035 — Quote detail page loads with header visible', async ({ page }) => {
-    const { oppName } = await createAccountAndOpportunity(page);
-    const quoteName = `AutoQuoteLoad-${Date.now()}`;
-
-    await goTo(page, '/lightning/o/Quote/new');
-    await dismissAuraError(page);
-    await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-    const sfHandler = new SalesforceFormHandler(page);
-    await sfHandler.fillText('Quote Name', quoteName);
-    await sfHandler.fillLookup('Opportunity Name', oppName);
-    await sfHandler.fillText('Expiration Date', '12/31/2025');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-
-    const detailOrError = page.locator('.slds-page-header, .slds-has-error, [role="alert"]').first();
-    await detailOrError.waitFor({ state: 'visible', timeout: 30000 });
-    await expect(detailOrError).toBeVisible();
-  });
-
-  // TC-QTE-038 | AC Reference: AC-010-04
-  test('TC-QTE-038 — Primary Quote checkbox available on Quote form', async ({ page }) => {
-    const { oppName } = await createAccountAndOpportunity(page);
-
-    await goTo(page, '/lightning/o/Quote/new');
-    await dismissAuraError(page);
-    await page.locator(MODAL).first().waitFor({ state: 'visible', timeout: 30000 });
-
-    // Check for Primary checkbox
-    const primaryCheckbox = page.getByRole('checkbox', { name: /primary/i })
-      .or(page.locator('input[type="checkbox"]').filter({ hasText: /primary/i }))
-      .or(page.locator('lightning-input').filter({ hasText: /primary/i }).locator('input'))
+    // AC-005-14: Verify an Order record was created (URL redirect or Orders related list)
+    const orderRelatedList = page
+      .locator('[title="Orders"], [aria-label="Orders"]')
       .first();
-
-    const sfHandler = new SalesforceFormHandler(page);
-    // Fill required fields first to ensure form is loaded
-    await sfHandler.fillText('Quote Name', `AutoQuotePrimary-${Date.now()}`);
-    await sfHandler.fillLookup('Opportunity Name', oppName);
-    await sfHandler.fillText('Expiration Date', '12/31/2025');
-
-    // Check if Primary checkbox is present anywhere on the form
-    const checkboxVisible = await primaryCheckbox.isVisible({ timeout: 5000 }).catch(() => false);
-    // Modal should be open - the checkbox may or may not be visible depending on org config
-    await expect(page.locator(MODAL).first()).toBeVisible();
+    const currentUrl = page.url();
+    const orderCreated = currentUrl.includes('/Order/') || (await orderRelatedList.count()) > 0;
+    expect(orderCreated).toBeTruthy();
   });
+
+  // ── US-005 END ───────────────────────────────────────────────────────
 
 });
