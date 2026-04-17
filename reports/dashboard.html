@@ -93,6 +93,7 @@ body::after{
   color:#c4b5fd;border-color:rgba(124,58,237,.3);
 }
 .chip.c-time{color:#7dd3fc;}
+.chip.c-heal{color:#fbbf24;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08);}
 
 /* ── Section Title ───────────────────────────── */
 .sec{
@@ -350,26 +351,26 @@ body::after{
     <div class="brand-mark">🚀</div>
     <div class="brand-info">
       <h1>Salesforce CPQ — QA Dashboard</h1>
-      <p>Playwright E2E · Chromium · 1 Tests across Account · Contact · Opportunity · Quote (CPQ)</p>
+      <p>Playwright E2E · Chromium · 0 Tests across Account · Contact · Opportunity · Quote (CPQ)</p>
       <div class="status-wrap">
 <!-- BADGE-START -->
-        <div class="badge badge-pass">ALL TESTS PASSED</div>
+        <div class="badge badge-fail">FAILURES DETECTED</div>
 <!-- BADGE-END -->
         <div class="chips">
-          <div class="chip">📦 1</div>
+          <div class="chip">📦 0</div>
           <div class="chip c-pass">✅ 0 Passed</div>
-          <div class="chip c-fail">❌ 1 Failed</div>
           
           
-          <div class="chip c-time">⏱ 00:26</div>
+          
+          <div class="chip c-time">⏱ 00:00</div>
           <div class="chip c-rate">📈 0%</div>
         </div>
       </div>
     </div>
   </div>
   <div class="header-right">
-    <div>Run: <strong>13 Apr 2026, 12:28</strong></div>
-    <div>Engine: <strong>Playwright v1.58</strong></div>
+    <div>Run: <strong>17 Apr 2026, 10:57</strong></div>
+    <div>Engine: <strong>Playwright —</strong></div>
     <div>Browser: <strong>Chromium</strong></div>
   </div>
 </div>
@@ -377,7 +378,7 @@ body::after{
 <!-- ── Pipeline Steps ────────────────────────────── -->
 <div class="sec">QA Pipeline — 8 Steps</div>
 <div class="pipeline">
-  <div class="pipe-steps">
+  <div class="pipe-steps" id="pipe-steps">
 <!-- PIPE-STEPS-START -->
 
       <div class="pipe-step pending">
@@ -386,11 +387,11 @@ body::after{
           <div class="step-num">0</div>
         </div>
         <div class="step-label">Scrape Locators</div>
-        <div class="step-detail">Locator map is 89m old (&lt; 24h) — using cache</div>
-        <div class="step-time">12:23:47</div>
+        <div class="step-detail">Locator map is 14m old (&lt; 24h) — using cache</div>
+        <div class="step-time">10:47:57</div>
         
         <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 9ms</span>
+          <span class="step-badge sb-time">⏱ 11ms</span>
           
         </div>
         
@@ -401,11 +402,11 @@ body::after{
           <div class="step-num">1</div>
         </div>
         <div class="step-label">AI Test Generation</div>
-        <div class="step-detail">All 1 user stories unchanged — nothing to regenerate</div>
-        <div class="step-time">12:23:47</div>
+        <div class="step-detail">Tests generated</div>
+        <div class="step-time">10:56:37</div>
         
         <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 30ms</span>
+          <span class="step-badge sb-time">⏱ 8m 40s</span>
           
         </div>
         
@@ -416,8 +417,8 @@ body::after{
           <div class="step-num">2</div>
         </div>
         <div class="step-label">Verify Scenarios</div>
-        <div class="step-detail">4 scenarios confirmed across Account · Contact · Opportunity · Quote (CPQ)</div>
-        <div class="step-time">12:23:48</div>
+        <div class="step-detail">Scenarios validated</div>
+        <div class="step-time">10:56:37</div>
         
         <div class="step-meta">
           <span class="step-badge sb-time">⏱ 11ms</span>
@@ -431,11 +432,11 @@ body::after{
           <div class="step-num">3</div>
         </div>
         <div class="step-label">Draft Test Plan</div>
-        <div class="step-detail">Confirmed — 4 tests · 1 user stories · 4 objects</div>
-        <div class="step-time">12:23:48</div>
+        <div class="step-detail">Test plan ready</div>
+        <div class="step-time">10:57:34</div>
         
         <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 27ms</span>
+          <span class="step-badge sb-time">⏱ 56s</span>
           
         </div>
         
@@ -446,43 +447,39 @@ body::after{
           <div class="step-num">4</div>
         </div>
         <div class="step-label">Execute E2E Tests</div>
-        <div class="step-detail">0/1 tests passed</div>
-        <div class="step-time">12:28:17</div>
+        <div class="step-detail">0/0 tests passed</div>
+        <div class="step-time">10:57:41</div>
         
         <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 25s</span>
+          <span class="step-badge sb-time">⏱ 16ms</span>
           
-        </div>
-        
-      </div>
-      <div class="pipe-step failed">
-        <div class="step-circle">
-          ❌
-          <div class="step-num">5</div>
-        </div>
-        <div class="step-label">Self-Heal Failures</div>
-        <div class="step-detail">1 failure(s) unhealed — see reports/healing-report.md</div>
-        <div class="step-time">12:28:17</div>
-        
-        <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 3m 53s</span>
-          <span class="step-badge sb-tok">▲ 9 / ▼ 7.4k</span>
         </div>
         
       </div>
       <div class="pipe-step done">
         <div class="step-circle">
           ✅
+          <div class="step-num">5</div>
+        </div>
+        <div class="step-label">Self-Heal Failures</div>
+        <div class="step-detail">All healed</div>
+        <div class="step-time">10:57:41</div>
+        
+        <div class="step-meta">
+          <span class="step-badge sb-time">⏱ 27ms</span>
+          
+        </div>
+        
+      </div>
+      <div class="pipe-step pending">
+        <div class="step-circle">
+          ⚙️
           <div class="step-num">6</div>
         </div>
         <div class="step-label">Generate Final Scripts</div>
-        <div class="step-detail">4 production scripts saved → generated/scripts/</div>
-        <div class="step-time">12:28:18</div>
+        <div class="step-detail">Waiting…</div>
+        <div class="step-time"></div>
         
-        <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 57ms</span>
-          
-        </div>
         
       </div>
       <div class="pipe-step pending">
@@ -499,12 +496,49 @@ body::after{
 <!-- PIPE-STEPS-END -->
   </div>
 </div>
+<script>
+(function(){
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function fmtDur(ms){if(ms<1000)return ms+'ms';if(ms<60000)return(ms/1000).toFixed(1)+'s';var m=Math.floor(ms/60000);return m+'m '+(Math.floor((ms%60000)/1000))+'s';}
+  function fmtTok(n){return n>=1000?(n/1000).toFixed(1)+'k':''+n;}
+  function renderStep(s){
+    var cls=s.status==='completed'?'done':s.status==='running'?'running':s.status==='failed'?'failed':'pending';
+    var icon=s.status==='completed'?'✅':s.status==='running'?'⟳':s.status==='failed'?'❌':esc(s.icon||'');
+    var elapsedMs=s.status==='running'&&s.startedAtMs?Date.now()-s.startedAtMs:(s.durationMs||0);
+    var meta='';
+    if(elapsedMs>0)meta+='<span class="step-badge sb-time">⏱ '+fmtDur(elapsedMs)+'</span>';
+    if((s.tokensIn||0)>0||(s.tokensOut||0)>0)meta+='<span class="step-badge sb-tok">▲ '+fmtTok(s.tokensIn||0)+' / ▼ '+fmtTok(s.tokensOut||0)+'</span>';
+    var progress=s.status==='running'?'<div class="step-progress"><div class="step-progress-bar"></div></div>':'';
+    return '<div class="pipe-step '+cls+'">'
+      +'<div class="step-circle">'+icon+'<div class="step-num">'+s.n+'</div></div>'
+      +'<div class="step-label">'+esc(s.label||'')+'</div>'
+      +'<div class="step-detail">'+esc(s.detail||(s.status==='pending'?'Waiting…':''))+'</div>'
+      +'<div class="step-time">'+(s.timestamp||'')+'</div>'
+      +(meta?'<div class="step-meta">'+meta+'</div>':'')
+      +progress+'</div>';
+  }
+  function refresh(){
+    fetch('pipeline-state.json?_='+Date.now())
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var el=document.getElementById('pipe-steps');
+        if(!el||!d.steps)return;
+        el.innerHTML='<!-- PIPE-STEPS-START -->
+'+(d.steps.map(renderStep).join(''))+'
+<!-- PIPE-STEPS-END -->';
+      })
+      .catch(function(){});
+  }
+  refresh();
+  setInterval(refresh,3000);
+})();
+</script>
 
 <!-- ── Overall Progress ───────────────────────────── -->
 <div class="overall">
   <div class="ov-label">
     <span>Overall Test Progress</span>
-    <strong>0 / 1 tests passing</strong>
+    <strong>0 / 0 tests passing</strong>
   </div>
   <div class="ov-track"><div class="ov-fill" style="width:0%"></div></div>
 </div>
@@ -515,23 +549,6 @@ body::after{
   <div>
     <div class="suite-grid">
       
-      <div class="suite-card sc-fail">
-        <div class="ring-wrap">
-          <svg viewBox="0 0 36 36" width="72" height="72">
-            <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
-            <circle class="ring-fg" cx="18" cy="18" r="15.9"
-              stroke="#f43f5e" stroke-dasharray="0, 100" stroke-dashoffset="0"/>
-          </svg>
-          <div class="ring-icon">📋</div>
-        </div>
-        <div class="sc-name">Quote (CPQ)</div>
-        <div class="sc-count" style="color:#f43f5e">0<span style="font-size:14px;color:var(--muted)">/1</span></div>
-        <div class="sc-sub">
-          <span style="color:var(--fail)">1 failed · </span>
-          
-          0% complete
-        </div>
-      </div>
     </div>
   </div>
   <div>
@@ -543,20 +560,12 @@ body::after{
       <div class="feed-list">
         
           <div class="feed-item fi-fail">
-            <span class="feed-time">12:28:17</span>
-            <span class="feed-msg">⚠ 1 test(s) failed — 0/1 passed</span>
-          </div>
-          <div class="feed-item fi-fail">
-            <span class="feed-time">12:28:17</span>
-            <span class="feed-msg">❌ TC-QTE-001 failed (0.0s)</span>
-          </div>
-          <div class="feed-item fi-run">
-            <span class="feed-time">12:27:54</span>
-            <span class="feed-msg">▶ TC-QTE-001 — Ready For Acceptance action visible on Approved quote and launches screenflow</span>
+            <span class="feed-time">10:57:41</span>
+            <span class="feed-msg">⚠ 0 test(s) failed — 0/0 passed</span>
           </div>
           <div class="feed-item fi-start">
-            <span class="feed-time">12:27:51</span>
-            <span class="feed-msg">Run started — 1 tests queued</span>
+            <span class="feed-time">10:57:41</span>
+            <span class="feed-msg">Run started — 0 tests queued</span>
           </div>
         
       </div>
@@ -567,23 +576,6 @@ body::after{
 <!-- ── Test Cases ─────────────────────────────────── -->
 <div class="sec">Test Cases</div>
 
-      <div class="suite-section">
-        <div class="ss-header">
-          <span class="ss-icon">📋</span>
-          <span class="ss-name">Quote (CPQ)</span>
-          <span class="ss-badge">0 / 1</span>
-        </div>
-        <div class="tile-grid">
-        <div class="tile t-failed" data-tc="TC-QTE-001">
-          <span class="t-icon">❌</span>
-          <div class="t-body">
-            <div class="t-id">TC-QTE-001</div>
-            <div class="t-title" title="TC-QTE-001 — Ready For Acceptance action visible on Approved quote and launches screenflow">Ready For Acceptance action visible on Approved quote and launches screenflow</div>
-            <div class="t-err">TimeoutError: locator.waitFor: Timeout 15000ms exceeded.</div>
-          </div>
-          <div class="t-dur">0.0s</div>
-        </div></div>
-      </div>
 
 <div class="footer">
   ✅ Run complete ·

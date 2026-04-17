@@ -2,7 +2,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
     "dotenv": "^17.3.1",
-    "playwright": "^1.58.2"
+    "playwright": "^1.58.2",
+    "pptxgenjs": "^4.0.1"
   },
   "name": "salesforcee2e",
   "version": "1.0.0",
@@ -12,8 +13,18 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "pipeline": "ts-node scripts/run-pipeline.ts"
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "pipeline": "ts-node scripts/run-pipeline.ts",
+    "watch:stories": "ts-node scripts/watch-stories.ts",
+    "fetch:stories": "ts-node scripts/fetch-jira-stories.ts",
+    "gen:tests": "ts-node scripts/generate-tests.ts",
+    "gen:plan": "ts-node scripts/generate-test-plan.ts",
+    "scrape:locators": "ts-node scripts/scrape-locators.ts",
+    "audit:orphans": "ts-node scripts/audit-orphans.ts",
+    "export:csv": "ts-node scripts/export-to-csv.ts",
+    "refresh-session": "ts-node scripts/refresh-session.ts",
+    "validate:specs": "tsc --noEmit"
   },
   "author": "",
   "license": "ISC",

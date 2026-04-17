@@ -1,6 +1,6 @@
 /**
  * DashboardReporter — Stunning live HTML dashboard for Playwright + Pipeline.
- * Generates reports/dashboard.html after every test. Auto-refreshes every 2s.
+ * Generates reports/dashboard.html after every test. Auto-refreshes every 3s.
  */
 import type {
   Reporter, FullConfig, Suite, TestCase, TestResult, FullResult,
@@ -57,7 +57,7 @@ class DashboardReporter implements Reporter {
 
   onBegin(_: FullConfig, root: Suite): void {
     fs.mkdirSync('reports', { recursive: true });
-    PipelineTracker.start(3, `Running ${root.allTests().length} tests…`);
+    PipelineTracker.start(4, `Running ${root.allTests().length} tests…`);
     this.log(`Run started — ${root.allTests().length} tests queued`, 'start');
 
     for (const test of root.allTests()) {
@@ -101,7 +101,7 @@ class DashboardReporter implements Reporter {
     this.overallStatus = result.status === 'passed' ? 'passed' : 'failed';
     const st = this.stats();
     PipelineTracker[result.status === 'passed' ? 'complete' : 'fail'](
-      3, `${st.passed}/${st.total} tests passed`
+      4, `${st.passed}/${st.total} tests passed`
     );
     this.log(
       result.status === 'passed'
@@ -247,6 +247,7 @@ body::after{
   color:#c4b5fd;border-color:rgba(124,58,237,.3);
 }
 .chip.c-time{color:#7dd3fc;}
+.chip.c-heal{color:#fbbf24;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.08);}
 
 /* ── Section Title ───────────────────────────── */
 .sec{
@@ -327,6 +328,29 @@ body::after{
 .pipe-step.running .step-detail{color:var(--run);}
 .pipe-step.failed  .step-detail{color:var(--fail);}
 .step-time{font-size:9px;color:var(--muted2);margin-top:3px;text-align:center;}
+
+/* ── Step meta badges (duration + tokens) ────── */
+.step-meta{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:5px;}
+.step-badge{
+  font-size:9px;font-weight:600;padding:2px 6px;border-radius:99px;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--muted);
+  white-space:nowrap;
+}
+.step-badge.sb-time{color:#7dd3fc;border-color:rgba(125,211,252,.2);}
+.step-badge.sb-tok {color:#a78bfa;border-color:rgba(167,139,250,.2);}
+.pipe-step.running .step-badge.sb-time{color:var(--run);border-color:rgba(245,158,11,.3);}
+
+/* ── Indeterminate progress bar (running step) ─ */
+.step-progress{
+  width:80%;height:3px;background:rgba(255,255,255,.06);border-radius:99px;
+  overflow:hidden;margin-top:7px;
+}
+.step-progress-bar{
+  height:100%;width:45%;border-radius:99px;
+  background:linear-gradient(90deg,transparent,var(--run),transparent);
+  animation:stepSweep 1.4s ease-in-out infinite;
+}
+@keyframes stepSweep{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
 
 /* ── Main Grid ───────────────────────────────── */
 .main-grid{
@@ -511,12 +535,47 @@ body::after{
 <!-- ── Pipeline Steps ────────────────────────────── -->
 <div class="sec">QA Pipeline — ${steps.length} Steps</div>
 <div class="pipeline">
-  <div class="pipe-steps">
+  <div class="pipe-steps" id="pipe-steps">
 <!-- PIPE-STEPS-START -->
 ${steps.map(s => this.renderStep(s)).join('')}
 <!-- PIPE-STEPS-END -->
   </div>
 </div>
+<script>
+(function(){
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function fmtDur(ms){if(ms<1000)return ms+'ms';if(ms<60000)return(ms/1000).toFixed(1)+'s';var m=Math.floor(ms/60000);return m+'m '+(Math.floor((ms%60000)/1000))+'s';}
+  function fmtTok(n){return n>=1000?(n/1000).toFixed(1)+'k':''+n;}
+  function renderStep(s){
+    var cls=s.status==='completed'?'done':s.status==='running'?'running':s.status==='failed'?'failed':'pending';
+    var icon=s.status==='completed'?'✅':s.status==='running'?'⟳':s.status==='failed'?'❌':esc(s.icon||'');
+    var elapsedMs=s.status==='running'&&s.startedAtMs?Date.now()-s.startedAtMs:(s.durationMs||0);
+    var meta='';
+    if(elapsedMs>0)meta+='<span class="step-badge sb-time">⏱ '+fmtDur(elapsedMs)+'</span>';
+    if((s.tokensIn||0)>0||(s.tokensOut||0)>0)meta+='<span class="step-badge sb-tok">▲ '+fmtTok(s.tokensIn||0)+' / ▼ '+fmtTok(s.tokensOut||0)+'</span>';
+    var progress=s.status==='running'?'<div class="step-progress"><div class="step-progress-bar"></div></div>':'';
+    return '<div class="pipe-step '+cls+'">'
+      +'<div class="step-circle">'+icon+'<div class="step-num">'+s.n+'</div></div>'
+      +'<div class="step-label">'+esc(s.label||'')+'</div>'
+      +'<div class="step-detail">'+esc(s.detail||(s.status==='pending'?'Waiting…':''))+'</div>'
+      +'<div class="step-time">'+(s.timestamp||'')+'</div>'
+      +(meta?'<div class="step-meta">'+meta+'</div>':'')
+      +progress+'</div>';
+  }
+  function refresh(){
+    fetch('pipeline-state.json?_='+Date.now())
+      .then(function(r){return r.json();})
+      .then(function(d){
+        var el=document.getElementById('pipe-steps');
+        if(!el||!d.steps)return;
+        el.innerHTML='<!-- PIPE-STEPS-START -->\n'+(d.steps.map(renderStep).join(''))+'\n<!-- PIPE-STEPS-END -->';
+      })
+      .catch(function(){});
+  }
+  refresh();
+  setInterval(refresh,3000);
+})();
+</script>
 
 <!-- ── Overall Progress ───────────────────────────── -->
 <div class="overall">
@@ -558,7 +617,7 @@ ${steps.map(s => this.renderStep(s)).join('')}
 ${[...this.suites.entries()].map(([,s]) => this.renderSuiteSection(s)).join('')}
 
 <div class="footer">
-  ${this.isComplete ? '✅ Run complete' : '⟳ Auto-refreshes every 2s'} ·
+  ${this.isComplete ? '✅ Run complete' : '⟳ Auto-refreshes every 3s'} ·
   Generated by DashboardReporter ·
   <a href="https://playwright.dev" target="_blank">Playwright</a>
 </div>
@@ -569,6 +628,17 @@ ${[...this.suites.entries()].map(([,s]) => this.renderSuiteSection(s)).join('')}
 
   // ── Sub-renderers ─────────────────────────────────────────────────────────
 
+  private fmtDuration(ms: number): string {
+    if (ms < 1000) return `${ms}ms`;
+    const s = Math.floor(ms / 1000);
+    if (s < 60) return `${s}s`;
+    return `${Math.floor(s / 60)}m ${s % 60}s`;
+  }
+
+  private fmtTokens(n: number): string {
+    return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`;
+  }
+
   private renderStep(s: StepState): string {
     const cls = s.status === 'completed' ? 'done'
               : s.status === 'running'   ? 'running'
@@ -578,6 +648,25 @@ ${[...this.suites.entries()].map(([,s]) => this.renderSuiteSection(s)).join('')}
                : s.status === 'running'   ? '⟳'
                : s.status === 'failed'    ? '❌'
                : s.icon;
+
+    // Duration: live elapsed for running, final for completed/failed
+    const elapsedMs = s.status === 'running' && s.startedAtMs
+      ? Date.now() - s.startedAtMs
+      : (s.durationMs ?? 0);
+    const showDuration = elapsedMs > 0;
+
+    // Token badges
+    const hasTokens = (s.tokensIn ?? 0) > 0 || (s.tokensOut ?? 0) > 0;
+
+    const metaBadges = (showDuration || hasTokens) ? `
+        <div class="step-meta">
+          ${showDuration ? `<span class="step-badge sb-time">⏱ ${this.fmtDuration(elapsedMs)}</span>` : ''}
+          ${hasTokens ? `<span class="step-badge sb-tok">▲ ${this.fmtTokens(s.tokensIn ?? 0)} / ▼ ${this.fmtTokens(s.tokensOut ?? 0)}</span>` : ''}
+        </div>` : '';
+
+    const progressBar = s.status === 'running' ? `
+        <div class="step-progress"><div class="step-progress-bar"></div></div>` : '';
+
     return `
       <div class="pipe-step ${cls}">
         <div class="step-circle">
@@ -587,6 +676,8 @@ ${[...this.suites.entries()].map(([,s]) => this.renderSuiteSection(s)).join('')}
         <div class="step-label">${esc(s.label)}</div>
         <div class="step-detail">${esc(s.detail || (s.status==='pending'?'Waiting…':''))}</div>
         <div class="step-time">${s.timestamp||''}</div>
+        ${metaBadges}
+        ${progressBar}
       </div>`;
   }
 
@@ -690,7 +781,15 @@ export function initDashboardForRun(): void {
  * Writes a blank dashboard with updated pipeline steps.
  */
 export function refreshDashboard(): void {
-  (new DashboardReporter() as any).render();
+  const r = new DashboardReporter() as any;
+  // Pre-populate suite cards from SUITE_META so they always appear in the
+  // dashboard even before Playwright runs (empty tile grids with 0 tests each).
+  for (const [key, meta] of Object.entries(SUITE_META)) {
+    if (!r.suites.has(key)) {
+      r.suites.set(key, { ...meta, tests: [] });
+    }
+  }
+  r.render();
 }
 
 /**
@@ -728,14 +827,15 @@ export function patchPipelineSteps(): void {
   const bei = html.indexOf(BE);
 
   if (bsi !== -1 && bei !== -1) {
-    const step3 = steps.find((s: any) => s.n === 3);
+    // Step n=4 is Execute E2E Tests — it drives the pass/fail badge
+    const step4 = steps.find((s: any) => s.n === 4);
     let badgeHtml = '';
 
-    if (step3?.status === 'completed') {
+    if (step4?.status === 'completed') {
       badgeHtml = `\n        <div class="badge badge-pass">ALL TESTS PASSED</div>\n`;
-    } else if (step3?.status === 'failed') {
+    } else if (step4?.status === 'failed') {
       badgeHtml = `\n        <div class="badge badge-fail">FAILURES DETECTED</div>\n`;
-    } else if (step3?.status === 'pending' || step3?.status === 'skipped') {
+    } else if (step4?.status === 'pending' || step4?.status === 'skipped') {
       // Playwright never ran or was aborted
       badgeHtml = `\n        <div class="badge badge-fail">ABORTED</div>\n`;
     }

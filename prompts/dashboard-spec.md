@@ -16,7 +16,8 @@ Two utilities collaborate to produce the dashboard:
 - Single source of truth for pipeline state
 - Persists state to `reports/pipeline-state.json` (JSON — survives process restarts)
 - API: `init()`, `start(n, msg)`, `complete(n, msg)`, `fail(n, msg)`, `skip(n, msg)`
-- Steps are 0-indexed: Step 0 = AI Test Generation, Steps 1–6 = verify / run / heal / archive / push
+- Steps are 0-indexed, **8 steps total (0–7)**: Step 0 = Scrape Locators, Step 1 = AI Test Generation, Step 2 = Verify Scenarios, Step 3 = Draft Test Plan, Step 4 = Execute E2E Tests, Step 5 = Self-Heal Failures, Step 6 = Generate Final Scripts, Step 7 = Push to GitHub
+- Status badge in dashboard header is driven by **step n=4 (Execute E2E Tests)** — not by the plan step
 
 ### `utils/DashboardReporter.ts`
 - A **Playwright custom reporter** (implements `Reporter` interface from `@playwright/test/reporter`)
@@ -70,9 +71,9 @@ pipeline run starts
 
 ## Key Features
 
-### 1. Pipeline Bar (7 steps)
-- Steps 0–6, each with status badge: `pending` / `running` / `completed` / `failed` / `skipped`
-- Labels and step count driven by `PipelineTracker.STEPS` array
+### 1. Pipeline Bar (8 steps)
+- Steps 0–7, each with status badge: `pending` / `running` / `completed` / `failed` / `skipped`
+- Labels and step count driven by `PipelineTracker.STEP_DEFAULTS` array
 - Updated by both `refreshDashboard()` (full render) and `patchPipelineSteps()` (surgical patch)
 
 ### 2. Suite Cards
@@ -87,13 +88,14 @@ pipeline run starts
 
 ### 4. Activity Feed
 - Chronological list of events: pipeline step changes, test start, test pass/fail
-- Feed item types and colours:
-  - `fi-pass` — green (test passed)
-  - `fi-fail` — red (test failed)
-  - `fi-run`  — grey/muted (test started — intentionally subdued, not amber)
-  - `fi-step` — blue (pipeline step change)
-  - `fi-warn` — amber (warnings / failures in pipeline steps)
-- Feed is capped to the most recent 60 entries to keep HTML size manageable
+- Feed item types and colours (CSS classes on `.feed-item`):
+  - `fi-pass`  — green (test passed)
+  - `fi-fail`  — red (test failed / pipeline step failed)
+  - `fi-run`   — grey/muted (test started — intentionally subdued)
+  - `fi-start` — white/text (run started event)
+  - `fi-done`  — white/text (run completed event)
+  - `info`     — muted (general info messages)
+- Feed is capped to the most recent 40 entries to keep HTML size manageable
 
 ### 5. Summary Bar
 - Total / Passed / Failed / Skipped counts

@@ -10,18 +10,14 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {
-      "actualWorkers": 1
-    },
+    "metadata": {},
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "D:/SalesforceE2E1/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "chromium",
         "name": "chromium",
         "testDir": "D:/SalesforceE2E1/tests",
@@ -62,96 +58,24 @@
     "workers": 1,
     "webServer": null
   },
-  "suites": [
+  "suites": [],
+  "errors": [
     {
-      "title": "quote.spec.ts",
-      "file": "quote.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Quote Tests",
-          "file": "quote.spec.ts",
-          "line": 123,
-          "column": 6,
-          "specs": [
-            {
-              "title": "TC-QTE-001 — Ready For Acceptance action visible on Approved quote and launches screenflow",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 1,
-                      "error": {
-                        "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[role=\"dialog\"]:not([id=\"auraError\"]):not([aria-hidden=\"true\"])').first().locator('[data-field-api-name=\"Name\"] input') to be visible\u001b[22m\n",
-                        "stack": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[role=\"dialog\"]:not([id=\"auraError\"]):not([aria-hidden=\"true\"])').first().locator('[data-field-api-name=\"Name\"] input') to be visible\u001b[22m\n\n    at createOpportunity (D:\\SalesforceE2E1\\tests\\quote.spec.ts:52:22)\n    at D:\\SalesforceE2E1\\tests\\quote.spec.ts:134:20",
-                        "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\quote.spec.ts",
-                          "column": 22,
-                          "line": 52
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 50 |\u001b[39m   \u001b[90m// Opportunity Name\u001b[39m\n \u001b[90m 51 |\u001b[39m   \u001b[36mconst\u001b[39m oppNameField \u001b[33m=\u001b[39m oppModal\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-field-api-name=\"Name\"] input'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 52 |\u001b[39m   \u001b[36mawait\u001b[39m oppNameField\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 53 |\u001b[39m   \u001b[36mawait\u001b[39m oppNameField\u001b[33m.\u001b[39mfill(oppName)\u001b[33m;\u001b[39m\n \u001b[90m 54 |\u001b[39m\n \u001b[90m 55 |\u001b[39m   \u001b[90m// Account lookup — use the provided existing account\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\quote.spec.ts",
-                            "column": 22,
-                            "line": 52
-                          },
-                          "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[role=\"dialog\"]:not([id=\"auraError\"]):not([aria-hidden=\"true\"])').first().locator('[data-field-api-name=\"Name\"] input') to be visible\u001b[22m\n\n\n\u001b[0m \u001b[90m 50 |\u001b[39m   \u001b[90m// Opportunity Name\u001b[39m\n \u001b[90m 51 |\u001b[39m   \u001b[36mconst\u001b[39m oppNameField \u001b[33m=\u001b[39m oppModal\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-field-api-name=\"Name\"] input'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 52 |\u001b[39m   \u001b[36mawait\u001b[39m oppNameField\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 53 |\u001b[39m   \u001b[36mawait\u001b[39m oppNameField\u001b[33m.\u001b[39mfill(oppName)\u001b[33m;\u001b[39m\n \u001b[90m 54 |\u001b[39m\n \u001b[90m 55 |\u001b[39m   \u001b[90m// Account lookup — use the provided existing account\u001b[39m\u001b[0m\n\u001b[2m    at createOpportunity (D:\\SalesforceE2E1\\tests\\quote.spec.ts:52:22)\u001b[22m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\quote.spec.ts:134:20\u001b[22m"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-13T06:57:54.281Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\quote-Quote-Tests-TC-QTE-0-0d8e5-ote-and-launches-screenflow-chromium\\test-failed-1.png"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\quote.spec.ts",
-                        "column": 22,
-                        "line": 52
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "9056fc4f94c24a29ec09-375c7804ea14c7999e54",
-              "file": "quote.spec.ts",
-              "line": 150,
-              "column": 5
-            }
-          ]
-        }
-      ]
+      "message": "Error: duplicate test title \"Contact Tests › TC-CON-001 — Verify Account Billing Address and Payment Terms (soft-fail)\", first declared in contact.spec.ts:53",
+      "location": {
+        "file": "D:\\SalesforceE2E1\\tests\\contact.spec.ts",
+        "line": 504,
+        "column": 7
+      },
+      "snippet": "\u001b[90m   at \u001b[39mcontact.spec.ts:504\n\n\u001b[0m \u001b[90m 502 |\u001b[39m   \u001b[90m// ── US-005 START ─────────────────────────────────────────────────────\u001b[39m\n \u001b[90m 503 |\u001b[39m   \u001b[90m// TC-CON-001 | AC Reference: AC-005-01\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 504 |\u001b[39m   test(\u001b[32m'TC-CON-001 — Verify Account Billing Address and Payment Terms (soft-fail)'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 505 |\u001b[39m     \u001b[36mconst\u001b[39m accountName \u001b[33m=\u001b[39m \u001b[32m'SBOTestAccount'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 506 |\u001b[39m\n \u001b[90m 507 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m`${SF}/lightning/o/Account/list?filterName=Recent`\u001b[39m\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
     }
   ],
-  "errors": [],
   "stats": {
-    "startTime": "2026-04-13T06:57:51.670Z",
-    "duration": 26022.026,
+    "startTime": "2026-04-17T05:27:40.824Z",
+    "duration": 421.68700000000035,
     "expected": 0,
     "skipped": 0,
-    "unexpected": 1,
+    "unexpected": 0,
     "flaky": 0
   }
 }

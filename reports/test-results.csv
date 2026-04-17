@@ -1,2 +1,1 @@
 TC ID,Object,User Story,Title,Status,Duration (s),AC Reference,Error Message,File,Line,Run Date
-TC-QTE-001,Quote (CPQ),US-005,TC-QTE-001 — Ready For Acceptance action visible on Approved quote and launches screenflow,failed,0.00,"AC-005-01, AC-005-02",TimeoutError: locator.waitFor: Timeout 15000ms exceeded.,quote.spec.ts,150,2026-04-13

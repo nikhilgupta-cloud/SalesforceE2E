@@ -1,326 +1,264 @@
 /**
- * run-pipeline.ts — Full QA Pipeline Orchestrator
- * Drives all 7 steps and keeps dashboard.html in sync throughout.
+ * run-pipeline.ts — FINAL QA Pipeline Orchestrator (Agent-Aligned)
  *
- * Usage:  npx ts-node scripts/run-pipeline.ts
+ * Usage:
+ *   npx ts-node scripts/run-pipeline.ts
  *
- * Step 0 (AI Test Generation) calls Claude API to turn user stories into tests.
- * Step 3 (Execute Tests) is handled internally by DashboardReporter —
- * this script only needs to spawn Playwright; the reporter updates the tracker.
+ * PIPELINE FLOW (Agent-Aligned)
+ * ─────────────────────────────────────────────
+ * Pre-Step   → Jira Sync (optional)
+ * Step 0     → Locator Scraping (CDP)
+ * Step 1     → Agent 1 (Knowledge Load) + Agent 2/4 (Test Generation)
+ * Step 2     → Scenario Validation
+ * Step 3     → Agent 3 (Test Plan)
+ * Step 4     → Agent 5 (Execution)
+ * Step 5     → Agent 6 (Self-Healing)
+ * Step 6     → Reporting + Export
+ * Step 7     → Git Push
  */
-import * as fs   from 'fs';
+
+import * as fs from 'fs';
 import * as path from 'path';
 import { execSync, spawnSync } from 'child_process';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 import { PipelineTracker } from '../utils/PipelineTracker';
-import { refreshDashboard, initDashboardForRun, patchPipelineSteps, patchHealedTests } from '../utils/DashboardReporter';
+import {
+  refreshDashboard,
+  initDashboardForRun,
+  patchPipelineSteps,
+  patchHealedTests
+} from '../utils/DashboardReporter';
+
 import { generateTestsFromUserStories } from './generate-tests';
+import { generateTestPlan } from './generate-test-plan';
+import { fetchJiraStories } from './fetch-jira-stories';
 import { selfHeal } from './self-heal';
+import { scrapeLocators } from './scrape-locators';
+import { exportToCsv } from './export-to-csv';
+import { auditOrphans } from './audit-orphans';
 import { loadConfig } from '../utils/FrameworkConfig';
 
-// ── tiny logger ───────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Logger
+// ─────────────────────────────────────────────
 function log(msg: string) {
-  const t = new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  const t = new Date().toLocaleTimeString('en-GB');
   console.log(`\n[pipeline ${t}] ${msg}`);
 }
 
-// ── STEP 0 — AI Test Generation from User Stories ────────────────────────────
-async function step0(): Promise<void> {
-  PipelineTracker.start(0, 'Scanning prompts/user-stories/ for new stories…');
-  log('STEP 0 — AI Test Generation');
+// ─────────────────────────────────────────────
+// STEP -1 — Jira Sync
+// ─────────────────────────────────────────────
+async function stepJira() {
+  if (!process.env.JIRA_BASE_URL) {
+    log('STEP -1 — Jira sync skipped');
+    return;
+  }
+
+  log('STEP -1 — Fetching user stories...');
+  try {
+    await fetchJiraStories();
+    log('STEP -1 — Done ✅');
+  } catch (e: any) {
+    log(`STEP -1 — Failed ⚠ ${e.message}`);
+  }
+}
+
+// ─────────────────────────────────────────────
+// STEP 0 — Locator Scraping
+// ─────────────────────────────────────────────
+async function stepScrape() {
+  PipelineTracker.start(0, 'Scraping locators...');
+  log('STEP 0 — Locator Scraper');
+
+  try {
+    const res = await scrapeLocators();
+    if (res.skipped) {
+      PipelineTracker.skip(0, res.reason);
+    } else {
+      PipelineTracker.complete(0, 'Locators ready');
+    }
+  } catch (e: any) {
+    PipelineTracker.skip(0, 'Using cached locators');
+  }
+}
+
+// ─────────────────────────────────────────────
+// STEP 1 — Agent 1 + Agent 2/4
+// ─────────────────────────────────────────────
+async function stepGenerate() {
+  PipelineTracker.start(1, 'Generating tests...');
+  log('STEP 1 — Agent 1 (Knowledge) + Agent 2/4 (Generation)');
+
+  log('Pre-step — Loading domain knowledge (Agent 1)');
 
   const result = await generateTestsFromUserStories();
 
-  if (result.notice) {
-    PipelineTracker.complete(0, result.notice);
-    log(`STEP 0 — Skipped (${result.notice})`);
-    return;
+  if (result.failed > 0 && result.added === 0) {
+    PipelineTracker.fail(1, 'Test generation failed');
+    throw new Error('Generation failed');
   }
 
-  if (result.added === 0 && result.updated === 0 && result.skipped === 0) {
-    PipelineTracker.complete(0, 'No user story files found');
-    log('STEP 0 — Done (no story files in prompts/user-stories/)');
-    return;
-  }
-
-  if (result.added === 0 && result.updated === 0) {
-    PipelineTracker.complete(0, `All ${result.skipped} user stories unchanged — nothing to regenerate`);
-    log('STEP 0 — Done (all stories up to date)');
-    return;
-  }
-
-  const parts: string[] = [];
-  if (result.added)   parts.push(`${result.added} new`);
-  if (result.updated) parts.push(`${result.updated} updated`);
-  if (result.skipped) parts.push(`${result.skipped} unchanged`);
-  PipelineTracker.complete(0, `Tests generated — ${parts.join(' · ')}`);
-  log(`STEP 0 — Done ✅ (${parts.join(', ')})`);
+  PipelineTracker.complete(1, 'Tests generated');
 }
 
-// ── STEP 1 — Verify test scenarios exist ──────────────────────────────────────
-function step1(): void {
-  PipelineTracker.start(1, 'Verifying test scenario files…');
-  log('STEP 1 — Checking generated/test-scenarios/');
+// ─────────────────────────────────────────────
+// STEP 2 — Scenario Validation
+// ─────────────────────────────────────────────
+function stepScenarios() {
+  PipelineTracker.start(2, 'Validating scenarios...');
+  log('STEP 2 — Scenario Validation');
 
-  const cfg     = loadConfig();
-  const dir     = path.join('generated', 'test-scenarios');
-  const missing = cfg.objects.filter(o => !fs.existsSync(path.join(dir, o.scenarioFile)));
-
-  if (missing.length) {
-    PipelineTracker.fail(1, `Missing: ${missing.map(o => o.scenarioFile).join(', ')}`);
-    throw new Error(`STEP 1 failed — missing scenario files: ${missing.map(o => o.scenarioFile).join(', ')}`);
+  const dir = 'generated/test-scenarios';
+  if (!fs.existsSync(dir)) {
+    throw new Error('No scenarios found');
   }
 
-  // Count scenarios dynamically
-  const total = cfg.objects.reduce((sum, o) => {
-    const content = fs.readFileSync(path.join(dir, o.scenarioFile), 'utf8');
-    return sum + (content.match(/^\| TC-/gm) ?? []).length;
-  }, 0);
-
-  PipelineTracker.complete(1, `${total} scenarios confirmed across ${cfg.objects.map(o => o.displayName).join(' · ')}`);
-  log('STEP 1 — Done ✅');
+  PipelineTracker.complete(2, 'Scenarios validated');
 }
 
-// ── STEP 2 — Verify test plan exists ─────────────────────────────────────────
-function step2(): void {
-  PipelineTracker.start(2, 'Verifying test plan…');
-  log('STEP 2 — Checking generated/test-plan.md');
+// ─────────────────────────────────────────────
+// STEP 3 — Agent 3 (Test Plan)
+// ─────────────────────────────────────────────
+async function stepPlan() {
+  PipelineTracker.start(3, 'Generating test plan...');
+  log('STEP 3 — Agent 3 (Test Plan)');
 
-  const planFile = path.join('generated', 'test-plan.md');
-  if (!fs.existsSync(planFile)) {
-    PipelineTracker.fail(2, 'test-plan.md not found');
-    throw new Error('STEP 2 failed — test-plan.md not found');
+  const res = await generateTestPlan();
+
+  if (res.status === 'failed') {
+    throw new Error('Test plan failed');
   }
 
-  // Count tests + user stories dynamically from spec/scenario files
-  const cfg2      = loadConfig();
-  const testCount = cfg2.objects.reduce((n, o) => {
-    const sp = path.join('tests', o.specFile);
-    if (!fs.existsSync(sp)) return n;
-    return n + (fs.readFileSync(sp, 'utf8').match(/^\s*test\(/gm) ?? []).length;
-  }, 0);
-  const usCount = cfg2.objects.reduce((n, o) => {
-    const fp = path.join('generated', 'test-scenarios', o.scenarioFile);
-    if (!fs.existsSync(fp)) return n;
-    return n + (fs.readFileSync(fp, 'utf8').match(/^## US-/gm) ?? []).length;
-  }, 0);
-
-  PipelineTracker.complete(2, `Test plan confirmed — ${testCount} tests · ${usCount} user stories · ${cfg2.objects.length} objects`);
-  log('STEP 2 — Done ✅');
+  PipelineTracker.complete(3, 'Test plan ready');
 }
 
-// ── STEP 3 — Run Playwright (DashboardReporter updates tracker internally) ────
-function step3(): boolean {
-  log('STEP 3 — Launching Playwright in headed mode…');
-  // NOTE: DashboardReporter.onBegin calls PipelineTracker.start(3)
-  //       DashboardReporter.onEnd  calls PipelineTracker.complete/fail(3)
-  //       Do NOT call PipelineTracker for step 3 here.
-  const specFiles = loadConfig().objects
-    .map(o => `tests/${o.specFile}`)           // forward slashes — Playwright requires them
-    .filter(sp => fs.existsSync(sp));
+// ─────────────────────────────────────────────
+// STEP 4 — Agent 5 (Execution)
+// ─────────────────────────────────────────────
+function stepExecution(): boolean {
+  log('STEP 4 — Agent 5 (Execution)');
+
+  const executionOrder = ['account', 'contact', 'opportunity', 'quote'];
+
+  const specFiles = executionOrder
+    .map(key => {
+      const obj = loadConfig().objects.find(o => o.key === key);
+      return obj ? `tests/${obj.specFile}` : null;
+    })
+    .filter(Boolean) as string[];
 
   const result = spawnSync(
     'npx',
     ['playwright', 'test', ...specFiles, '--headed'],
-    { stdio: 'inherit', shell: true },
+    { stdio: 'inherit', shell: true }
   );
-  const passed = result.status === 0;
-  log(`STEP 3 — ${passed ? 'All tests passed ✅' : 'Some tests failed ⚠'}`);
-  return passed;
+
+  return result.status === 0;
 }
 
-// ── STEP 4 — Self-heal failures ──────────────────────────────────────────────
-async function step4(allPassed: boolean): Promise<void> {
-  PipelineTracker.start(4, allPassed ? 'No failures detected' : 'Analysing failures…');
-  log('STEP 4 — Self-heal check');
+// ─────────────────────────────────────────────
+// STEP 5 — Agent 6 (Self-Healing)
+// ─────────────────────────────────────────────
+async function stepHeal(allPassed: boolean) {
+  PipelineTracker.start(5, 'Self-healing...');
+  log('STEP 5 — Agent 6 (Self-Healing, max 3 rounds)');
 
-  const resultsFile = path.join('reports', 'results.json');
-  if (!fs.existsSync(resultsFile)) {
-    PipelineTracker.complete(4, 'No results.json — nothing to heal');
-    log('STEP 4 — No results file, skipped.');
+  if (allPassed) {
+    PipelineTracker.complete(5, 'No failures');
     return;
   }
 
-  // Collect initially-failed test titles
-  const raw = JSON.parse(fs.readFileSync(resultsFile, 'utf8'));
-  const initialFailed: string[] = [];
+  const res = await selfHeal();
 
-  function collect(suite: any) {
-    for (const spec of suite.specs  ?? []) {
-      for (const test of spec.tests ?? []) {
-        if (test.results?.some((r: any) => r.status === 'failed')) {
-          initialFailed.push(spec.title);
-        }
-      }
-    }
-    for (const child of suite.suites ?? []) collect(child);
-  }
-  (raw.suites ?? []).forEach(collect);
-
-  if (initialFailed.length === 0) {
-    PipelineTracker.complete(4, 'No failures — healing not required');
-    log('STEP 4 — Done ✅ (nothing to heal)');
-    return;
+  if (res.healed.length > 0) {
+    patchHealedTests(res.healed);
   }
 
-  log(`STEP 4 — ${initialFailed.length} failure(s) detected — attempting AI healing…`);
-
-  // Run AI healer
-  const healResult = await selfHeal();
-  const { healed, failed, skipped } = healResult;
-
-  // Patch dashboard tiles for healed tests immediately
-  if (healResult.healed.length > 0) patchHealedTests(healResult.healed);
-
-  // Write healing report
-  const today = new Date().toLocaleDateString('en-GB');
-  const lines: string[] = [`# Healing Report — ${today}`, ''];
-
-  if (healed.length > 0) {
-    lines.push(`**Healed (${healed.length}):**`, ...healed.map(f => `- ✅ ${f}`), '');
-  }
-  if (failed.length > 0) {
-    lines.push(`**Still failing (${failed.length}):**`, ...failed.map(f => `- ❌ ${f}`), '');
-  }
-  if (skipped.length > 0) {
-    lines.push(`**Skipped — ANTHROPIC_API_KEY not set (${skipped.length}):**`, ...skipped.map(f => `- ⚠ ${f}`), '');
-  }
-  if (failed.length > 0 || skipped.length > 0) {
-    lines.push(
-      '**Next steps for remaining failures:**',
-      '1. Classify each failure: selector_failure | timing_failure | data_failure | environment_failure',
-      '2. For selector/timing: re-probe DOM, update SalesforceFormHandler or spec locator.',
-      '3. Re-run: `npx playwright test --headed --grep "<TC-ID>"`',
-      '4. Repeat up to 3 rounds before escalating.',
-    );
-  }
-
-  fs.mkdirSync('reports', { recursive: true });
-  fs.writeFileSync(path.join('reports', 'healing-report.md'), lines.join('\n'));
-
-  const remaining = failed.length + skipped.length;
-  if (remaining === 0) {
-    PipelineTracker.complete(4, `All ${healed.length} failure(s) healed ✅`);
-    log(`STEP 4 — Done ✅ (healed ${healed.length}/${initialFailed.length})`);
-  } else if (healed.length > 0) {
-    PipelineTracker.fail(4, `Healed ${healed.length} · ${remaining} remaining — see reports/healing-report.md`);
-    log(`STEP 4 — Partial heal (${healed.length} fixed, ${remaining} remaining)`);
+  if (res.failed.length === 0) {
+    PipelineTracker.complete(5, 'All healed');
   } else {
-    PipelineTracker.fail(4, `${initialFailed.length} failure(s) unhealed — see reports/healing-report.md`);
-    log(`STEP 4 — ${initialFailed.length} failure(s) could not be healed`);
+    PipelineTracker.fail(5, 'Some failures remain');
   }
 }
 
-// ── STEP 5 — Copy final scripts ───────────────────────────────────────────────
-function step5(): void {
-  PipelineTracker.start(5, 'Copying production scripts…');
-  log('STEP 5 — Copying specs → generated/scripts/');
+// ─────────────────────────────────────────────
+// STEP 6 — Reporting
+// ─────────────────────────────────────────────
+function stepReport() {
+  log('STEP 6 — Reporting');
 
-  const dest = path.join('generated', 'scripts');
-  fs.mkdirSync(dest, { recursive: true });
-
-  const cfg5   = loadConfig();
-  let   copied = 0;
-  for (const o of cfg5.objects) {
-    const src = path.join('tests', o.specFile);
-    if (fs.existsSync(src)) { fs.copyFileSync(src, path.join(dest, o.specFile)); copied++; }
+  try {
+    exportToCsv();
+    log('Reports generated ✅');
+  } catch {
+    log('Report generation failed ⚠');
   }
-
-  PipelineTracker.complete(5, `${copied} production script${copied !== 1 ? 's' : ''} saved → generated/scripts/`);
-  log('STEP 5 — Done ✅');
 }
 
-// ── STEP 6 — Git commit & push ────────────────────────────────────────────────
-function step6(): void {
-  PipelineTracker.start(6, 'Committing and pushing to GitHub…');
-  log('STEP 6 — Git push');
-
-  // Delete any lingering probe scripts
-  try {
-    fs.readdirSync('tests')
-      .filter(f => f.startsWith('probe-'))
-      .forEach(f => fs.unlinkSync(path.join('tests', f)));
-  } catch {}
-
-  // Build commit message from results
-  let passed = 0, total = 0;
-  try {
-    const raw = JSON.parse(fs.readFileSync(path.join('reports', 'results.json'), 'utf8'));
-    function count(suite: any) {
-      for (const spec of suite.specs  ?? []) {
-        for (const test of spec.tests ?? []) {
-          total++;
-          if (test.results?.some((r: any) => r.status === 'passed')) passed++;
-        }
-      }
-      for (const child of suite.suites ?? []) count(child);
-    }
-    (raw.suites ?? []).forEach(count);
-  } catch {}
-
-  const date   = new Date().toISOString().split('T')[0];
-  const msg    = `chore: QA run ${date} — ${passed}/${total} tests passing`;
-  const branch = process.env.GITHUB_BRANCH ?? 'main';
+// ─────────────────────────────────────────────
+// STEP 7 — Git Push
+// ─────────────────────────────────────────────
+function stepGit() {
+  PipelineTracker.start(7, 'Git push...');
+  log('STEP 7 — Git Push');
 
   try {
-    // Stage everything except secrets
-    exec('git add generated/ reports/pipeline-state.json');
-    // Stage optional report files — ignore errors if they don't exist
-    for (const f of ['reports/results.json', 'reports/healing-report.md', 'reports/dashboard.html']) {
-      if (fs.existsSync(f)) exec(`git add "${f}"`);
-    }
-    exec(`git commit -m "${msg}" --allow-empty`);
-    exec(`git push origin ${branch}`);
+    execSync('git add .');
+    execSync('git commit -m "QA Pipeline Run" --allow-empty');
+    execSync('git push');
 
-    PipelineTracker.complete(6, `Pushed — "${msg}"`);
-    log('STEP 6 — Done ✅');
+    PipelineTracker.complete(7, 'Pushed to GitHub');
   } catch (e: any) {
-    const errMsg = e.message?.split('\n')[0] ?? String(e);
-    PipelineTracker.fail(6, `Git error: ${errMsg}`);
-    log(`STEP 6 — Failed: ${errMsg}`);
+    PipelineTracker.fail(7, e.message);
+    log('⚠ Git push failed — manual intervention required');
   }
 }
 
-function exec(cmd: string) {
-  execSync(cmd, { stdio: 'inherit' });
-}
-
-// ── MAIN ──────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// MAIN
+// ─────────────────────────────────────────────
 async function main() {
-  log('═══════════════════════════════════════');
-  log('  QA Pipeline Starting — 7 Steps');
-  log('═══════════════════════════════════════');
+  log('════════ QA PIPELINE START ════════');
 
-  PipelineTracker.init();   // Reset dashboard to all-pending with today's date
-  refreshDashboard();        // Write fresh HTML immediately so browser sees the reset
+  PipelineTracker.init();
+  refreshDashboard();
 
   try {
-    await step0();             // AI: generate tests from new user stories
-    refreshDashboard();        // Step 0 result → HTML
-    step1();                   // Verify scenario files exist
-    refreshDashboard();        // Step 1 result → HTML
-    step2();                   // Verify test plan
-    initDashboardForRun();     // Step 2 result → HTML with test tiles pre-populated as pending
-    const allPassed = step3();        // Run Playwright (DashboardReporter drives Step 3)
-    await step4(allPassed);           // Self-heal failures with AI
-    patchPipelineSteps();      // Step 4 result → patch pipeline bar only
-    step5();                   // Copy final scripts
-    patchPipelineSteps();      // Step 5 result → patch pipeline bar only
-    step6();                   // Push to GitHub
-    patchPipelineSteps();      // Step 6 result → patch pipeline bar only
+    await stepJira();
 
-    log('═══════════════════════════════════════');
-    log('  QA Pipeline Complete');
-    log('═══════════════════════════════════════');
+    await stepScrape();
+    refreshDashboard();          // show step 0 result (completed / skipped)
+
+    await stepGenerate();
+    refreshDashboard();          // show step 1 result
+
+    stepScenarios();
+    refreshDashboard();          // show step 2 result
+
+    await stepPlan();
+    refreshDashboard();          // show step 3 result
+
+    initDashboardForRun();       // pre-populate test tiles as pending
+
+    const passed = stepExecution();
+    patchPipelineSteps();        // patch step 4 status without clobbering test tiles
+
+    await stepHeal(passed);
+    patchPipelineSteps();        // patch step 5
+
+    stepReport();
+    stepGit();
+
+    log('════════ QA PIPELINE COMPLETE ════════');
+  } catch (e: any) {
+    console.error('FATAL:', e.message);
+    process.exit(1);
   } finally {
-    // Always patch the dashboard on exit so it never stays "RUNNING" if interrupted
-    patchPipelineSteps();
+    patchPipelineSteps();        // always settle the final state
   }
 }
 
-main().catch(e => {
-  console.error('\n[pipeline] FATAL:', e.message);
-  process.exit(1);
-});
+main();

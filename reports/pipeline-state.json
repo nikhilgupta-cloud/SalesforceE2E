@@ -1,34 +1,34 @@
 {
-  "runDate": "2026-04-13T06:53:45.962Z",
+  "runDate": "2026-04-17T05:17:55.325Z",
   "steps": [
     {
       "n": 0,
       "label": "Scrape Locators",
       "icon": "🔍",
       "status": "skipped",
-      "detail": "Locator map is 89m old (< 24h) — using cache",
-      "timestamp": "12:23:47",
-      "startedAtMs": 1776063227938,
-      "durationMs": 9
+      "detail": "Locator map is 14m old (< 24h) — using cache",
+      "timestamp": "10:47:57",
+      "startedAtMs": 1776403076995,
+      "durationMs": 11
     },
     {
       "n": 1,
       "label": "AI Test Generation",
       "icon": "🤖",
       "status": "completed",
-      "detail": "All 1 user stories unchanged — nothing to regenerate",
-      "timestamp": "12:23:47",
-      "startedAtMs": 1776063227955,
-      "durationMs": 30
+      "detail": "Tests generated",
+      "timestamp": "10:56:37",
+      "startedAtMs": 1776403077020,
+      "durationMs": 520439
     },
     {
       "n": 2,
       "label": "Verify Scenarios",
       "icon": "📋",
       "status": "completed",
-      "detail": "4 scenarios confirmed across Account · Contact · Opportunity · Quote (CPQ)",
-      "timestamp": "12:23:48",
-      "startedAtMs": 1776063227999,
+      "detail": "Scenarios validated",
+      "timestamp": "10:56:37",
+      "startedAtMs": 1776403597493,
       "durationMs": 11
     },
     {
@@ -36,51 +36,47 @@
       "label": "Draft Test Plan",
       "icon": "📄",
       "status": "completed",
-      "detail": "Confirmed — 4 tests · 1 user stories · 4 objects",
-      "timestamp": "12:23:48",
-      "startedAtMs": 1776063228039,
-      "durationMs": 27
+      "detail": "Test plan ready",
+      "timestamp": "10:57:34",
+      "startedAtMs": 1776403597524,
+      "durationMs": 56856
     },
     {
       "n": 4,
       "label": "Execute E2E Tests",
       "icon": "🧪",
       "status": "failed",
-      "detail": "0/1 tests passed",
-      "timestamp": "12:28:17",
-      "startedAtMs": 1776063471808,
-      "durationMs": 25903
+      "detail": "0/0 tests passed",
+      "timestamp": "10:57:41",
+      "startedAtMs": 1776403661237,
+      "durationMs": 16
     },
     {
       "n": 5,
       "label": "Self-Heal Failures",
       "icon": "🔧",
-      "status": "failed",
-      "detail": "1 failure(s) unhealed — see reports/healing-report.md",
-      "timestamp": "12:28:17",
-      "startedAtMs": 1776063264673,
-      "tokensIn": 9,
-      "tokensOut": 7358,
-      "durationMs": 233315
+      "status": "completed",
+      "detail": "All healed",
+      "timestamp": "10:57:41",
+      "startedAtMs": 1776403661389,
+      "durationMs": 27
     },
     {
       "n": 6,
       "label": "Generate Final Scripts",
       "icon": "⚙️",
-      "status": "completed",
-      "detail": "4 production scripts saved → generated/scripts/",
-      "timestamp": "12:28:18",
-      "startedAtMs": 1776063498110,
-      "durationMs": 57
+      "status": "pending",
+      "detail": "",
+      "timestamp": ""
     },
     {
       "n": 7,
       "label": "Push to GitHub",
       "icon": "🚀",
       "status": "running",
-      "detail": "Committing and pushing to GitHub…",
-      "timestamp": "12:28:18",
-      "startedAtMs": 1776063498185
+      "detail": "Git push...",
+      "timestamp": "10:57:41",
+      "startedAtMs": 1776403661473
     }
   ]
 }

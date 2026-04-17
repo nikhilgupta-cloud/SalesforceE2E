@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI-Powered Playwright Framework — Full Guide</title>
+<style>
+/* ── Variables ──────────────────────────────────────────────────────────────── */
+:root{
+  --bg:#03060f;--bg2:#080d1a;--bg3:#0d1528;--bg4:#111827;
+  --glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.07);--glass3:rgba(255,255,255,0.03);
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --text:#f0f4ff;--muted:#6b7fa3;--muted2:#4a5568;--muted3:#94a3b8;
+  --pass:#22d3a5;--warn:#f59e0b;--fail:#f43f5e;--info:#60a5fa;
+  --p1:#7c3aed;--p2:#2563eb;--p3:#06b6d4;--p4:#10b981;
+  --r:16px;--r2:12px;--r3:8px;--r4:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;
+  overflow-x:hidden;font-size:15px;line-height:1.7;
+}
+
+/* ── Animated background ────────────────────────────────────────────────────── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%,rgba(124,58,237,.10) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 10%,rgba(37,99,235,.08) 0%,transparent 60%),
+    radial-gradient(ellipse 70% 60% at 50% 90%,rgba(6,182,212,.06) 0%,transparent 60%);
+  animation:bgPulse 12s ease-in-out infinite alternate;
+}
+@keyframes bgPulse{0%{opacity:.7}100%{opacity:1}}
+body::after{
+  content:'';position:fixed;width:700px;height:700px;
+  top:-250px;right:-250px;border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(124,58,237,.05) 0%,transparent 70%);
+  animation:orbFloat 18s ease-in-out infinite;
+}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-60px,60px) scale(1.1)}}
+
+/* ── Layout ─────────────────────────────────────────────────────────────────── */
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 32px 80px;}
+
+/* ── Hero ───────────────────────────────────────────────────────────────────── */
+.hero{
+  padding:60px 0 48px;text-align:center;
+  border-bottom:1px solid var(--border);margin-bottom:56px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--glass2);border:1px solid var(--border2);
+  border-radius:100px;padding:6px 18px;font-size:12px;font-weight:600;
+  color:var(--muted3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:24px;
+}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--pass);
+  box-shadow:0 0 8px var(--pass);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{
+  font-size:clamp(32px,5vw,56px);font-weight:800;letter-spacing:-.03em;
+  background:linear-gradient(135deg,#fff 0%,#c4b5fd 40%,#93c5fd 70%,#67e8f9 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.1;margin-bottom:16px;
+}
+.hero-sub{font-size:18px;color:var(--muted);max-width:620px;margin:0 auto 32px;line-height:1.6;}
+.pill-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:8px;}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 14px;
+  border-radius:100px;font-size:12px;font-weight:600;
+  border:1px solid var(--border2);background:var(--glass);color:var(--muted3);
+}
+.pill.pw{border-color:rgba(37,99,235,.4);color:#93c5fd;background:rgba(37,99,235,.08);}
+.pill.ts{border-color:rgba(6,182,212,.4);color:#67e8f9;background:rgba(6,182,212,.08);}
+.pill.sf{border-color:rgba(124,58,237,.4);color:#c4b5fd;background:rgba(124,58,237,.08);}
+.pill.ai{border-color:rgba(16,185,129,.4);color:#6ee7b7;background:rgba(16,185,129,.08);}
+.pill.cl{border-color:rgba(245,158,11,.4);color:#fcd34d;background:rgba(245,158,11,.08);}
+
+/* ── Navigation sidebar ─────────────────────────────────────────────────────── */
+.layout{display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start;}
+.toc{
+  position:sticky;top:24px;background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;
+}
+.toc-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted2);margin-bottom:14px;}
+.toc a{
+  display:block;padding:5px 10px;border-radius:var(--r4);font-size:13px;
+  color:var(--muted);text-decoration:none;transition:all .15s;margin-bottom:2px;
+}
+.toc a:hover{color:var(--text);background:var(--glass2);}
+.toc .toc-group{margin-top:10px;}
+.toc .toc-group-label{font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted2);padding:0 10px;margin-bottom:4px;}
+
+/* ── Sections ───────────────────────────────────────────────────────────────── */
+section{margin-bottom:56px;scroll-margin-top:24px;}
+h2{
+  font-size:22px;font-weight:700;margin-bottom:20px;padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+h2 .sec-icon{
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:16px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--p1),var(--p2));
+  box-shadow:0 0 16px rgba(124,58,237,.4);
+}
+h3{font-size:16px;font-weight:600;margin:24px 0 10px;color:#cbd5e1;}
+p{margin-bottom:14px;color:#cbd5e1;}
+p:last-child{margin-bottom:0;}
+
+/* ── Cards ──────────────────────────────────────────────────────────────────── */
+.card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px 24px;margin-bottom:16px;
+}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:16px;}
+.card-sm{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r2);padding:16px 18px;
+}
+.card-sm h4{font-size:14px;font-weight:600;margin-bottom:6px;
+  display:flex;align-items:center;gap:8px;}
+.card-sm p{font-size:13px;color:var(--muted);margin:0;}
+
+/* ── Pipeline steps ─────────────────────────────────────────────────────────── */
+.pipeline{display:flex;flex-direction:column;gap:0;margin:20px 0;}
+.pipe-step{
+  display:grid;grid-template-columns:48px 1fr;gap:0;position:relative;
+}
+.pipe-step:not(:last-child) .pipe-line{
+  position:absolute;left:23px;top:48px;width:2px;
+  bottom:0;background:linear-gradient(180deg,var(--border2),transparent);
+}
+.pipe-num{
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;background:var(--bg3);border:2px solid var(--border2);
+  position:relative;z-index:1;margin-top:2px;
+}
+.pipe-body{padding:0 0 32px 16px;}
+.pipe-body h4{font-size:15px;font-weight:600;margin-bottom:4px;
+  display:flex;align-items:center;gap:10px;}
+.pipe-body p{font-size:13px;color:var(--muted);margin:0;}
+.step-tag{
+  font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 8px;border-radius:100px;background:var(--glass2);border:1px solid var(--border2);
+  color:var(--muted3);
+}
+
+/* ── Code blocks ────────────────────────────────────────────────────────────── */
+pre{
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:var(--r2);padding:18px 20px;overflow-x:auto;
+  font-family:'SF Mono','Fira Code','Cascadia Code',monospace;
+  font-size:13px;line-height:1.65;margin:12px 0 20px;color:#e2e8f0;
+}
+code{
+  font-family:'SF Mono','Fira Code','Cascadia Code',monospace;
+  font-size:12.5px;background:rgba(255,255,255,.06);
+  border:1px solid var(--border);border-radius:4px;
+  padding:1px 6px;color:#c4b5fd;
+}
+pre code{background:none;border:none;padding:0;color:inherit;font-size:inherit;}
+.comment{color:var(--muted);}
+.kw{color:#c4b5fd;}
+.str{color:#86efac;}
+.fn{color:#67e8f9;}
+.num{color:#fcd34d;}
+
+/* ── Tables ─────────────────────────────────────────────────────────────────── */
+.table-wrap{overflow-x:auto;margin:12px 0 20px;border-radius:var(--r2);
+  border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--glass2);}
+th{
+  font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--muted);padding:10px 16px;text-align:left;
+  border-bottom:1px solid var(--border);
+}
+td{
+  padding:10px 16px;font-size:13px;color:#cbd5e1;
+  border-bottom:1px solid var(--border);vertical-align:top;
+}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--glass3);}
+td code{font-size:12px;}
+
+/* ── Callout boxes ──────────────────────────────────────────────────────────── */
+.callout{
+  border-radius:var(--r2);padding:14px 18px;margin:12px 0 20px;
+  display:flex;gap:12px;align-items:flex-start;
+  border:1px solid;font-size:13px;
+}
+.callout-icon{font-size:17px;line-height:1;flex-shrink:0;margin-top:1px;}
+.callout.tip{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06);color:#a7f3d0;}
+.callout.warn{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.06);color:#fde68a;}
+.callout.info{border-color:rgba(96,165,250,.3);background:rgba(96,165,250,.06);color:#bfdbfe;}
+.callout.danger{border-color:rgba(244,63,94,.3);background:rgba(244,63,94,.06);color:#fecdd3;}
+.callout-body strong{color:#fff;}
+
+/* ── Command reference list ─────────────────────────────────────────────────── */
+.cmd-list{display:flex;flex-direction:column;gap:10px;margin:12px 0 20px;}
+.cmd-row{
+  display:grid;grid-template-columns:auto 1fr;gap:0;
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r2);overflow:hidden;
+}
+.cmd-code{
+  padding:10px 16px;background:var(--bg4);border-right:1px solid var(--border);
+  font-family:'SF Mono','Fira Code',monospace;font-size:12.5px;color:#67e8f9;
+  white-space:nowrap;align-self:center;
+}
+.cmd-desc{padding:10px 16px;font-size:13px;color:var(--muted3);align-self:center;}
+
+/* ── Agent cards ────────────────────────────────────────────────────────────── */
+.agent-list{display:flex;flex-direction:column;gap:12px;margin:16px 0;}
+.agent-card{
+  display:grid;grid-template-columns:44px 1fr;gap:0;
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r2);overflow:hidden;transition:border-color .2s;
+}
+.agent-card:hover{border-color:var(--border2);}
+.agent-num{
+  background:linear-gradient(180deg,var(--p1),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:800;color:rgba(255,255,255,.8);
+}
+.agent-body{padding:12px 16px;}
+.agent-title{font-size:14px;font-weight:600;margin-bottom:3px;}
+.agent-desc{font-size:12.5px;color:var(--muted);}
+.agent-in{font-size:11px;color:var(--muted2);margin-top:6px;}
+
+/* ── Directory tree ─────────────────────────────────────────────────────────── */
+.tree{
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:var(--r2);padding:18px 20px;
+  font-family:'SF Mono','Fira Code',monospace;font-size:13px;
+  line-height:2;margin:12px 0 20px;
+}
+.tree .dir{color:#93c5fd;font-weight:600;}
+.tree .file{color:#e2e8f0;}
+.tree .note{color:var(--muted);font-style:italic;font-size:12px;}
+
+/* ── Ordered steps ──────────────────────────────────────────────────────────── */
+.steps{counter-reset:step;list-style:none;display:flex;flex-direction:column;gap:14px;margin:12px 0 20px;}
+.steps li{
+  counter-increment:step;display:grid;grid-template-columns:32px 1fr;gap:12px;
+  align-items:flex-start;
+}
+.steps li::before{
+  content:counter(step);width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p1),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;
+  box-shadow:0 0 12px rgba(124,58,237,.4);
+}
+.steps li .step-content{padding-top:5px;}
+.steps li .step-content strong{color:#fff;display:block;margin-bottom:3px;}
+.steps li .step-content span{font-size:13px;color:var(--muted);}
+
+/* ── Badge labels ───────────────────────────────────────────────────────────── */
+.badge{
+  display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.badge.required{background:rgba(244,63,94,.15);color:#fca5a5;border:1px solid rgba(244,63,94,.3);}
+.badge.optional{background:rgba(96,165,250,.12);color:#93c5fd;border:1px solid rgba(96,165,250,.25);}
+.badge.auto{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.badge.new{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.25);}
+
+/* ── Footer ─────────────────────────────────────────────────────────────────── */
+.footer{
+  text-align:center;padding:40px 0 0;border-top:1px solid var(--border);
+  color:var(--muted2);font-size:13px;
+}
+.footer strong{color:var(--muted);}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+@media(max-width:860px){
+  .layout{grid-template-columns:1fr;}
+  .toc{display:none;}
+  .wrap{padding:0 20px 60px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ── HERO ──────────────────────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-badge"><span class="dot"></span> Production-Ready Framework</div>
+  <h1>AI-Powered Playwright<br>E2E Test Framework</h1>
+  <p class="hero-sub">
+    An autonomous QA pipeline that reads your user stories, scrapes live DOM locators,
+    generates Playwright TypeScript tests with Claude AI, self-heals failures, and
+    publishes a live dashboard — all in one command.
+  </p>
+  <div class="pill-row">
+    <span class="pill pw">⚡ Playwright 1.58</span>
+    <span class="pill ts">📘 TypeScript</span>
+    <span class="pill sf">☁️ Salesforce Lightning</span>
+    <span class="pill ai">🤖 Claude AI</span>
+    <span class="pill cl">🔧 Self-Healing</span>
+  </div>
+</div>
+
+<!-- ── MAIN LAYOUT ────────────────────────────────────────────────────────────── -->
+<div class="layout">
+
+<!-- ── TOC Sidebar ─────────────────────────────────────────────────────────── -->
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <div class="toc-group">
+    <div class="toc-group-label">Getting Started</div>
+    <a href="#overview">Overview</a>
+    <a href="#prereqs">Prerequisites</a>
+    <a href="#quickstart">Quick Start</a>
+    <a href="#structure">Project Structure</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-group-label">Core Concepts</div>
+    <a href="#pipeline">8-Step Pipeline</a>
+    <a href="#agents">AI Agents</a>
+    <a href="#stories">User Stories</a>
+    <a href="#locators">Locator Strategy</a>
+    <a href="#patterns">Patterns Reference</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-group-label">Porting</div>
+    <a href="#newproject">New Project Guide</a>
+    <a href="#config">Configuration</a>
+    <a href="#objects">Adding Objects</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-group-label">Integrations</div>
+    <a href="#jira">Jira Integration</a>
+    <a href="#github">GitHub Push</a>
+  </div>
+  <div class="toc-group">
+    <div class="toc-group-label">Reference</div>
+    <a href="#commands">Commands</a>
+    <a href="#env">Environment Vars</a>
+    <a href="#healing">Self-Healing</a>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#troubleshoot">Troubleshooting</a>
+  </div>
+</nav>
+
+<!-- ── CONTENT ────────────────────────────────────────────────────────────────── -->
+<main>
+
+<!-- ── SECTION 1: Overview ────────────────────────────────────────────────────── -->
+<section id="overview">
+  <h2><span class="sec-icon">🗺️</span> Overview</h2>
+  <p>
+    This framework combines traditional Playwright automation with a Claude AI backend to deliver
+    a <strong>fully autonomous QA pipeline</strong>. Drop in a user story — the pipeline handles
+    everything else: it reads the story, scrapes your live application for real DOM selectors,
+    generates executable test code, runs the suite, and heals any failures automatically.
+  </p>
+
+  <div class="card-grid">
+    <div class="card-sm">
+      <h4>🔍 Live DOM Scraping</h4>
+      <p>Playwright CDP scraper extracts real selectors from your live org — no more guessing label text. Results cached 24h.</p>
+    </div>
+    <div class="card-sm">
+      <h4>🤖 AI Test Generation</h4>
+      <p>Claude CLI reads user stories + domain knowledge and writes production-ready Playwright TypeScript. No hallucinated selectors.</p>
+    </div>
+    <div class="card-sm">
+      <h4>🔧 Self-Healing</h4>
+      <p>Failed tests are automatically analysed, classified, patched, and re-run — up to 3 rounds, with a healing report written to disk.</p>
+    </div>
+    <div class="card-sm">
+      <h4>📊 Live Dashboard</h4>
+      <p>Auto-refreshing HTML dashboard tracks every step of the pipeline and every test result in real time.</p>
+    </div>
+    <div class="card-sm">
+      <h4>📎 Smart Change Detection</h4>
+      <p>MD5 hashing means only changed user stories trigger regeneration — unchanged stories are never re-processed.</p>
+    </div>
+    <div class="card-sm">
+      <h4>🚀 GitHub Auto-Push</h4>
+      <p>On success, the pipeline commits generated tests and results with a timestamped message and pushes to your branch.</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <div class="callout-body">
+      <strong>No ANTHROPIC_API_KEY required.</strong> The framework uses the Claude Code CLI
+      (<code>claude -p</code>) which authenticates through your active Claude Code session.
+      Ensure <code>claude --version</code> works in your terminal before running the pipeline.
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 2: Prerequisites ────────────────────────────────────────────────── -->
+<section id="prereqs">
+  <h2><span class="sec-icon">✅</span> Prerequisites</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tool</th><th>Version</th><th>Purpose</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td><code>Node.js</code></td><td>18+</td><td>Runtime for TypeScript scripts and Playwright</td><td><span class="badge required">Required</span></td></tr>
+        <tr><td><code>npm</code></td><td>8+</td><td>Package manager</td><td><span class="badge required">Required</span></td></tr>
+        <tr><td><code>Claude Code CLI</code></td><td>Latest</td><td>AI backend for test generation and healing</td><td><span class="badge required">Required</span></td></tr>
+        <tr><td><code>Git</code></td><td>Any</td><td>Version control and GitHub push step</td><td><span class="badge required">Required</span></td></tr>
+        <tr><td><code>Chromium</code></td><td>Auto-installed</td><td>Browser for Playwright tests and scraper</td><td><span class="badge auto">Auto (npx playwright install)</span></td></tr>
+        <tr><td><code>GITHUB_TOKEN</code></td><td>PAT</td><td>Push results to GitHub (Step 7)</td><td><span class="badge optional">Optional</span></td></tr>
+        <tr><td><code>JIRA_BASE_URL</code></td><td>—</td><td>Auto-fetch stories from Jira board</td><td><span class="badge optional">Optional</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Verify your Claude CLI</h3>
+  <pre><code><span class="comment"># Confirm Claude Code CLI is installed and authenticated</span>
+claude --version
+<span class="comment"># Should output something like: claude 1.x.x</span>
+
+<span class="comment"># Quick smoke test</span>
+claude -p <span class="str">"Say hello in one word"</span>
+<span class="comment"># Should output: Hello</span></code></pre>
+</section>
+
+<!-- ── SECTION 3: Quick Start ──────────────────────────────────────────────────── -->
+<section id="quickstart">
+  <h2><span class="sec-icon">⚡</span> Quick Start</h2>
+
+  <ol class="steps">
+    <li>
+      <div class="step-content">
+        <strong>Clone the repository</strong>
+        <span>Get the framework onto your machine.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Install dependencies</strong>
+        <pre style="margin:6px 0 0"><code>npm install
+npx playwright install chromium</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Create your <code>.env</code> file</strong>
+        <pre style="margin:6px 0 0"><code>SF_SANDBOX_URL=https://your-org.my.salesforce.com
+SF_USERNAME=you@yourorg.com
+SF_PASSWORD=yourpassword
+GITHUB_REPO=your-github/repo-name
+GITHUB_BRANCH=main
+<span class="comment"># Optional</span>
+GITHUB_TOKEN=ghp_xxxxxxxxxxxx
+JIRA_BASE_URL=https://yourcompany.atlassian.net</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Authenticate to Salesforce</strong>
+        <pre style="margin:6px 0 0"><code>npx ts-node scripts/refresh-session.ts
+<span class="comment"># A browser opens — log in to your org — session is saved to auth/session.json</span></code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Drop in your first user story</strong>
+        <span>Create a <code>.md</code> file in <code>user-stories/</code> or <code>prompts/user-stories/</code> — see the User Stories section below for format.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Run the pipeline</strong>
+        <pre style="margin:6px 0 0"><code>npm run pipeline
+<span class="comment"># Equivalent: npx ts-node scripts/run-pipeline.ts</span></code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Open the live dashboard</strong>
+        <pre style="margin:6px 0 0"><code><span class="comment"># Open in browser — auto-refreshes every 3 seconds</span>
+reports/dashboard.html</code></pre>
+      </div>
+    </li>
+  </ol>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <strong>First run tip:</strong> The locator scraper (Step 0) opens a headed browser and navigates to your object
+      New-record forms. This is normal — it's extracting real DOM selectors. After the first run, results are cached
+      for 24 hours and the step is skipped automatically.
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 4: Project Structure ───────────────────────────────────────────── -->
+<section id="structure">
+  <h2><span class="sec-icon">📁</span> Project Structure</h2>
+  <div class="tree">
+    <div><span class="dir">SalesforceE2E/</span></div>
+    <div>├── <span class="dir">knowledge/</span></div>
+    <div>│   └── <span class="dir">agentforce-rm/</span>            <span class="note"># Domain knowledge injected into AI prompts</span></div>
+    <div>│       ├── INDEX.md               <span class="note"># Object → domain file quick map (start here)</span></div>
+    <div>│       ├── quote-lifecycle.md     <span class="note"># Quote, QuoteLineItem, CPQ flow</span></div>
+    <div>│       ├── pricing.md             <span class="note"># PricebookEntry, price schedules</span></div>
+    <div>│       └── ...                    <span class="note"># 23 domain knowledge files total</span></div>
+    <div>├── <span class="dir">tests/</span>                         <span class="note"># Playwright spec files — one per Salesforce object</span></div>
+    <div>│   ├── account.spec.ts</div>
+    <div>│   ├── contact.spec.ts</div>
+    <div>│   ├── opportunity.spec.ts</div>
+    <div>│   └── quote.spec.ts</div>
+    <div>├── <span class="dir">user-stories/</span>                  <span class="note"># Multi-story files (OBJECT N: NAME format)</span></div>
+    <div>│   └── CPQ_User_stories.md</div>
+    <div>├── <span class="dir">prompts/</span></div>
+    <div>│   ├── framework-config.json      <span class="note"># Object registry — edit this for a new project</span></div>
+    <div>│   └── <span class="dir">user-stories/</span>              <span class="note"># Single-file user stories (one .md per US-XXX)</span></div>
+    <div>├── <span class="dir">scripts/</span></div>
+    <div>│   ├── run-pipeline.ts            <span class="note"># 8-step pipeline orchestrator</span></div>
+    <div>│   ├── scrape-locators.ts         <span class="note"># CDP DOM scraper → knowledge/scraped-locators.json</span></div>
+    <div>│   ├── generate-tests.ts          <span class="note"># Claude API test generation</span></div>
+    <div>│   ├── self-heal.ts               <span class="note"># Claude API failure healer</span></div>
+    <div>│   ├── refresh-session.ts         <span class="note"># Salesforce auth refresh</span></div>
+    <div>│   └── generate-ppt.js            <span class="note"># PowerPoint report builder</span></div>
+    <div>├── <span class="dir">utils/</span></div>
+    <div>│   ├── DashboardReporter.ts       <span class="note"># Playwright reporter — generates dashboard.html</span></div>
+    <div>│   ├── PipelineTracker.ts         <span class="note"># 8-step status tracker → pipeline-state.json</span></div>
+    <div>│   ├── FrameworkConfig.ts         <span class="note"># Loads framework-config.json</span></div>
+    <div>│   └── SalesforceFormHandler.ts   <span class="note"># Legacy SF form helper (optional)</span></div>
+    <div>├── <span class="dir">generated/</span>                     <span class="note"># AI output — never hand-edit these</span></div>
+    <div>│   ├── test-plan.md</div>
+    <div>│   ├── <span class="dir">test-scenarios/</span>            <span class="note"># Scenario tables per object</span></div>
+    <div>│   └── <span class="dir">scripts/</span>                   <span class="note"># Final production copies of spec files</span></div>
+    <div>├── <span class="dir">reports/</span></div>
+    <div>│   ├── dashboard.html             <span class="note"># Live QA dashboard (open in browser)</span></div>
+    <div>│   ├── results.json               <span class="note"># Raw Playwright JSON results</span></div>
+    <div>│   ├── pipeline-state.json        <span class="note"># 8-step pipeline status</span></div>
+    <div>│   └── SalesforceE2E-Framework-Overview.pptx</div>
+    <div>├── <span class="dir">auth/</span></div>
+    <div>│   └── session.json               <span class="note"># Salesforce auth state — gitignored, never commit</span></div>
+    <div>├── <span class="dir">.claude/</span></div>
+    <div>│   ├── <span class="dir">Agents/</span>                    <span class="note"># 7 specialised AI agent definitions</span></div>
+    <div>│   └── <span class="dir">Skills/automate/</span>           <span class="note"># /automate skill — main Claude Code entry point</span></div>
+    <div>├── playwright.config.ts</div>
+    <div>├── tsconfig.json</div>
+    <div>├── .env                           <span class="note"># Secrets — gitignored, never commit</span></div>
+    <div>└── package.json</div>
+  </div>
+</section>
+
+<!-- ── SECTION 5: Pipeline ─────────────────────────────────────────────────────── -->
+<section id="pipeline">
+  <h2><span class="sec-icon">⚙️</span> 8-Step Pipeline</h2>
+  <p>The pipeline is orchestrated by <code>scripts/run-pipeline.ts</code> and tracked in real-time on the dashboard. Each step updates <code>reports/pipeline-state.json</code> as it runs.</p>
+
+  <div class="pipeline">
+
+    <div class="pipe-step">
+      <div class="pipe-line"></div>
+      <div class="pipe-num">🔍</div>
+      <div class="pipe-body">
+        <h4>Step 0 — Scrape Locators <span class="step-tag">Cached 24h</span></h4>
+        <p>Launches a headed Chromium browser with your saved session, navigates to each object's New-record form, and uses CDP DOM evaluation to extract all <code>lightning-*</code> component selectors — piercing Shadow DOMs. Results are written to <code>knowledge/scraped-locators.json</code> and injected into Claude's system prompt at Step 1. Skipped automatically if cache is less than 24 hours old.</p>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-line"></div>
+      <div class="pipe-num">🤖</div>
+      <div class="pipe-body">
+        <h4>Step 1 — AI Test Generation <span class="step-tag">Smart delta</span></h4>
+        <p>Scans <code>user-stories/</code> and <code>prompts/user-stories/</code> for <code>.md</code> files. Each user story is hashed (MD5). New stories generate fresh test blocks; changed stories regenerate only their block; unchanged stories are skipped entirely. Generated code is wrapped in <code>// ── US-XXX START ──</code> / <code>END</code> markers and appended to the relevant spec file.</p>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-line"></div>
+      <div class="pipe-num">📋</div>
+      <div class="pipe-body">
+        <h4>Step 2 — Verify Scenarios</h4>
+        <p>Confirms that <code>generated/test-scenarios/{object}-scenarios.md</code> exists for each object in <code>framework-config.json</code>. Warns (but does not abort) if an object has no scenario file — meaning no user stories were provided for that object. Counts total scenario rows and reports to the dashboard.</p>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-line"></div>
+      <div class="pipe-num">📄</div>
+      <div class="pipe-body">
+        <h4>Step 3 — Verify Test Plan</h4>
+        <p>Confirms that <code>generated/test-plan.md</code> exists. Dynamically counts the total number of <code>test(</code> calls across all spec files and user story sections across all scenario files, and updates the test plan counts in place.</p>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-line"></div>
+      <div class="pipe-num">🧪</div>
+      <div class="pipe-body">
+        <h4>Step 4 — Execute E2E Tests <span class="step-tag">Headed Chromium</span></h4>
+        <p>Spawns <code>npx playwright test</code> with all spec files in order (Account → Contact → Opportunity → Quote). Worker count is fixed at <strong>1</strong> — sequential execution is required for Salesforce session state management. The <code>DashboardReporter</code> custom reporter updates Step 4 status internally as tests run.</p>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-line"></div>
+      <div class="pipe-num">🔧</div>
+      <div class="pipe-body">
+        <h4>Step 5 — Self-Heal Failures <span class="step-tag">Up to 3 rounds</span></h4>
+        <p>Reads <code>reports/results.json</code>. For each failed test: extracts the test block, classifies the failure type (selector / timing / data / environment), asks Claude to generate a fix, applies the patch to the spec file, and re-runs that single test to verify. Repeats up to 3 rounds. Writes <code>reports/healing-report.md</code> with full diagnosis.</p>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-line"></div>
+      <div class="pipe-num">⚙️</div>
+      <div class="pipe-body">
+        <h4>Step 6 — Generate Final Scripts</h4>
+        <p>Copies the post-healing spec files from <code>tests/</code> into <code>generated/scripts/</code>. This gives you a clean snapshot of the final, production-ready test files at each pipeline run.</p>
+      </div>
+    </div>
+
+    <div class="pipe-step">
+      <div class="pipe-num">🚀</div>
+      <div class="pipe-body">
+        <h4>Step 7 — Push to GitHub <span class="step-tag">Optional</span></h4>
+        <p>Stages <code>generated/</code>, <code>reports/</code>, and creates a timestamped commit: <code>chore: QA run YYYY-MM-DD — X/Y tests passing</code>. Pushes to <code>GITHUB_BRANCH</code>. Probe scripts (<code>probe-*.ts</code>) are deleted before staging. <code>auth/session.json</code> and <code>.env</code> are never staged.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── SECTION 6: AI Agents ────────────────────────────────────────────────────── -->
+<section id="agents">
+  <h2><span class="sec-icon">🤖</span> AI Agents</h2>
+  <p>The framework uses 7 specialised Claude agents, each defined as a markdown file under <code>.claude/Agents/</code>. They connect in sequence — each one's output feeds the next.</p>
+
+  <div class="agent-list">
+    <div class="agent-card">
+      <div class="agent-num">1</div>
+      <div class="agent-body">
+        <div class="agent-title">Knowledge Base Agent</div>
+        <div class="agent-desc">Loads the correct domain knowledge file from <code>knowledge/agentforce-rm/</code> for the object under test. Prepends verified field names, UI patterns, and platform gotchas to every Claude prompt — preventing hallucination.</div>
+        <div class="agent-in">📁 <code>.claude/Agents/agent-1-knowledge-base.md</code></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-num">2</div>
+      <div class="agent-body">
+        <div class="agent-title">Story Reader Agent</div>
+        <div class="agent-desc">Parses user story markdown files. Handles both single-file format (<code>prompts/user-stories/</code>) and multi-story files (<code>user-stories/</code>). Detects object context from <code>OBJECT N: NAME</code> headers and extracts structured AC lists.</div>
+        <div class="agent-in">📁 <code>.claude/Agents/agent-2-story-reader.md</code></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-num">3</div>
+      <div class="agent-body">
+        <div class="agent-title">Test Plan Drafter Agent</div>
+        <div class="agent-desc">Generates <code>generated/test-plan.md</code> — a summary table of all objects, TC counts, user stories, test data strategy, execution order, risks, and entry/exit criteria.</div>
+        <div class="agent-in">📁 <code>.claude/Agents/agent-3-test-plan-drafter.md</code></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-num">4</div>
+      <div class="agent-body">
+        <div class="agent-title">Scenario & Test Drafter Agent</div>
+        <div class="agent-desc">The primary test-writing agent. For each AC: generates 1 positive + 1 negative + 1 edge case scenario, then writes the Playwright TypeScript test block. Uses scraped locators first, falls back to LWC filter patterns. Wraps output in <code>// ── US-XXX START/END ──</code> markers.</div>
+        <div class="agent-in">📁 <code>.claude/Agents/agent-4-scenario-drafter.md</code></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-num">5</div>
+      <div class="agent-body">
+        <div class="agent-title">Test Executor Agent</div>
+        <div class="agent-desc">Runs pre-flight checks (session.json, .env, stale .js files), then launches Playwright against all spec files in execution order (Account → Contact → Opportunity → Quote). Workers fixed at 1. Writes <code>reports/results.json</code>.</div>
+        <div class="agent-in">📁 <code>.claude/Agents/agent-5-test-executor.md</code></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-num">6</div>
+      <div class="agent-body">
+        <div class="agent-title">Self-Healer Agent</div>
+        <div class="agent-desc">Classifies each failure as <em>selector</em> / <em>timing</em> / <em>data</em> / <em>environment</em>. For selector and timing failures: re-probes DOM, cross-references scraped locators, patches the spec, re-runs. Up to 3 rounds per failure. Writes <code>reports/healing-report.md</code>.</div>
+        <div class="agent-in">📁 <code>.claude/Agents/agent-6-self-healer.md</code></div>
+      </div>
+    </div>
+    <div class="agent-card">
+      <div class="agent-num">7</div>
+      <div class="agent-body">
+        <div class="agent-title">Dashboard & Reporter Agent</div>
+        <div class="agent-desc">Aggregates all pipeline outputs into the live HTML dashboard, updates <code>pipeline-state.json</code>, generates the PowerPoint report via <code>node scripts/generate-ppt.js</code>, and optionally commits + pushes everything to GitHub.</div>
+        <div class="agent-in">📁 <code>.claude/Agents/agent-7-dashboard-reporter.md</code></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 7: User Stories ─────────────────────────────────────────────────── -->
+<section id="stories">
+  <h2><span class="sec-icon">📖</span> Writing User Stories</h2>
+  <p>The framework supports two story file formats. Both are scanned automatically by the pipeline.</p>
+
+  <h3>Format A — Single-file per story (<code>prompts/user-stories/</code>)</h3>
+  <p>Best for individual stories added one at a time. File name doesn't matter — what matters is the heading.</p>
+  <pre><code><span class="comment"># US-001: As a Sales Rep, I want to create a Quote</span>
+
+<span class="comment">**Object:** Quote</span>
+
+<span class="comment">## Acceptance Criteria</span>
+<span class="comment">AC-001-01: Given a valid Opportunity, when I click New Quote, a Quote record is created</span>
+<span class="comment">AC-001-02: The Quote Status should default to "Draft"</span>
+<span class="comment">AC-001-03: Required fields (Account, Opportunity, Expiry Date) must be validated</span></code></pre>
+
+  <h3>Format B — Multi-story file (<code>user-stories/</code>)</h3>
+  <p>Best for exporting a full Jira sprint or project backlog. Group stories by object using <code>OBJECT N: NAME</code> headers.</p>
+  <pre><code><span class="str">OBJECT 1: QUOTE</span>
+
+<span class="comment">## US-005 — As a Sales user, I want the system to mark the Quote as 'Accepted'</span>
+As a Sales Rep,
+• I should be able to hand over the Quote to Legal by clicking 'Ready For Acceptance'...
+
+<span class="str">OBJECT 2: OPPORTUNITY</span>
+
+<span class="comment">## US-010 — As a Sales user, I want to convert an Opportunity to a Quote</span>
+...</code></pre>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <strong>Object detection:</strong> In multi-story files, the parser tracks the current object from <code>OBJECT N: NAME</code> headers. All <code>## US-XXX</code> stories below a header belong to that object until the next <code>OBJECT</code> header. Make sure your object names match one of the keys in <code>framework-config.json</code>.
+    </div>
+  </div>
+
+  <h3>Hash-based change detection</h3>
+  <p>The pipeline stores an MD5 hash of each processed story in <code>prompts/user-stories/.story-hashes.json</code>. On subsequent runs:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Story state</th><th>Action taken</th></tr></thead>
+      <tbody>
+        <tr><td>New story (no hash entry)</td><td>Full generation — scenarios + spec block created</td></tr>
+        <tr><td>Changed story (hash mismatch)</td><td>Old blocks removed, regenerated from scratch</td></tr>
+        <tr><td>Unchanged story (hash match)</td><td>Skipped — nothing regenerated</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <strong>Force regeneration:</strong> Delete <code>prompts/user-stories/.story-hashes.json</code> to treat all stories as new and regenerate everything from scratch.
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <span class="callout-icon">🚨</span>
+    <div class="callout-body">
+      <strong>No hash store + existing marker blocks = duplicate tests.</strong>
+      If <code>.story-hashes.json</code> does not exist (e.g. first run after cloning, or after deleting it),
+      the pipeline treats every story as <em>new</em> — meaning it skips the "remove old block" step
+      and goes straight to appending. If a <code>// ── US-XXX START/END ──</code> block already exists in a spec file,
+      you will end up with two identical blocks for that story.
+      <br><br>
+      <strong>Fix before running:</strong> Manually remove any existing <code>// ── US-XXX START ──</code> to
+      <code>// ── US-XXX END ──</code> blocks from the spec file, then run the pipeline — it will
+      generate and append cleanly. Alternatively, clear the generated scenario file for that object:
+      <pre style="margin:8px 0 0;background:rgba(0,0,0,.3);padding:10px;border-radius:6px;font-size:12px;"><code><span class="comment"># Git Bash / macOS:</span>
+echo "# Test Scenarios — Quote" > generated/test-scenarios/quote-scenarios.md
+
+<span class="comment"># PowerShell (Windows):</span>
+Set-Content generated\test-scenarios\quote-scenarios.md "# Test Scenarios — Quote"
+
+<span class="comment"># CMD (Windows):</span>
+echo # Test Scenarios — Quote > generated\test-scenarios\quote-scenarios.md</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 8: Jira Integration ────────────────────────────────────────────── -->
+<section id="jira">
+  <h2><span class="sec-icon">🎫</span> Jira Integration</h2>
+  <p>
+    The framework can automatically pull user stories from Jira and convert them into the
+    multi-story markdown format expected by <code>generate-tests.ts</code> — all without any manual
+    copy-paste. This is handled by <code>scripts/fetch-jira-stories.ts</code>, which runs as
+    <strong>Step -1</strong> at the start of every pipeline when <code>JIRA_BASE_URL</code> is set.
+  </p>
+
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <div class="callout-body">
+      <strong>Automatic:</strong> When <code>JIRA_BASE_URL</code> is present in your <code>.env</code>,
+      the pipeline runs the Jira fetch before any other step — no extra command needed.
+      If <code>JIRA_BASE_URL</code> is not set, Step -1 is silently skipped and the pipeline
+      uses whatever story files already exist in <code>user-stories/</code>.
+    </div>
+  </div>
+
+  <h3>Setup — required .env variables</h3>
+  <pre><code>JIRA_BASE_URL=https://yourcompany.atlassian.net
+JIRA_EMAIL=you@yourcompany.com
+JIRA_API_TOKEN=your_personal_api_token      <span class="comment"># NOT your password — generate from Atlassian account settings</span>
+JIRA_PROJECT_KEY=CPQ                        <span class="comment"># The Jira project key to pull from</span></code></pre>
+
+  <h3>Optional variables</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Variable</th><th>Default</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>JIRA_JQL</code></td>
+          <td><code>project = KEY AND issuetype = Task ORDER BY created ASC</code></td>
+          <td>Override the JQL query — e.g. filter by sprint, epic, or label</td>
+        </tr>
+        <tr>
+          <td><code>JIRA_AC_FIELD</code></td>
+          <td>—</td>
+          <td>Custom field ID for Acceptance Criteria (e.g. <code>customfield_10016</code>). If set, ACs are read from this field instead of the description body.</td>
+        </tr>
+        <tr>
+          <td><code>JIRA_OBJECT_FIELD</code></td>
+          <td>—</td>
+          <td>Custom field ID that identifies the Salesforce object for a ticket (e.g. <code>customfield_10020</code>). Takes highest priority in object detection.</td>
+        </tr>
+        <tr>
+          <td><code>JIRA_OUTPUT_FILE</code></td>
+          <td><code>user-stories/CPQ_User_stories.md</code></td>
+          <td>Override the output file path for fetched stories</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>How to generate a Jira API token</h3>
+  <ol class="steps">
+    <li>
+      <div class="step-content">
+        <strong>Go to Atlassian account settings</strong>
+        <span>Navigate to <code>id.atlassian.com → Security → API tokens</code></span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Click "Create API token"</strong>
+        <span>Give it a label like <em>SalesforceE2E Framework</em> so you can identify it later.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Copy the token immediately</strong>
+        <span>It is shown only once. Paste it into <code>.env</code> as <code>JIRA_API_TOKEN</code>.</span>
+      </div>
+    </li>
+  </ol>
+
+  <h3>Object detection — how Jira tickets are mapped to Salesforce objects</h3>
+  <p>The fetcher uses a four-tier priority system to decide which object a story belongs to. The first match wins:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Priority</th><th>Source</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1 — Custom field</strong></td>
+          <td>Value of <code>JIRA_OBJECT_FIELD</code> on the ticket</td>
+          <td>Field value <code>"Quote"</code> → maps to <code>quote</code> object key</td>
+        </tr>
+        <tr>
+          <td><strong>2 — Jira component</strong></td>
+          <td>Ticket's Component(s) field</td>
+          <td>Component <code>"quote"</code> or <code>"Quote CPQ"</code> → <code>quote</code></td>
+        </tr>
+        <tr>
+          <td><strong>3 — Jira label</strong></td>
+          <td>Ticket labels matching <code>sf-{key}</code>, <code>salesforce-{key}</code>, or <code>{key}</code></td>
+          <td>Label <code>sf-quote</code> or <code>quote</code> → <code>quote</code></td>
+        </tr>
+        <tr>
+          <td><strong>4 — Keyword scan</strong></td>
+          <td>Word-boundary regex on ticket summary, then description</td>
+          <td>Summary contains <code>"quote"</code> → <code>quote</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <strong>Unresolved stories:</strong> If a ticket's object cannot be detected by any of the four methods,
+      it is written to the output file as an HTML comment block labelled
+      <em>⚠ UNRESOLVED STORIES</em>. The pipeline will log a warning for each one.
+      Fix by adding a Jira component matching an object key in <code>framework-config.json</code>,
+      or a label like <code>sf-quote</code>.
+    </div>
+  </div>
+
+  <h3>How ACs are extracted</h3>
+  <p>If <code>JIRA_AC_FIELD</code> is set, acceptance criteria are read from that custom field directly.
+  Otherwise the fetcher looks for an <em>"Acceptance Criteria"</em> heading inside the ticket description
+  and collects all bullet lines beneath it. Each AC is automatically numbered in
+  <code>AC-NNN-NN</code> format if it doesn't already have one.</p>
+
+  <h3>Output format</h3>
+  <p>Stories are written to <code>user-stories/CPQ_User_stories.md</code> (or <code>JIRA_OUTPUT_FILE</code>) in the multi-story format, grouped by Salesforce object:</p>
+  <pre><code>Salesforce CPQ — User Stories & Acceptance Criteria
+Source: Jira CPQ — fetched 2026-04-09
+Flow: Account → Contact → Opportunity → Quote (CPQ)
+________________________________________
+OBJECT 1: QUOTE
+
+## US-005 — As a Sales user, I want the system to mark the Quote as 'Accepted'
+As a Sales Rep...
+Acceptance Criteria:
+• AC-005-01: When I click 'Ready For Acceptance'...
+• AC-005-02: System triggers all existing create order validations...
+&lt;!-- Jira: CPQ-123 --&gt;
+
+________________________________________</code></pre>
+
+  <h3>Running standalone (without the pipeline)</h3>
+  <pre><code><span class="comment"># Fetch stories only — no test generation</span>
+npm run fetch:stories
+
+<span class="comment"># Then run the pipeline to generate tests from the fetched stories</span>
+npm run pipeline</code></pre>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <strong>JQL tip:</strong> To pull only stories from the current sprint, use:
+      <code>JIRA_JQL=project = CPQ AND sprint in openSprints() AND issuetype = Story ORDER BY created ASC</code>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 8b: GitHub Push ────────────────────────────────────────────────── -->
+<section id="github">
+  <h2><span class="sec-icon">🚀</span> GitHub Push (Step 7)</h2>
+  <p>
+    Step 7 is the pipeline's final action: it commits all generated outputs with a timestamped
+    message and pushes to your configured branch. This gives you a full audit trail of every QA run
+    directly in your git history.
+  </p>
+
+  <h3>Setup</h3>
+  <ol class="steps">
+    <li>
+      <div class="step-content">
+        <strong>Create a GitHub Personal Access Token (PAT)</strong>
+        <span>Go to <code>GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)</code>. Generate a token with <code>repo</code> scope (read + write). Copy the token — it is shown only once.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Add to <code>.env</code></strong>
+        <pre style="margin:6px 0 0"><code>GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+GITHUB_REPO=your-org/your-repo-name
+GITHUB_BRANCH=main</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Ensure the remote is configured</strong>
+        <pre style="margin:6px 0 0"><code>git remote -v
+<span class="comment"># Should show: origin  https://github.com/your-org/your-repo.git</span>
+
+<span class="comment"># If not set:</span>
+git remote add origin https://github.com/your-org/your-repo.git</code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Run the pipeline — Step 7 fires automatically</strong>
+        <pre style="margin:6px 0 0"><code>npm run pipeline</code></pre>
+      </div>
+    </li>
+  </ol>
+
+  <h3>What gets committed</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>File / Folder</th><th>Why it's staged</th></tr></thead>
+      <tbody>
+        <tr><td><code>generated/</code></td><td>AI-generated scenarios, test plan, and final spec copies</td></tr>
+        <tr><td><code>reports/pipeline-state.json</code></td><td>8-step pipeline status for dashboard rendering</td></tr>
+        <tr><td><code>reports/results.json</code></td><td>Raw Playwright test results</td></tr>
+        <tr><td><code>reports/healing-report.md</code></td><td>Self-healer diagnosis and outcomes</td></tr>
+        <tr><td><code>reports/dashboard.html</code></td><td>Live HTML dashboard snapshot</td></tr>
+        <tr><td colspan="2" style="color:var(--fail);font-size:12px;">🚫 <strong>Never staged:</strong> <code>auth/session.json</code>, <code>.env</code>, <code>probe-*.ts</code> temp files</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Commit message format</h3>
+  <pre><code>chore: QA run 2026-04-09 — 42/44 tests passing</code></pre>
+  <p>The pass count is read directly from <code>reports/results.json</code> after healing. Every run in your git log tells you exactly how many tests passed on that date.</p>
+
+  <h3>Pushing with a fine-grained token (alternative to classic PAT)</h3>
+  <pre><code><span class="comment"># Fine-grained token (more secure) — set repo permissions:</span>
+<span class="comment"># Contents: Read and write</span>
+<span class="comment"># Metadata: Read-only (required)</span>
+
+<span class="comment"># Then configure git to use the token for HTTPS pushes:</span>
+git config credential.helper store
+echo "https://your-user:ghp_xxx@github.com" >> ~/.git-credentials</code></pre>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <strong>Branch protection:</strong> If your <code>main</code> branch has push protection or
+      requires pull requests, set <code>GITHUB_BRANCH</code> to a QA results branch (e.g. <code>qa-reports</code>)
+      and merge via PR. Never force-push to a protected branch.
+    </div>
+  </div>
+
+  <h3>If Step 7 fails</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Error</th><th>Cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>remote: Permission to … denied</code></td>
+          <td>Token missing <code>repo</code> scope or wrong user</td>
+          <td>Regenerate PAT with <code>repo</code> scope; ensure the token matches the repo owner</td>
+        </tr>
+        <tr>
+          <td><code>! [rejected] main → main (fetch first)</code></td>
+          <td>Remote has commits not in local history</td>
+          <td>Run <code>git pull --rebase origin main</code> then re-run the pipeline</td>
+        </tr>
+        <tr>
+          <td><code>error: src refspec main does not match any</code></td>
+          <td>First push — remote branch doesn't exist yet</td>
+          <td>Run <code>git push -u origin main</code> once to create the remote branch</td>
+        </tr>
+        <tr>
+          <td>Step 7 log says "Git error" but exits cleanly</td>
+          <td>Git credentials not stored — token in <code>.env</code> alone is not enough</td>
+          <td>Configure <code>git credential.helper</code> or use SSH with a deploy key</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <strong>Skip Step 7 selectively:</strong> Step 7 always runs if git is configured. To run
+      the pipeline without pushing (e.g. during local development), remove or comment out
+      <code>GITHUB_TOKEN</code> from your <code>.env</code> — the step will still attempt a local commit
+      but the push will fail gracefully and the pipeline will continue.
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 8c: Locator Strategy ─────────────────────────────────────────────── -->
+<section id="locators">
+  <h2><span class="sec-icon">🎯</span> Locator Strategy</h2>
+  <p>Salesforce Lightning wraps form elements in Shadow DOMs. The framework uses a three-tier locator strategy — always prefer higher-priority patterns.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Priority</th><th>Pattern</th><th>When to use</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1 — Scraped API Name</strong></td>
+          <td><code>[data-field-api-name="AccountId"] input</code></td>
+          <td>Always first choice. Immune to UI label changes. Provided by <code>knowledge/scraped-locators.json</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>2 — ARIA Role</strong></td>
+          <td><code>getByRole('button', { name: 'Save', exact: true })</code></td>
+          <td>Buttons, links, tabs, dialog roles. Always use <code>exact: true</code> to avoid partial matches.</td>
+        </tr>
+        <tr>
+          <td><strong>3 — Label-Based</strong></td>
+          <td><code>getByLabel('Account Name')</code></td>
+          <td>Preferred over text-filter for form fields. Matches the <code>&lt;label&gt;</code> association directly.</td>
+        </tr>
+        <tr>
+          <td><strong>4 — LWC Text Filter</strong></td>
+          <td><code>page.locator('lightning-input').filter({ hasText: /Account Name/i }).locator('input')</code></td>
+          <td>Fallback when API name and label are not available. Use <code>/regex/i</code> for case-insensitive matching.</td>
+        </tr>
+        <tr>
+          <td><strong>5 — Shadow Fallback</strong></td>
+          <td><code>page.locator('label:has-text("Name")').locator('xpath=..').locator('input')</code></td>
+          <td>Last resort only. Used when LWC structure prevents all other patterns. Avoid if possible.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Key Playwright rules for Salesforce LWC</h3>
+  <pre><code><span class="comment">// ✅ DO — Always wait for visibility, never check with isVisible()</span>
+<span class="kw">await</span> page.locator(<span class="str">'.my-selector'</span>).waitFor({ state: <span class="str">'visible'</span>, timeout: <span class="num">30000</span> });
+
+<span class="comment">// ❌ NEVER — networkidle hangs forever on Salesforce</span>
+<span class="kw">await</span> page.waitForLoadState(<span class="str">'networkidle'</span>);  <span class="comment">// banned</span>
+
+<span class="comment">// ✅ Modal — always scope to non-error, visible dialogs</span>
+<span class="kw">const</span> modal = page.locator(<span class="str">'[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])'</span>);
+
+<span class="comment">// ✅ After every page.goto() — dismiss Aura errors</span>
+<span class="kw">await</span> <span class="fn">dismissAuraError</span>(page);
+
+<span class="comment">// ✅ Combobox — click trigger, wait for option to attach</span>
+<span class="kw">const</span> trigger = page.locator(<span class="str">'lightning-combobox'</span>).filter({ hasText: <span class="str">/Stage/i</span> }).locator(<span class="str">'button'</span>).first();
+<span class="kw">await</span> trigger.click({ force: <span class="kw">true</span> });
+<span class="kw">const</span> option = page.locator(<span class="str">'[role="option"]'</span>).filter({ hasText: <span class="str">/Closed Won/i</span> }).last();
+<span class="kw">await</span> option.waitFor({ state: <span class="str">'attached'</span>, timeout: <span class="num">5000</span> });
+<span class="kw">await</span> option.click({ force: <span class="kw">true</span> });</code></pre>
+</section>
+
+<!-- ── SECTION 8d: Patterns Reference ────────────────────────────────────────── -->
+<section id="patterns">
+  <h2><span class="sec-icon">🧩</span> Patterns Reference</h2>
+  <p>
+    All 14 reusable interaction patterns for Salesforce Lightning (LWC). These are the canonical
+    implementations — always prefer higher-priority locators (see
+    <a href="#locators" style="color:var(--info)">Locator Strategy</a>).
+    Source of truth: <code>.claude/Skills/automate/PATTERNS.md</code>.
+  </p>
+
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <div class="callout-body">
+      <strong>Decision hierarchy applies inside every pattern.</strong>
+      For each field: try API name first → ARIA role → label → LWC text filter → shadow fallback.
+      Never skip levels. Never invent selectors.
+    </div>
+  </div>
+
+  <!-- Pattern A -->
+  <h3>Pattern A — Text Input</h3>
+  <p>Standard text fields rendered as <code>lightning-input</code>.</p>
+  <pre><code><span class="comment">// Preferred: label-based</span>
+<span class="kw">const</span> field = page.<span class="fn">getByLabel</span>(<span class="str">'Account Name'</span>);
+<span class="kw">await</span> field.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span>, timeout: <span class="num">30000</span> });
+<span class="kw">await</span> field.<span class="fn">fill</span>(<span class="str">'Acme Corp'</span>);
+
+<span class="comment">// Fallback: LWC text filter</span>
+<span class="kw">const</span> field = page.<span class="fn">locator</span>(<span class="str">'lightning-input'</span>).<span class="fn">filter</span>({ hasText: <span class="str">/Account Name/i</span> }).<span class="fn">locator</span>(<span class="str">'input'</span>);
+<span class="kw">await</span> field.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span> });
+<span class="kw">await</span> field.<span class="fn">fill</span>(<span class="str">'Acme Corp'</span>);</code></pre>
+
+  <!-- Pattern B -->
+  <h3>Pattern B — Combobox (Picklist)</h3>
+  <p>Picklist fields rendered as <code>lightning-combobox</code>.</p>
+  <pre><code><span class="kw">const</span> trigger = page.<span class="fn">locator</span>(<span class="str">'lightning-combobox'</span>)
+  .<span class="fn">filter</span>({ hasText: <span class="str">/Stage/i</span> }).<span class="fn">locator</span>(<span class="str">'button'</span>).<span class="fn">first</span>();
+<span class="kw">await</span> trigger.<span class="fn">click</span>({ force: <span class="kw">true</span> });
+
+<span class="kw">const</span> option = page.<span class="fn">locator</span>(<span class="str">'[role="option"]'</span>).<span class="fn">filter</span>({ hasText: <span class="str">/Closed Won/i</span> }).<span class="fn">last</span>();
+<span class="kw">await</span> option.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span> });
+<span class="kw">await</span> option.<span class="fn">click</span>();</code></pre>
+
+  <!-- Pattern C -->
+  <h3>Pattern C — Lookup (Record Search)</h3>
+  <p>Relationship fields rendered as <code>lightning-lookup</code>.</p>
+  <pre><code><span class="kw">const</span> input = page.<span class="fn">locator</span>(<span class="str">'lightning-lookup'</span>).<span class="fn">filter</span>({ hasText: <span class="str">/Account/i</span> }).<span class="fn">locator</span>(<span class="str">'input'</span>);
+<span class="kw">await</span> input.<span class="fn">fill</span>(<span class="str">'Acme'</span>);
+
+<span class="kw">const</span> option = page.<span class="fn">locator</span>(<span class="str">'[role="option"]'</span>).<span class="fn">filter</span>({ hasText: <span class="str">'Acme Corp'</span> }).<span class="fn">first</span>();
+<span class="kw">await</span> option.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span> });
+<span class="kw">await</span> option.<span class="fn">click</span>();</code></pre>
+
+  <!-- Pattern D -->
+  <h3>Pattern D — Checkbox</h3>
+  <pre><code><span class="kw">const</span> checkbox = page.<span class="fn">locator</span>(<span class="str">'lightning-input[type="checkbox"]'</span>).<span class="fn">locator</span>(<span class="str">'input'</span>);
+<span class="kw">await</span> checkbox.<span class="fn">check</span>();
+<span class="kw">await</span> <span class="fn">expect</span>(checkbox).<span class="fn">toBeChecked</span>();</code></pre>
+
+  <!-- Pattern E -->
+  <h3>Pattern E — AG-Grid (RLM Line Editor)</h3>
+  <p>Revenue Cloud line item grids use AG-Grid. Cells require click-then-enter to activate the inline input.</p>
+  <pre><code><span class="kw">const</span> cell = page.<span class="fn">locator</span>(<span class="str">`div[role="row"][row-id="row-0"] div[col-id="Quantity"]`</span>);
+<span class="kw">await</span> cell.<span class="fn">click</span>({ force: <span class="kw">true</span> });
+<span class="kw">await</span> page.keyboard.<span class="fn">press</span>(<span class="str">'Enter'</span>);
+
+<span class="kw">const</span> input = page.<span class="fn">locator</span>(<span class="str">'input.slds-input'</span>).<span class="fn">last</span>();
+<span class="kw">await</span> input.<span class="fn">fill</span>(<span class="str">'10'</span>);
+<span class="kw">await</span> page.keyboard.<span class="fn">press</span>(<span class="str">'Enter'</span>);
+<span class="kw">await</span> <span class="fn">waitForRlmSpinners</span>(page); <span class="comment">// always wait after grid edits</span></code></pre>
+
+  <!-- Pattern F -->
+  <h3>Pattern F — API Name Locator (MANDATORY if available)</h3>
+  <p>When <code>knowledge/scraped-locators.json</code> has a <code>data-field-api-name</code> for a field, this MUST be used — it is immune to UI label renames.</p>
+  <pre><code><span class="kw">const</span> field = page.<span class="fn">locator</span>(<span class="str">'[data-field-api-name="AccountId"] input'</span>);
+<span class="kw">await</span> field.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span> });
+<span class="kw">await</span> field.<span class="fn">fill</span>(<span class="str">'Acme Corp'</span>);</code></pre>
+
+  <!-- Pattern G -->
+  <h3>Pattern G — Modal-Scoped Interactions</h3>
+  <p>ALWAYS scope all interactions inside a dialog to the modal container. Never query globally when a modal is open.</p>
+  <pre><code><span class="kw">const</span> modal = page.<span class="fn">locator</span>(<span class="str">'[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])'</span>);
+<span class="kw">await</span> modal.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span>, timeout: <span class="num">30000</span> });
+
+<span class="kw">await</span> modal.<span class="fn">locator</span>(<span class="str">'lightning-input'</span>).<span class="fn">filter</span>({ hasText: <span class="str">/Name/i</span> }).<span class="fn">locator</span>(<span class="str">'input'</span>).<span class="fn">fill</span>(<span class="str">'Test Value'</span>);
+<span class="kw">await</span> modal.<span class="fn">getByRole</span>(<span class="str">'button'</span>, { name: <span class="str">'Save'</span>, exact: <span class="kw">true</span> }).<span class="fn">click</span>();</code></pre>
+  <div class="callout danger" style="margin-top:8px">
+    <span class="callout-icon">🚫</span>
+    <div class="callout-body">NEVER call <code>page.locator(...)</code> for fields when a modal is open — always use <code>modal.locator(...)</code></div>
+  </div>
+
+  <!-- Pattern H -->
+  <h3>Pattern H — Toast Validation</h3>
+  <pre><code><span class="kw">const</span> toast = page.<span class="fn">locator</span>(<span class="str">'.slds-notify_toast'</span>);
+<span class="kw">await</span> toast.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span>, timeout: <span class="num">10000</span> });
+<span class="kw">await</span> <span class="fn">expect</span>(toast).<span class="fn">toContainText</span>(<span class="str">'was created'</span>);
+<span class="kw">await</span> toast.<span class="fn">waitFor</span>({ state: <span class="str">'hidden'</span>, timeout: <span class="num">15000</span> }); <span class="comment">// wait to dismiss before chaining</span></code></pre>
+
+  <!-- Pattern I -->
+  <h3>Pattern I — iFrame Handling</h3>
+  <pre><code><span class="kw">const</span> frame = page.<span class="fn">frameLocator</span>(<span class="str">'iframe[title="Your Frame Title"]'</span>);
+<span class="kw">await</span> frame.<span class="fn">locator</span>(<span class="str">'button:has-text("Save")'</span>).<span class="fn">click</span>();</code></pre>
+
+  <!-- Pattern J -->
+  <h3>Pattern J — Safe Click (Retry Wrapper)</h3>
+  <p>Use sparingly — prefer fixing the root cause (missing <code>waitFor</code>) over wrapping in retry.</p>
+  <pre><code><span class="kw">async function</span> <span class="fn">safeClick</span>(locator: Locator): Promise&lt;<span class="kw">void</span>&gt; {
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+    <span class="kw">try</span> {
+      <span class="kw">await</span> locator.<span class="fn">click</span>();
+      <span class="kw">return</span>;
+    } <span class="kw">catch</span> {
+      <span class="kw">await</span> locator.<span class="fn">page</span>().<span class="fn">waitForTimeout</span>(<span class="num">500</span>);
+    }
+  }
+  <span class="kw">throw new</span> Error(<span class="str">'safeClick failed after 3 attempts'</span>);
+}</code></pre>
+
+  <!-- Pattern K -->
+  <h3>Pattern K — Tab Navigation</h3>
+  <pre><code><span class="kw">await</span> page.<span class="fn">getByRole</span>(<span class="str">'tab'</span>, { name: <span class="str">'Related'</span>, exact: <span class="kw">true</span> }).<span class="fn">click</span>();
+<span class="kw">await</span> <span class="fn">expect</span>(page.<span class="fn">getByRole</span>(<span class="str">'tab'</span>, { name: <span class="str">'Related'</span> })).<span class="fn">toHaveAttribute</span>(<span class="str">'aria-selected'</span>, <span class="str">'true'</span>);</code></pre>
+
+  <!-- Pattern L -->
+  <h3>Pattern L — Field Error Validation</h3>
+  <pre><code><span class="comment">// Assert error appears after bad submit</span>
+<span class="kw">const</span> error = page.<span class="fn">locator</span>(<span class="str">'.slds-form-element__help'</span>);
+<span class="kw">await</span> error.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span>, timeout: <span class="num">5000</span> });
+<span class="kw">await</span> <span class="fn">expect</span>(error).<span class="fn">toContainText</span>(<span class="str">'Complete this field'</span>);
+
+<span class="comment">// Assert error clears after valid input</span>
+<span class="kw">await</span> error.<span class="fn">waitFor</span>({ state: <span class="str">'hidden'</span>, timeout: <span class="num">5000</span> });</code></pre>
+
+  <!-- Pattern M -->
+  <h3>Pattern M — Lightning Date Pickers</h3>
+  <p>NEVER click the calendar icon or interact with the popup. Always fill the input directly in <code>YYYY-MM-DD</code> format.</p>
+  <pre><code><span class="comment">// Preferred: label-based</span>
+<span class="kw">const</span> dateField = page.<span class="fn">getByLabel</span>(<span class="str">'Close Date'</span>);
+<span class="kw">await</span> dateField.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span>, timeout: <span class="num">30000</span> });
+<span class="kw">await</span> dateField.<span class="fn">fill</span>(<span class="str">'2026-12-31'</span>);
+<span class="kw">await</span> dateField.<span class="fn">press</span>(<span class="str">'Tab'</span>); <span class="comment">// trigger Salesforce validation</span>
+
+<span class="comment">// API name approach</span>
+<span class="kw">const</span> dateField = page.<span class="fn">locator</span>(<span class="str">'[data-field-api-name="CloseDate"] input'</span>);
+<span class="kw">await</span> dateField.<span class="fn">fill</span>(<span class="str">'2026-12-31'</span>);
+<span class="kw">await</span> dateField.<span class="fn">press</span>(<span class="str">'Tab'</span>);
+
+<span class="comment">// If value does not persist</span>
+<span class="kw">await</span> dateField.<span class="fn">fill</span>(<span class="str">'2026-12-31'</span>);
+<span class="kw">await</span> dateField.<span class="fn">press</span>(<span class="str">'Tab'</span>);
+<span class="kw">await</span> dateField.<span class="fn">blur</span>();</code></pre>
+  <p style="font-size:13px;color:var(--muted)">Applies to: Opportunity Close Date, Contract Start/End Dates, Quote Expiration Date, any standard Salesforce date field.</p>
+
+  <!-- Pattern N -->
+  <h3>Pattern N — Related List / List View Row Actions</h3>
+  <p>Target the row container first, open the action dropdown, then click the menu item — never click the record link text.</p>
+  <pre><code><span class="comment">// Step 1: Locate and assert the row</span>
+<span class="kw">const</span> row = page.<span class="fn">locator</span>(<span class="str">'[role="row"]'</span>).<span class="fn">filter</span>({ hasText: <span class="str">'Acme Corp'</span> }).<span class="fn">first</span>();
+<span class="kw">await</span> row.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span>, timeout: <span class="num">30000</span> });
+<span class="kw">await</span> <span class="fn">expect</span>(row).<span class="fn">toContainText</span>(<span class="str">'Acme Corp'</span>);
+
+<span class="comment">// Step 2: Open action menu</span>
+<span class="kw">const</span> actionButton = row.<span class="fn">locator</span>(<span class="str">'button[aria-haspopup="true"]'</span>).<span class="fn">first</span>();
+<span class="kw">await</span> actionButton.<span class="fn">click</span>({ force: <span class="kw">true</span> });
+<span class="kw">await</span> page.<span class="fn">waitForTimeout</span>(<span class="num">300</span>); <span class="comment">// allow menu render</span>
+
+<span class="comment">// Step 3: Click scoped menu item</span>
+<span class="kw">const</span> menu = page.<span class="fn">locator</span>(<span class="str">'[role="menu"]'</span>);
+<span class="kw">await</span> menu.<span class="fn">waitFor</span>({ state: <span class="str">'visible'</span> });
+<span class="kw">await</span> menu.<span class="fn">locator</span>(<span class="str">'[role="menuitem"]'</span>).<span class="fn">filter</span>({ hasText: <span class="str">'Edit'</span> }).<span class="fn">click</span>();</code></pre>
+  <p style="font-size:13px;color:var(--muted)">Applies to: Related Lists (Quotes under Opportunity), List Views (Accounts, Opportunities), RLM Quote Line Items, any row-level action.</p>
+
+</section>
+
+<!-- ── SECTION 9: New Project Guide ───────────────────────────────────────────── -->
+<section id="newproject">
+  <h2><span class="sec-icon">🔄</span> Porting to a New Project</h2>
+  <p>The framework is configuration-driven. Here is the complete checklist to adapt it to any Salesforce org or web application.</p>
+
+  <ol class="steps">
+    <li>
+      <div class="step-content">
+        <strong>Update <code>prompts/framework-config.json</code></strong>
+        <span>This is the single source of truth for object metadata. Change <code>appName</code>, <code>dashboardTitle</code>, and the <code>objects</code> array to match your new project's objects.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Update <code>.env</code></strong>
+        <span>Point <code>SF_SANDBOX_URL</code> at the new org. Update credentials. Set <code>GITHUB_REPO</code> and <code>GITHUB_BRANCH</code>.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Re-authenticate</strong>
+        <pre style="margin:6px 0 0"><code>npx ts-node scripts/refresh-session.ts
+<span class="comment"># Login to the new org in the browser that opens</span></code></pre>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Add domain knowledge files</strong>
+        <span>Drop <code>.md</code> files into <code>knowledge/agentforce-rm/</code> describing your objects — field names, UI patterns, gotchas. Update <code>knowledge/agentforce-rm/INDEX.md</code> and the <code>OBJECT_KNOWLEDGE_MAP</code> in <code>scripts/generate-tests.ts</code>.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Update scraper object URLs</strong>
+        <span>Edit the <code>OBJECT_URLS</code> map in <code>scripts/scrape-locators.ts</code> to point at your new objects' New-record form paths.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Clear old generated files</strong>
+        <div class="tab-group" style="margin:8px 0 0">
+          <div class="tab-bar" style="display:flex;gap:4px;margin-bottom:-1px">
+            <button class="tab-btn active" onclick="switchTab(this,'bash-clear')" style="padding:4px 12px;background:rgba(99,102,241,.25);border:1px solid rgba(99,102,241,.4);border-bottom:none;border-radius:6px 6px 0 0;color:#a5b4fc;cursor:pointer;font-size:12px">Git Bash / macOS</button>
+            <button class="tab-btn" onclick="switchTab(this,'ps-clear')" style="padding:4px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-bottom:none;border-radius:6px 6px 0 0;color:#94a3b8;cursor:pointer;font-size:12px">PowerShell (Windows)</button>
+            <button class="tab-btn" onclick="switchTab(this,'cmd-clear')" style="padding:4px 12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-bottom:none;border-radius:6px 6px 0 0;color:#94a3b8;cursor:pointer;font-size:12px">CMD (Windows)</button>
+          </div>
+          <pre id="bash-clear" class="tab-panel" style="margin:0;border-radius:0 6px 6px 6px;border:1px solid rgba(99,102,241,.4)"><code>rm -f generated/test-scenarios/account-scenarios.md
+rm -f generated/test-scenarios/contact-scenarios.md
+rm -f generated/test-scenarios/opportunity-scenarios.md
+rm -f generated/test-scenarios/quote-scenarios.md
+rm -f generated/test-plan.md
+rm -f knowledge/scraped-locators.json
+rm -f prompts/user-stories/.story-hashes.json</code></pre>
+          <pre id="ps-clear" class="tab-panel" style="display:none;margin:0;border-radius:0 6px 6px 6px;border:1px solid rgba(255,255,255,.1)"><code>Remove-Item generated\test-scenarios\* -Force -ErrorAction SilentlyContinue
+Remove-Item generated\test-plan.md -Force -ErrorAction SilentlyContinue
+Remove-Item knowledge\scraped-locators.json -Force -ErrorAction SilentlyContinue
+Remove-Item prompts\user-stories\.story-hashes.json -Force -ErrorAction SilentlyContinue</code></pre>
+          <pre id="cmd-clear" class="tab-panel" style="display:none;margin:0;border-radius:0 6px 6px 6px;border:1px solid rgba(255,255,255,.1)"><code>del /q generated\test-scenarios\* 2>nul
+del /q generated\test-plan.md 2>nul
+del /q knowledge\scraped-locators.json 2>nul
+del /q prompts\user-stories\.story-hashes.json 2>nul</code></pre>
+        </div>
+        <p style="margin:6px 0 0;font-size:12px;color:#64748b">⚠️ If using the Playwright VS Code extension terminal, it may open PowerShell or CMD — use the matching tab above.</p>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Add your user stories</strong>
+        <span>Create <code>.md</code> files in <code>user-stories/</code> or <code>prompts/user-stories/</code> following the formats above.</span>
+      </div>
+    </li>
+    <li>
+      <div class="step-content">
+        <strong>Run the pipeline</strong>
+        <pre style="margin:6px 0 0"><code>npm run pipeline</code></pre>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- ── SECTION 10: Configuration ──────────────────────────────────────────────── -->
+<section id="config">
+  <h2><span class="sec-icon">🔧</span> Configuration Reference</h2>
+
+  <h3><code>prompts/framework-config.json</code> — Object registry</h3>
+  <pre><code>{
+  <span class="str">"appName"</span>: <span class="str">"Salesforce CPQ"</span>,          <span class="comment">// Shown in dashboard header</span>
+  <span class="str">"dashboardTitle"</span>: <span class="str">"CPQ — QA Dashboard"</span>,
+  <span class="str">"dashboardSubtitle"</span>: <span class="str">"Playwright E2E · Chromium"</span>,
+  <span class="str">"objects"</span>: [
+    {
+      <span class="str">"key"</span>:          <span class="str">"quote"</span>,           <span class="comment">// Must match object key in knowledge map</span>
+      <span class="str">"prefix"</span>:       <span class="str">"QTE"</span>,             <span class="comment">// Used in TC-QTE-001 test IDs</span>
+      <span class="str">"displayName"</span>:  <span class="str">"Quote (CPQ)"</span>,     <span class="comment">// Human label in dashboard</span>
+      <span class="str">"icon"</span>:         <span class="str">"📋"</span>,              <span class="comment">// Dashboard tile icon</span>
+      <span class="str">"accent"</span>:       <span class="str">"#10b981"</span>,         <span class="comment">// Dashboard tile colour</span>
+      <span class="str">"specFile"</span>:     <span class="str">"quote.spec.ts"</span>,   <span class="comment">// Playwright spec file in tests/</span>
+      <span class="str">"scenarioFile"</span>: <span class="str">"quote-scenarios.md"</span> <span class="comment">// Scenario file in generated/test-scenarios/</span>
+    }
+  ]
+}</code></pre>
+
+  <h3><code>playwright.config.ts</code> — Key settings</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Setting</th><th>Value</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><code>workers</code></td><td><strong>1</strong></td><td>Salesforce session state requires sequential execution — never change this</td></tr>
+        <tr><td><code>browser</code></td><td>Chromium only</td><td>Safari/Firefox have known Salesforce LWC issues</td></tr>
+        <tr><td><code>testTimeout</code></td><td>120 000 ms</td><td>CPQ pricing calculations and RLM spinners can take 30–60s</td></tr>
+        <tr><td><code>actionTimeout</code></td><td>30 000 ms</td><td>Standard LWC render latency budget</td></tr>
+        <tr><td><code>navigationTimeout</code></td><td>60 000 ms</td><td>Org cold-start and page load buffer</td></tr>
+        <tr><td><code>screenshot</code></td><td>On failure only</td><td>Saved to <code>test-results/</code> for healer analysis</td></tr>
+        <tr><td><code>trace</code></td><td>On first retry</td><td>Trace viewer captures DOM state for debugging</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── SECTION 11: Adding Objects ─────────────────────────────────────────────── -->
+<section id="objects">
+  <h2><span class="sec-icon">➕</span> Adding a New Salesforce Object</h2>
+  <p>To extend the framework with a new object (e.g. <em>Contract</em>) follow these four steps.</p>
+
+  <h3>1. Add to <code>framework-config.json</code></h3>
+  <pre><code>{
+  <span class="str">"key"</span>: <span class="str">"contract"</span>,
+  <span class="str">"prefix"</span>: <span class="str">"CON"</span>,
+  <span class="str">"displayName"</span>: <span class="str">"Contract"</span>,
+  <span class="str">"icon"</span>: <span class="str">"📜"</span>,
+  <span class="str">"accent"</span>: <span class="str">"#f59e0b"</span>,
+  <span class="str">"specFile"</span>: <span class="str">"contract.spec.ts"</span>,
+  <span class="str">"scenarioFile"</span>: <span class="str">"contract-scenarios.md"</span>
+}</code></pre>
+
+  <h3>2. Add the scraper URL in <code>scripts/scrape-locators.ts</code></h3>
+  <pre><code><span class="kw">const</span> OBJECT_URLS = {
+  account:     <span class="str">'/lightning/o/Account/new'</span>,
+  contact:     <span class="str">'/lightning/o/Contact/new'</span>,
+  opportunity: <span class="str">'/lightning/o/Opportunity/new'</span>,
+  quote:       <span class="str">'/lightning/o/Quote/new'</span>,
+  contract:    <span class="str">'/lightning/o/Contract/new'</span>,  <span class="comment">// ← add this</span>
+};</code></pre>
+
+  <h3>3. Add domain knowledge mapping in <code>scripts/generate-tests.ts</code></h3>
+  <pre><code><span class="kw">const</span> OBJECT_KNOWLEDGE_MAP = {
+  <span class="comment">// ... existing entries ...</span>
+  contract: [<span class="str">'contract-lifecycle.md'</span>, <span class="str">'amendments.md'</span>],  <span class="comment">// ← add this</span>
+};</code></pre>
+
+  <h3>4. Add a domain knowledge file (if not already present)</h3>
+  <p>Create <code>knowledge/agentforce-rm/contract-lifecycle.md</code> describing the object's fields, UI patterns, and known gotchas. Update <code>knowledge/agentforce-rm/INDEX.md</code> with the new entry.</p>
+  <p>The spec file (<code>tests/contract.spec.ts</code>) will be auto-generated by the pipeline on first run if it doesn't exist.</p>
+</section>
+
+<!-- ── SECTION 12: Commands ────────────────────────────────────────────────────── -->
+<section id="commands">
+  <h2><span class="sec-icon">💻</span> Commands Reference</h2>
+
+  <div class="cmd-list">
+    <div class="cmd-row">
+      <div class="cmd-code">npm run pipeline</div>
+      <div class="cmd-desc">Run the full 8-step pipeline — the primary entry point for every QA cycle</div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">npm run watch:stories</div>
+      <div class="cmd-desc">Watch <code>user-stories/</code> for changes — auto-regenerates tests on every save</div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">npm run scrape:locators</div>
+      <div class="cmd-desc">Force-run the DOM scraper (bypasses 24h cache)</div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">npm run fetch:stories</div>
+      <div class="cmd-desc">Pull user stories from Jira (requires <code>JIRA_BASE_URL</code> in <code>.env</code>)</div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">npx playwright test</div>
+      <div class="cmd-desc">Run Playwright directly — bypasses pipeline, no AI generation or healing</div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">npx playwright test --grep "TC-QTE-001"</div>
+      <div class="cmd-desc">Run a single test by TC ID — useful for debugging individual failures</div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">npx playwright test --headed</div>
+      <div class="cmd-desc">Run tests with browser UI visible — helps diagnose selector failures</div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">npx ts-node scripts/refresh-session.ts</div>
+      <div class="cmd-desc">Re-authenticate to Salesforce and refresh <code>auth/session.json</code></div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">npx ts-node scripts/generate-tests.ts</div>
+      <div class="cmd-desc">Run AI test generation only (no test execution)</div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">npx ts-node scripts/self-heal.ts</div>
+      <div class="cmd-desc">Run the self-healer against existing <code>reports/results.json</code> without re-running tests</div>
+    </div>
+    <div class="cmd-row">
+      <div class="cmd-code">node scripts/generate-ppt.js</div>
+      <div class="cmd-desc">Generate the PowerPoint report from current pipeline state</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 13: Environment Variables ──────────────────────────────────────── -->
+<section id="env">
+  <h2><span class="sec-icon">🔐</span> Environment Variables</h2>
+  <div class="callout danger">
+    <span class="callout-icon">🚨</span>
+    <div class="callout-body">
+      <strong>Never commit <code>.env</code> or <code>auth/session.json</code>.</strong>
+      Both are in <code>.gitignore</code>. The pipeline will refuse to stage them.
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Variable</th><th>Example</th><th>Purpose</th><th>Required?</th></tr></thead>
+      <tbody>
+        <tr><td><code>SF_SANDBOX_URL</code></td><td><code>https://org.my.salesforce.com</code></td><td>Base URL for all Playwright navigation and scraper</td><td><span class="badge required">Required</span></td></tr>
+        <tr><td><code>SF_USERNAME</code></td><td><code>user@org.com</code></td><td>Used for session refresh script</td><td><span class="badge required">Required</span></td></tr>
+        <tr><td><code>SF_PASSWORD</code></td><td><code>yourpassword</code></td><td>Used for session refresh script</td><td><span class="badge required">Required</span></td></tr>
+        <tr><td><code>GITHUB_REPO</code></td><td><code>org/repo-name</code></td><td>Target GitHub repository for push step</td><td><span class="badge optional">Optional</span></td></tr>
+        <tr><td><code>GITHUB_BRANCH</code></td><td><code>main</code></td><td>Branch to push results to (defaults to <code>main</code>)</td><td><span class="badge optional">Optional</span></td></tr>
+        <tr><td><code>GITHUB_TOKEN</code></td><td><code>ghp_xxxx</code></td><td>Personal Access Token for GitHub push</td><td><span class="badge optional">Optional</span></td></tr>
+        <tr><td><code>JIRA_BASE_URL</code></td><td><code>https://org.atlassian.net</code></td><td>Jira base URL for story auto-fetch</td><td><span class="badge optional">Optional</span></td></tr>
+        <tr><td><code>JIRA_EMAIL</code></td><td><code>user@org.com</code></td><td>Jira account email</td><td><span class="badge optional">Optional</span></td></tr>
+        <tr><td><code>JIRA_API_TOKEN</code></td><td><code>your_api_token</code></td><td>Jira Personal API Token (generate from Atlassian account settings — not your password)</td><td><span class="badge optional">Optional</span></td></tr>
+        <tr><td><code>JIRA_PROJECT_KEY</code></td><td><code>SCRUM</code></td><td>Jira project key to fetch stories from</td><td><span class="badge optional">Optional</span></td></tr>
+        <tr><td><code>JIRA_JQL</code></td><td><code>project = SCRUM ORDER BY created ASC</code></td><td>Custom JQL query for story filter</td><td><span class="badge optional">Optional</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── SECTION 14: Self-Healing ───────────────────────────────────────────────── -->
+<section id="healing">
+  <h2><span class="sec-icon">🔧</span> Self-Healing Deep Dive</h2>
+  <p>Agent 6 (Self-Healer) runs automatically after every test execution. Here's how it classifies and fixes failures.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Failure Type</th><th>Symptoms</th><th>Fix Strategy</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>selector_failure</code></td>
+          <td>Locator returned 0 or >1 elements, or timed out waiting for visibility</td>
+          <td>Re-probe DOM via temp probe script, cross-reference <code>scraped-locators.json</code>, rewrite locator</td>
+        </tr>
+        <tr>
+          <td><code>timing_failure</code></td>
+          <td>Action timed out while page was loading or spinner was active</td>
+          <td>Add <code>waitFor</code>, increase timeout, inject <code>waitForRlmSpinners()</code> call</td>
+        </tr>
+        <tr>
+          <td><code>data_failure</code></td>
+          <td>Lookup record doesn't exist, missing prerequisite data</td>
+          <td>Add <code>createSupportingRecord()</code> helper in <code>beforeAll</code></td>
+        </tr>
+        <tr>
+          <td><code>environment_failure</code></td>
+          <td>Session expired, network error, org issue</td>
+          <td>Not auto-fixable — written to <code>healing-report.md</code> with instructions</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Healing limits and safety</h3>
+  <div class="card">
+    <p>The healer runs a maximum of <strong>3 rounds</strong> per failure. After round 3, remaining failures are marked as <em>unresolved</em> and written to <code>reports/healing-report.md</code> with a manual action checklist.</p>
+    <p style="margin-top:10px;">The healer <strong>only patches code within <code>// ── US-XXX START/END ──</code> markers</strong>. Manually authored tests outside these markers are never touched.</p>
+    <p style="margin-top:10px;">Temporary probe files (<code>probe-*.ts</code>) used for DOM inspection are always deleted before the GitHub push step.</p>
+  </div>
+</section>
+
+<!-- ── SECTION 15: Dashboard ───────────────────────────────────────────────────── -->
+<section id="dashboard">
+  <h2><span class="sec-icon">📊</span> Dashboard</h2>
+  <p>Open <code>reports/dashboard.html</code> in any browser. It auto-refreshes every 3 seconds and updates live as the pipeline progresses.</p>
+
+  <div class="card-grid">
+    <div class="card-sm">
+      <h4>📍 Pipeline Timeline</h4>
+      <p>Shows all 8 steps with real-time status: <span style="color:var(--warn)">running</span>, <span style="color:var(--pass)">completed</span>, <span style="color:var(--fail)">failed</span>, or skipped. Each step shows its detail message and timestamp.</p>
+    </div>
+    <div class="card-sm">
+      <h4>🏷️ Test Tiles</h4>
+      <p>One card per test — colour-coded by object accent colour. Shows TC ID, title, and pass/fail/skip status. Healed tests update in real time without re-running.</p>
+    </div>
+    <div class="card-sm">
+      <h4>📈 Summary Bar</h4>
+      <p>Totals across all objects: Passed / Failed / Skipped. Updates as tests complete.</p>
+    </div>
+    <div class="card-sm">
+      <h4>🔄 Auto-Refresh</h4>
+      <p>3-second meta-refresh keeps the dashboard live during pipeline execution. Close the tab when the run is complete to stop refreshing.</p>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <strong>Do not modify <code>utils/DashboardReporter.ts</code></strong> without first reading
+      <code>prompts/dashboard-spec.md</code>. The reporter implements the Playwright <code>Reporter</code>
+      interface and has strict dependencies on <code>PipelineTracker</code> step numbers.
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 16: Troubleshooting ────────────────────────────────────────────── -->
+<section id="troubleshoot">
+  <h2><span class="sec-icon">🛠️</span> Troubleshooting</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Step 0 fails with "No auth/session.json"</td>
+          <td>Session file missing or deleted</td>
+          <td><code>npx ts-node scripts/refresh-session.ts</code></td>
+        </tr>
+        <tr>
+          <td>Step 0 scraper finds 0 fields for an object</td>
+          <td>Modal didn't open in time, or object has a Record Type selector</td>
+          <td>Increase timeout in <code>waitForModal()</code>, or handle the "Next" button in <code>scrapeObject()</code></td>
+        </tr>
+        <tr>
+          <td>Step 1 returns null from Claude</td>
+          <td><code>claude</code> CLI not installed or not authenticated</td>
+          <td>Run <code>claude --version</code> and <code>claude -p "test"</code> to verify</td>
+        </tr>
+        <tr>
+          <td>Step 1 skips all stories (hash match)</td>
+          <td>Stories haven't changed since last run</td>
+          <td>Delete <code>prompts/user-stories/.story-hashes.json</code> to force regeneration</td>
+        </tr>
+        <tr>
+          <td>Spec file has duplicate <code>// ── US-XXX START/END ──</code> blocks after pipeline run</td>
+          <td>No hash store existed — pipeline treated existing story as new and appended instead of replacing</td>
+          <td>Remove the duplicate block from the spec file manually. Then re-run. Pre-seed the hash store by running <code>npx ts-node scripts/generate-tests.ts</code> once after clearing duplicates.</td>
+        </tr>
+        <tr>
+          <td>Tests time out on combobox options</td>
+          <td>Salesforce dropdown renders async at bottom of DOM</td>
+          <td>Use <code>waitFor({ state: 'attached' })</code> (not <code>visible</code>) for listbox items</td>
+        </tr>
+        <tr>
+          <td>Dashboard stuck at "RUNNING" after pipeline crash</td>
+          <td>Pipeline killed before <code>finally</code> block ran</td>
+          <td>The <code>finally</code> block calls <code>patchPipelineSteps()</code> — re-run pipeline or manually edit <code>pipeline-state.json</code></td>
+        </tr>
+        <tr>
+          <td>Step 7 git push fails with auth error</td>
+          <td>No <code>GITHUB_TOKEN</code> or expired credentials</td>
+          <td>Set <code>GITHUB_TOKEN=ghp_xxx</code> in <code>.env</code>, or configure git credential manager</td>
+        </tr>
+        <tr>
+          <td>TypeScript errors on compile</td>
+          <td>Dependency version mismatch</td>
+          <td><code>npm install</code> then <code>npx tsc --noEmit</code> to see errors</td>
+        </tr>
+        <tr>
+          <td>Playwright can't find elements in AG-Grid</td>
+          <td>AG-Grid cells don't have inputs until focused</td>
+          <td>Use the AG-Grid pattern: <code>cell.click() → keyboard.press('Enter') → locator('.slds-input').fill()</code></td>
+        </tr>
+        <tr>
+          <td>Session expired mid-test</td>
+          <td>Long-running test suite outlasts session TTL</td>
+          <td>Refresh session before pipeline: <code>npx ts-node scripts/refresh-session.ts</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+</div><!-- /layout -->
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────────── -->
+<div class="footer">
+  <p>
+    <strong>AI-Powered Playwright E2E Framework</strong> &nbsp;·&nbsp;
+    Built with Playwright, TypeScript &amp; Claude AI
+    &nbsp;·&nbsp; Forsys Inc.
+  </p>
+  <p style="margin-top:8px;color:var(--muted2);">
+    For support, open an issue on GitHub or contact your QA automation team.
+  </p>
+</div>
+
+</div><!-- /wrap -->
+<script>
+function switchTab(btn, panelId) {
+  // Deactivate all tabs in this group
+  const bar = btn.closest('.tab-bar');
+  bar.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.background = 'rgba(255,255,255,.05)';
+    b.style.border = '1px solid rgba(255,255,255,.1)';
+    b.style.borderBottom = 'none';
+    b.style.color = '#94a3b8';
+  });
+  // Hide all panels in this group
+  const group = btn.closest('.tab-group');
+  group.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  // Activate clicked tab
+  btn.classList.add('active');
+  btn.style.background = 'rgba(99,102,241,.25)';
+  btn.style.border = '1px solid rgba(99,102,241,.4)';
+  btn.style.borderBottom = 'none';
+  btn.style.color = '#a5b4fc';
+  // Show target panel
+  document.getElementById(panelId).style.display = 'block';
+}
+</script>
+</body>
+</html>

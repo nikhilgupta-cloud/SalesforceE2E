@@ -1,9 +1,9 @@
-# Salesforce CPQ — End-to-End Test Plan
+# Salesforce CPQ — End-to-End QA Test Plan
 
 **Version:** 1.0
-**Date:** 2026-04-13
+**Date:** 2026-04-17
 **Author:** AI-Generated
-**Project:** Salesforce CPQ — Playwright + TypeScript E2E Framework
+**Project:** Salesforce CPQ — E2E Playwright Automation Suite
 
 ---
 
@@ -11,141 +11,159 @@
 
 ### In Scope
 
-The following Salesforce objects are covered by this test plan. Each object maps directly to a Playwright spec file and is registered in `prompts/framework-config.json`.
-
-| Object | Prefix | Spec File | Rationale |
-|---|---|---|---|
-| Account | ACC | `tests/account.spec.ts` | Root dependency for Contact, Opportunity, and Quote; must pass before downstream objects |
-| Contact | CON | `tests/contact.spec.ts` | Associated to Accounts; required for Quote ownership and approval routing |
-| Opportunity | OPP | `tests/opportunity.spec.ts` | Parent record for CPQ Quote creation; gate to the full revenue flow |
-| Quote (CPQ) | QTE | `tests/quote.spec.ts` | Primary Revenue Cloud object under active test; covers the full acceptance-to-order flow |
+| Object | Reason for Inclusion |
+|---|---|
+| Account | Prerequisite record for all downstream objects; billing address and payment terms verified as pre-conditions |
+| Contact | Core CRM entity; creation, linkage to Account, and assignment as Opportunity Contact Role validated |
+| Opportunity | Created in the context of a Contact; Contact Role association forms the terminal assertion of the E2E flow |
+| Quote (CPQ) | Planned for future sprint; infrastructure scaffolded under prefix QTE; zero executable TCs at this time |
 
 ### Out of Scope
 
 - Manual test cases and exploratory testing
-- Load testing, stress testing, or performance benchmarking
-- API-only flows not exercised through the Salesforce Lightning UI
-- Salesforce admin configuration (profiles, permission sets, page layouts)
-- Billing, invoicing, and payment flows beyond Order creation
+- Load testing and performance benchmarking
+- API-only flows (REST/SOAP) with no UI component
+- Production org validation
+- Third-party integrations not surfaced in the CPQ UI
 
 ---
 
-## 2. Test Case Summary
+## 2. Objective
+
+Validate the sequential Salesforce CRM lifecycle from Account verification through Opportunity Contact Role assignment, executing as a single deterministic Playwright suite. All tests must map to an Acceptance Criterion and maintain traceability throughout the pipeline.
+
+---
+
+## 3. Test Case Summary
 
 | Object | User Stories | Total TCs | Positive | Negative | Edge Cases |
 |---|---|---|---|---|---|
-| Account | — | 0 | 0 | 0 | 0 |
-| Contact | — | 0 | 0 | 0 | 0 | 
-| Opportunity | — | 0 | 0 | 0 | 0 |
-| Quote (CPQ) | US-005 | 4 | 2 | 1 | 1 |
-| **Total** | **1** | **4** | **2** | **1** | **1** |
+| Account (ACC) | — | 0 | 0 | 0 | 0 |
+| Contact (CON) | US-005 | 4 | 3 | 0 | 1 |
+| Opportunity (OPP) | US-005 | 4 | 3 | 0 | 1 |
+| Quote / CPQ (QTE) | — | 0 | 0 | 0 | 0 |
+| **Total** | | **8** | **6** | **0** | **2** |
 
-> **Note:** Account, Contact, and Opportunity spec files are scaffolded and registered but contain no test cases at this time. Test generation is pending user story input for those objects.
-
-### Quote (CPQ) — TC Detail
-
-| TC ID | AC References | Type | Description |
-|---|---|---|---|
-| TC-QTE-001 | AC-005-01, AC-005-02 | Positive | Ready For Acceptance action visible on Approved quote; RCA validations run; screen flow modal opens |
-| TC-QTE-002 | AC-005-03, AC-005-04, AC-005-06, AC-005-08, AC-005-10 | Positive | Screen flow modal renders all mandatory document capture fields |
-| TC-QTE-003 | AC-005-26 | Edge Case | Both "Not Required" checkboxes set to TRUE; flow completes; Execution Status → Ready for Acceptance |
-| TC-QTE-004 | AC-005-12, AC-005-13, AC-005-14 | Negative | Create Order action gated behind Execution Status = Ready for Acceptance; after click, Status = Accepted and Order record linked |
+> Edge cases are TC-CON-001 and TC-OPP-001 (soft-fail on optional fields).
 
 ---
 
-## 3. Test Data Strategy
+## 4. Test Case Inventory
 
-### Principles
+### 4.1 Contact (CON) — US-005
 
-- **Uniqueness via timestamps.** Every dynamically created record name embeds `Date.now()`, e.g., `AutoAcc-${Date.now()}`, `AutoQuote-${Date.now()}`. This prevents collisions across parallel runs and retries.
-- **In-test record creation.** Supporting records (Account, Opportunity) are created programmatically at the start of each Quote test using local helper functions (`createSupportingAccount()`, `createSupportingOpportunity()`). No pre-seeded static data is assumed to exist.
-- **No hardcoded credentials.** All org access is provided exclusively via environment variables (`SF_SANDBOX_URL`, `SF_USERNAME`, `SF_PASSWORD`) loaded from `.env`. Credentials never appear in spec files or committed configuration.
-- **Teardown not required.** Test records in the sandbox do not need to be deleted post-run. Record names contain timestamps and are effectively isolated. If cleanup is needed in future, a dedicated teardown helper should be added — not inline cleanup logic that could mask test failures.
-- **Document attachments.** For TC-QTE-002, any attachment fields exercised by the screen flow modal use small synthetic files (e.g., a 1 KB PDF fixture stored in `test-results/fixtures/`). Fixtures must not contain real customer data.
+| TC ID | Scenario | Expected Result | Type | AC Ref |
+|---|---|---|---|---|
+| TC-CON-001 | Verify Account Billing Address and Payment Terms exist (soft-fail if missing) | Page loads; missing fields produce console warnings; test does not hard-fail | Edge | AC-005-01 |
+| TC-CON-002 | Create a new Contact record linked to the Account when none exists | Contact "David John" created, saved, and Account association confirmed | Positive | AC-005-02 |
+| TC-CON-003 | Create an Opportunity from the Contact's Related list | Opportunity "Standard E2E - Q2 Order" created; detail page loads successfully | Positive | AC-005-03 |
+| TC-CON-004 | Verify newly created Contact is assigned as Primary Contact Role on the Opportunity | "David John" appears in Contact Roles related list with Primary designation | Positive | AC-005-04 |
+
+### 4.2 Opportunity (OPP) — US-005
+
+| TC ID | Scenario | Expected Result | Type | AC Ref |
+|---|---|---|---|---|
+| TC-OPP-001 | Verify Account "SBOTestAccount" has Billing Address and Payment Terms (soft-fail if missing) | Detail page loads; missing fields produce console warnings; no hard failure | Edge | AC-005-01 |
+| TC-OPP-002 | Create Contact "David John" for Account if not already present | Contact created and linked to SBOTestAccount, or confirmed pre-existing | Positive | AC-005-02 |
+| TC-OPP-003 | Create Opportunity from Contact "David John" using New Opportunity action | Opportunity detail page confirms creation from Contact context | Positive | AC-005-03 |
+| TC-OPP-004 | Verify "David John" is assigned as Primary Contact Role on the Opportunity | Contact Roles related list shows David John with Primary flag set | Positive | AC-005-04 |
 
 ---
 
-## 4. Execution Order
+## 5. Test Data Strategy
 
-Tests execute **sequentially** with a single Playwright worker (`workers: 1` in `playwright.config.ts`). This is mandatory because Salesforce session state is shared and concurrent navigation causes unpredictable UI behaviour.
+| Principle | Implementation |
+|---|---|
+| **Record uniqueness** | All dynamically named records use timestamp suffixes, e.g. `AutoAcc-${Date.now()}` |
+| **Supporting records** | Accounts, Contacts, and Opportunities are created in-test; no pre-seeded data assumed |
+| **Credentials** | Sourced exclusively from `.env` via `SF_USERNAME`, `SF_PASSWORD`, `SF_SANDBOX_URL`; never hardcoded |
+| **Object mapping** | `data.account` → Account fields; `data.contact` → Contact fields; `data.opportunity` → Opportunity fields |
+| **Idempotency** | Tests check for pre-existing records before creation (e.g., TC-OPP-002) to avoid duplicates |
+| **Session state** | `auth/session.json` reused across tests; refreshed via `scripts/refresh-session.ts` before each run |
+| **Isolation** | No shared mutable state between spec files; each suite cleans up or namespaces its records |
+
+---
+
+## 6. Execution Order
+
+Tests execute **sequentially** in a single Playwright worker (`workers = 1`). The order reflects the Salesforce CRM object dependency chain.
 
 ```
-1. account.spec.ts     (ACC)  — no active TCs; spec file runs clean
-2. contact.spec.ts     (CON)  — no active TCs; spec file runs clean
-3. opportunity.spec.ts (OPP)  — no active TCs; spec file runs clean
-4. quote.spec.ts       (QTE)  — TC-QTE-001 → TC-QTE-002 → TC-QTE-003 → TC-QTE-004
+Step 1 — Account    (ACC)  → Verify pre-existing "SBOTestAccount" fields [pre-condition]
+Step 2 — Contact    (CON)  → TC-CON-001 → TC-CON-002 → TC-CON-003 → TC-CON-004
+Step 3 — Opportunity (OPP) → TC-OPP-001 → TC-OPP-002 → TC-OPP-003 → TC-OPP-004
+Step 4 — Quote/CPQ  (QTE)  → [No executable TCs — placeholder only]
 ```
 
-Tests within `quote.spec.ts` must also run in TC-ID order because each subsequent test may depend on the Quote state left by the previous step (e.g., TC-QTE-004 requires Execution Status set by TC-QTE-003).
+State (record IDs, URLs) produced by each step is passed forward to subsequent steps. No step may be skipped if a preceding step has produced a hard failure.
 
 ---
 
-## 5. Entry Criteria
+## 7. Entry Criteria
 
-All of the following must be satisfied before the test run begins:
+All of the following must be satisfied before test execution begins.
 
 | # | Criterion | Verification |
 |---|---|---|
-| 1 | `auth/session.json` is present and contains a valid, unexpired Salesforce session token | File exists; run `npx ts-node scripts/refresh-session.ts` if stale |
-| 2 | `SF_SANDBOX_URL` is set in `.env` and resolves to the target org | `curl $SF_SANDBOX_URL` returns HTTP 200 |
-| 3 | `SF_USERNAME` and `SF_PASSWORD` are set in `.env` | Non-empty strings; used by `refresh-session.ts` |
-| 4 | Playwright is installed (`@playwright/test` 1.58.2) and Chromium browser binary is present | `npx playwright install --dry-run` shows no missing browsers |
-| 5 | `ts-node` and all `node_modules` are installed | `npm ci` completed without errors |
-| 6 | The target Quote record referenced by US-005 exists in the sandbox or will be created in-test | Verified by TC-QTE-001 setup block |
-| 7 | The `claude` CLI is available in PATH (required for self-healing step) | `claude --version` exits 0 |
+| 1 | `auth/session.json` is present and contains a valid, non-expired Salesforce session | Run `npx ts-node scripts/refresh-session.ts`; confirm no auth error |
+| 2 | `SF_SANDBOX_URL`, `SF_USERNAME`, and `SF_PASSWORD` are set in `.env` | `dotenv` loads without missing-key warnings at suite startup |
+| 3 | Playwright is installed and TypeScript compilation succeeds | `npx playwright --version` returns without error |
+| 4 | Target sandbox org is accessible and the CPQ package is installed | Manual spot-check of sandbox login before pipeline trigger |
+| 5 | Account "SBOTestAccount" exists in the sandbox | TC-CON-001 / TC-OPP-001 soft-fail check confirms presence |
 
 ---
 
-## 6. Exit Criteria
+## 8. Exit Criteria
 
-The test run is considered complete when all of the following are true:
+The test run is considered complete when all of the following are true.
 
 | # | Criterion |
 |---|---|
-| 1 | All 4 active TCs (TC-QTE-001 through TC-QTE-004) have been executed at least once |
-| 2 | Any initially failing TCs have been processed by the self-healing pipeline (`scripts/self-heal.ts`) for up to 3 rounds |
-| 3 | `reports/results.json` has been written with final pass/fail status for every executed TC |
-| 4 | `reports/dashboard.html` reflects the final run results (auto-refreshes every 2 seconds) |
-| 5 | `reports/pipeline-state.json` shows all 7 pipeline steps as completed or intentionally skipped |
-| 6 | `reports/SalesforceE2E-Framework-Overview.pptx` has been generated by `scripts/generate-ppt.js` |
-| 7 | No TC is left in an indeterminate state; every TC is marked passed, failed, or skipped with a recorded reason |
+| 1 | All 8 executable TCs have been run and a pass/fail status recorded |
+| 2 | Self-healing (Agent 6) has completed up to 3 retry attempts for any failing TC |
+| 3 | Any remaining unresolved failures are explicitly marked `UNRESOLVED` in `results.json` |
+| 4 | `dashboard.html` reflects the final execution state |
+| 5 | `pipeline-state.json` is updated with terminal status for each TC |
+| 6 | A summary report has been generated and is available under `reports/` |
 
 ---
 
-## 7. Risks and Mitigations
+## 9. Risks and Mitigations
 
-| Risk | Likelihood | Impact | Mitigation |
+| # | Risk | Impact | Mitigation |
 |---|---|---|---|
-| **Salesforce session expiry** mid-run invalidates `auth/session.json` | Medium | High | Run `npx ts-node scripts/refresh-session.ts` before every pipeline execution. The pipeline orchestrator (`run-pipeline.ts`) should validate session freshness as step 0. |
-| **Spinner / loading overlay timing** causes locator actions to fire before the page is interactive | High | High | Use explicit `page.waitForSelector()` or `locator.waitFor({ state: 'visible' })` with a 30-second timeout on every navigation and modal open. Never rely on fixed `waitForTimeout` for readiness checks. |
-| **Lookup search lag** — the Salesforce typeahead does not return results immediately | High | Medium | Insert `page.waitForTimeout(3000)` before typing into any `lightning-lookup` input to allow the search index to initialise. Follow with `waitForSelector` on the dropdown option. |
-| **Shadow DOM pierce failures** using generic CSS selectors | Medium | High | Use only native `lightning-*` component locators filtered by visible label text (e.g., `page.locator('lightning-input').filter({ hasText: /Account Name/i }).locator('input')`). Never query by generated Salesforce class names. |
-| **Aura error overlay** blocking interactions after a failed server action | Low | High | Call `dismissAuraError(page)` at the start of each test and after any action that triggers a server-side save or Flow execution. |
-| **Screen flow modal selector ambiguity** — multiple dialogs may be present in the DOM | Medium | Medium | Scope all modal interactions to `[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])` to target only the active, visible dialog. |
-| **Order record not created** due to missing Quote field prerequisites | Low | High | TC-QTE-004 must assert Execution Status = Ready for Acceptance before clicking Create Order. If the prerequisite assertion fails, the test must abort and report a blocked status — not continue and produce a misleading failure. |
-| **Self-healing loop exhaustion** — Claude patches do not resolve a failure within 3 rounds | Low | Medium | After 3 rounds, `self-heal.ts` marks the TC as permanently failed and logs the last error. A human reviewer must triage. Healing failures are surfaced in `dashboard.html` with a distinct visual indicator. |
+| R-01 | Salesforce session expiry mid-run | All subsequent steps fail with auth error | Re-run `scripts/refresh-session.ts` before pipeline start; Agent 6 detects auth failures and triggers refresh |
+| R-02 | Spinner / loading overlay blocks element interaction | Click or assertion fires on hidden element | `await page.locator('.slds-spinner').waitFor({ state: 'hidden' })` with 30 s timeout on every navigation |
+| R-03 | Lookup search field lag (SOSL debounce) | Lookup returns no results; record not selected | `waitForTimeout(3000)` inserted before typing into lookup fields; confirmed against known lag pattern |
+| R-04 | Shadow DOM / LWC component encapsulation | Standard selectors fail to pierce shadow root | Use native `lightning-*` locators exclusively; never use `>>` pierce or `evaluate` workarounds |
+| R-05 | Duplicate record creation on retry | Data integrity issues and assertion mismatches | Idempotency guards check for existing records by name before creating; timestamps ensure uniqueness when creation is required |
+| R-06 | Hardcoded wait times causing flakiness on slow sandbox | Tests pass locally but fail in CI | All waits are explicit `waitFor` calls; no arbitrary `sleep` without a condition |
 
 ---
 
-## 8. Tooling and Environment
+## 10. Traceability Matrix
 
-| Component | Detail |
-|---|---|
-| Test runner | Playwright 1.58.2, Chromium only |
-| Language | TypeScript 6.0.2, executed via ts-node 10.9.2 |
-| AI backend | Claude Code CLI (`claude -p`); no `ANTHROPIC_API_KEY` required |
-| Workers | 1 (sequential) |
-| Timeouts | Test: 120 s · Action: 30 s · Navigation: 60 s |
-| Screenshots | On failure only |
-| Trace | On first retry |
-| Reports | `reports/dashboard.html`, `reports/results.json`, `reports/pipeline-state.json`, `reports/SalesforceE2E-Framework-Overview.pptx` |
-
----
-
-## 9. Approval
-
-| Role | Name | Date |
+| AC Reference | TC ID(s) | Spec File |
 |---|---|---|
-| QA Lead | _(to be signed)_ | 2026-04-13 |
-| Dev Lead | _(to be signed)_ | |
-| Product Owner | _(to be signed)_ | |
+| AC-005-01 | TC-CON-001, TC-OPP-001 | contact.spec.ts, opportunity.spec.ts |
+| AC-005-02 | TC-CON-002, TC-OPP-002 | contact.spec.ts, opportunity.spec.ts |
+| AC-005-03 | TC-CON-003, TC-OPP-003 | contact.spec.ts, opportunity.spec.ts |
+| AC-005-04 | TC-CON-004, TC-OPP-004 | contact.spec.ts, opportunity.spec.ts |
+
+Every test function in a spec file must carry a leading comment in the format:
+
+```
+// TC-CON-002 | AC Reference: AC-005-02
+```
+
+No test may be committed without a valid TC ID and AC reference.
+
+---
+
+## 11. Approval
+
+| Role | Name | Status |
+|---|---|---|
+| QA Lead | AI-Generated | Approved — 2026-04-17 |
+| Dev Lead | — | Pending |
+| Product Owner | — | Pending |
