@@ -34,6 +34,7 @@ import {
 import { generateTestsFromUserStories } from './generate-tests';
 import { generateTestPlan } from './generate-test-plan';
 import { fetchJiraStories } from './fetch-jira-stories';
+import type { JiraStoryEntry } from './fetch-jira-stories';
 import { selfHeal } from './self-heal';
 import { scrapeLocators } from './scrape-locators';
 import { exportToCsv } from './export-to-csv';
@@ -48,6 +49,9 @@ function log(msg: string) {
   console.log(`\n[pipeline ${t}] ${msg}`);
 }
 
+// Stories fetched from Jira — passed directly to stepGenerate to skip file I/O
+let _jiraStories: JiraStoryEntry[] = [];
+
 // ─────────────────────────────────────────────
 // STEP -1 — Jira Sync
 // ─────────────────────────────────────────────
@@ -57,10 +61,11 @@ async function stepJira() {
     return;
   }
 
-  log('STEP -1 — Fetching user stories...');
+  log('STEP -1 — Fetching user stories from Jira...');
   try {
-    await fetchJiraStories();
-    log('STEP -1 — Done ✅');
+    const result = await fetchJiraStories();
+    _jiraStories = result.stories;
+    log(`STEP -1 — Done ✅ (${result.fetched} issue(s), ${_jiraStories.length} story entries)`);
   } catch (e: any) {
     log(`STEP -1 — Failed ⚠ ${e.message}`);
   }
@@ -86,22 +91,57 @@ async function stepScrape() {
 }
 
 // ─────────────────────────────────────────────
-// STEP 1 — Agent 1 + Agent 2/4
+// Helpers
 // ─────────────────────────────────────────────
-async function stepGenerate() {
-  PipelineTracker.start(1, 'Generating tests...');
+
+/**
+ * Returns true if at least one spec file already contains generated test() calls.
+ * Used to decide whether we can skip generation when stories are unchanged.
+ */
+function specFilesHaveTests(): boolean {
+  const cfg = loadConfig();
+  return cfg.objects.some(obj => {
+    const specPath = path.join('tests', obj.specFile);
+    if (!fs.existsSync(specPath)) return false;
+    return /^\s*test\s*\(/m.test(fs.readFileSync(specPath, 'utf8'));
+  });
+}
+
+// ─────────────────────────────────────────────
+// STEP 1 — Agent 1 + Agent 2/4
+// Returns true if generation was skipped (no changes), false if it ran.
+// ─────────────────────────────────────────────
+async function stepGenerate(): Promise<boolean> {
+  PipelineTracker.start(1, 'Checking for story changes...');
   log('STEP 1 — Agent 1 (Knowledge) + Agent 2/4 (Generation)');
 
-  log('Pre-step — Loading domain knowledge (Agent 1)');
+  // callClaudeCode now uses async spawn (non-blocking), so the event loop is
+  // free during generation. Patch the dashboard every 3 s so the browser's
+  // meta-refresh always picks up the live "running + elapsed time" state.
+  const dashInterval = setInterval(() => patchPipelineSteps(), 3000);
 
-  const result = await generateTestsFromUserStories();
+  try {
+    const result = await generateTestsFromUserStories(_jiraStories);
 
-  if (result.failed > 0 && result.added === 0) {
-    PipelineTracker.fail(1, 'Test generation failed');
-    throw new Error('Generation failed');
+    // All stories unchanged AND tests already exist → skip AI steps, go straight to execution
+    const allSkipped = result.added === 0 && result.updated === 0 && result.failed === 0 && result.skipped > 0;
+    if (allSkipped && specFilesHaveTests()) {
+      PipelineTracker.skip(1, `No changes — ${result.skipped} stories unchanged`);
+      log(`STEP 1 — No story changes detected (${result.skipped} stories unchanged) → skipping to execution`);
+      return true;   // caller will skip Steps 2 & 3
+    }
+
+    if (result.failed > 0 && result.added === 0 && result.updated === 0) {
+      PipelineTracker.fail(1, 'Test generation failed');
+      throw new Error('Generation failed');
+    }
+
+    const detail = `${result.added} new, ${result.updated} updated, ${result.skipped} unchanged`;
+    PipelineTracker.complete(1, `Tests generated — ${detail}`);
+    return false;
+  } finally {
+    clearInterval(dashInterval);
   }
-
-  PipelineTracker.complete(1, 'Tests generated');
 }
 
 // ─────────────────────────────────────────────
@@ -141,14 +181,9 @@ async function stepPlan() {
 function stepExecution(): boolean {
   log('STEP 4 — Agent 5 (Execution)');
 
-  const executionOrder = ['account', 'contact', 'opportunity', 'quote'];
-
-  const specFiles = executionOrder
-    .map(key => {
-      const obj = loadConfig().objects.find(o => o.key === key);
-      return obj ? `tests/${obj.specFile}` : null;
-    })
-    .filter(Boolean) as string[];
+  const specFiles = loadConfig().objects
+    .map(obj => `tests/${obj.specFile}`)
+    .filter(file => fs.existsSync(file));
 
   const result = spawnSync(
     'npx',
@@ -232,14 +267,23 @@ async function main() {
     await stepScrape();
     refreshDashboard();          // show step 0 result (completed / skipped)
 
-    await stepGenerate();
-    refreshDashboard();          // show step 1 result
+    const generationSkipped = await stepGenerate();
+    refreshDashboard();          // show step 1 result (completed / skipped)
 
-    stepScenarios();
-    refreshDashboard();          // show step 2 result
+    if (!generationSkipped) {
+      // Stories changed — validate scenarios and regenerate test plan
+      stepScenarios();
+      refreshDashboard();        // show step 2 result
 
-    await stepPlan();
-    refreshDashboard();          // show step 3 result
+      await stepPlan();
+      refreshDashboard();        // show step 3 result
+    } else {
+      // Nothing changed — mark Steps 2 & 3 as skipped and go straight to execution
+      PipelineTracker.skip(2, 'No story changes — skipped');
+      PipelineTracker.skip(3, 'No story changes — skipped');
+      refreshDashboard();
+      log('STEP 2+3 — Skipped (no story changes)');
+    }
 
     initDashboardForRun();       // pre-populate test tiles as pending
 
@@ -251,6 +295,9 @@ async function main() {
 
     stepReport();
     stepGit();
+
+    log('STEP 8 — Orphan Audit');
+    auditOrphans();
 
     log('════════ QA PIPELINE COMPLETE ════════');
   } catch (e: any) {

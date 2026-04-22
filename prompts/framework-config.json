@@ -13,7 +13,8 @@
       "icon":         "🏢",
       "accent":       "#6366f1",
       "specFile":     "account.spec.ts",
-      "scenarioFile": "account-scenarios.md"
+      "scenarioFile": "account-scenarios.md",
+      "sfApiName":    "Account"
     },
     {
       "key":          "contact",
@@ -22,7 +23,8 @@
       "icon":         "👤",
       "accent":       "#a855f7",
       "specFile":     "contact.spec.ts",
-      "scenarioFile": "contact-scenarios.md"
+      "scenarioFile": "contact-scenarios.md",
+      "sfApiName":    "Contact"
     },
     {
       "key":          "opportunity",
@@ -31,7 +33,9 @@
       "icon":         "💼",
       "accent":       "#0ea5e9",
       "specFile":     "opportunity.spec.ts",
-      "scenarioFile": "opportunity-scenarios.md"
+      "scenarioFile": "opportunity-scenarios.md",
+      "sfApiName":    "Opportunity",
+      "_recordTypeNote": "Set recordType to your CPQ-specific layout name if your org prompts for one, e.g. 'CPQ Opportunity'"
     },
     {
       "key":          "quote",
@@ -40,7 +44,53 @@
       "icon":         "📋",
       "accent":       "#10b981",
       "specFile":     "quote.spec.ts",
-      "scenarioFile": "quote-scenarios.md"
+      "scenarioFile": "quote-scenarios.md",
+      "sfApiName":    "SBQQ__Quote__c",
+      "_extraScrapeNote": "To scrape the QLE, set extraScrapeUrls to [\"/apex/sbqq__sb?id=<SampleQuoteId>\"]"
+    },
+    {
+      "_inactive": "Remove this key to activate. Create tests/contract.spec.ts first.",
+      "key":          "contract",
+      "prefix":       "CTR",
+      "displayName":  "Contract",
+      "icon":         "📝",
+      "accent":       "#f59e0b",
+      "specFile":     "contract.spec.ts",
+      "scenarioFile": "contract-scenarios.md",
+      "sfApiName":    "Contract"
+    },
+    {
+      "_inactive": "Remove this key to activate. Create tests/order.spec.ts first.",
+      "key":          "order",
+      "prefix":       "ORD",
+      "displayName":  "Order",
+      "icon":         "🛒",
+      "accent":       "#ef4444",
+      "specFile":     "order.spec.ts",
+      "scenarioFile": "order-scenarios.md",
+      "sfApiName":    "Order"
+    },
+    {
+      "_inactive": "Remove this key to activate. Create tests/amendment.spec.ts first.",
+      "key":          "amendment",
+      "prefix":       "AMD",
+      "displayName":  "Amendment",
+      "icon":         "✏️",
+      "accent":       "#8b5cf6",
+      "specFile":     "amendment.spec.ts",
+      "scenarioFile": "amendment-scenarios.md",
+      "sfApiName":    "SBQQ__Quote__c"
+    },
+    {
+      "_inactive": "Remove this key to activate. Create tests/renewal.spec.ts first.",
+      "key":          "renewal",
+      "prefix":       "RNW",
+      "displayName":  "Renewal",
+      "icon":         "🔄",
+      "accent":       "#06b6d4",
+      "specFile":     "renewal.spec.ts",
+      "scenarioFile": "renewal-scenarios.md",
+      "sfApiName":    "SBQQ__Quote__c"
     }
   ]
 }

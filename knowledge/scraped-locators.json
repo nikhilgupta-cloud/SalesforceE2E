@@ -1,6 +1,6 @@
 {
   "account": {
-    "scrapedAt": "2026-04-17T05:03:38.198Z",
+    "scrapedAt": "2026-04-22T03:28:40.375Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Account/new",
     "fields": [
       {
@@ -48,7 +48,7 @@
     ]
   },
   "contact": {
-    "scrapedAt": "2026-04-17T05:03:46.520Z",
+    "scrapedAt": "2026-04-22T03:28:48.317Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Contact/new",
     "fields": [
       {
@@ -96,7 +96,7 @@
     ]
   },
   "opportunity": {
-    "scrapedAt": "2026-04-17T05:03:54.488Z",
+    "scrapedAt": "2026-04-22T03:28:56.477Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Opportunity/new",
     "fields": [
       {
@@ -144,72 +144,8 @@
     ]
   },
   "quote": {
-    "scrapedAt": "2026-04-17T05:04:02.593Z",
-    "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Quote/new",
-    "fields": [
-      {
-        "label": "Contract Type",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Contract Type\") button",
-        "apiName": null
-      },
-      {
-        "label": "Quote Currency",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Quote Currency\") button",
-        "apiName": null
-      },
-      {
-        "label": "Status",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Status\") button",
-        "apiName": null
-      },
-      {
-        "label": "Description",
-        "componentTag": "lightning-textarea",
-        "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Description\") textarea",
-        "apiName": null
-      },
-      {
-        "label": "Deal Type",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Deal Type\") button",
-        "apiName": null
-      },
-      {
-        "label": "Auto Renewal Term (Months)",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Auto Renewal Term (Months)\") button",
-        "apiName": null
-      },
-      {
-        "label": "Allow Overage",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Allow Overage\") button",
-        "apiName": null
-      },
-      {
-        "label": "Bill To Street",
-        "componentTag": "lightning-textarea",
-        "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Bill To Street\") textarea",
-        "apiName": null
-      },
-      {
-        "label": "Ship To Street",
-        "componentTag": "lightning-textarea",
-        "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Ship To Street\") textarea",
-        "apiName": null
-      }
-    ]
+    "scrapedAt": "2026-04-22T03:29:04.198Z",
+    "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/SBQQ__Quote__c/new",
+    "fields": []
   }
 }

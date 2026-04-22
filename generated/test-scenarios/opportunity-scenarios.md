@@ -7,7 +7,7 @@
 
 | TC ID | Scenario | Expected Result | AC Ref |
 |-------|----------|-----------------|--------|
-| TC-OPP-001 | Verify Account "SBOTestAccount" has Billing Address and Payment Terms (soft-fail if missing) | Account detail page loads; missing fields produce console warnings but do not fail the test | AC-005-01 |
-| TC-OPP-002 | Create Contact "David John" for Account if not already present | Contact record for David John is created and linked to SBOTestAccount, or confirmed already existing | AC-005-02 |
-| TC-OPP-003 | Create Opportunity from Contact "David John" record using New Opportunity action | Opportunity detail page loads confirming creation from the Contact's context | AC-005-03 |
-| TC-OPP-004 | Verify "David John" is assigned as Primary Contact Role on the created Opportunity | Contact Roles related list shows David John with Primary flag set | AC-005-04 |
+| TC-OPP-001 | Verify existing Account has Billing Address and Payment Terms under Details tab (soft-fail if missing) | Both fields are visible on the Details tab; missing fields emit a console warning but do not hard-fail the run | AC-005-01 |
+| TC-OPP-002 | Check whether a Contact exists for the Account; create a new Contact record if one is absent | New Contact is created and visible on the Account's Contacts related list | AC-005-02 |
+| TC-OPP-003 | Open the Contact record and create a new Opportunity from the Contact's perspective | Opportunity record is saved and the detail page loads successfully | AC-005-03 |
+| TC-OPP-004 | Navigate to the newly created Opportunity and verify the Contact appears in Contact Roles as Primary | Contact is listed in the Contact Roles related list with Primary role | AC-005-04 |

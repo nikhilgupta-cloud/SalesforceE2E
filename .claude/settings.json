@@ -1,0 +1,33 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--headless"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github@latest"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "configure-via-setup-mcp"
+      }
+    },
+    "jira": {
+      "command": "npx",
+      "args": ["-y", "mcp-atlassian@latest"],
+      "env": {
+        "JIRA_URL": "configure-via-setup-mcp",
+        "JIRA_USERNAME": "configure-via-setup-mcp",
+        "JIRA_API_TOKEN": "configure-via-setup-mcp"
+      }
+    },
+    "salesforce": {
+      "command": "npx",
+      "args": ["-y", "@salesforce/mcp@latest"],
+      "env": {
+        "SF_USERNAME": "configure-via-setup-mcp",
+        "SF_PASSWORD": "configure-via-setup-mcp",
+        "SF_INSTANCE_URL": "configure-via-setup-mcp"
+      }
+    }
+  }
+}

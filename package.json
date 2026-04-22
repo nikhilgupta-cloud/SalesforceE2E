@@ -21,6 +21,7 @@
     "gen:tests": "ts-node scripts/generate-tests.ts",
     "gen:plan": "ts-node scripts/generate-test-plan.ts",
     "scrape:locators": "ts-node scripts/scrape-locators.ts",
+    "enrich:locators": "ts-node scripts/enrich-locators.ts",
     "audit:orphans": "ts-node scripts/audit-orphans.ts",
     "export:csv": "ts-node scripts/export-to-csv.ts",
     "refresh-session": "ts-node scripts/refresh-session.ts",

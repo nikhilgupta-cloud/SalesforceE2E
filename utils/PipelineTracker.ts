@@ -30,14 +30,15 @@ export interface PipelineState {
 const STATE_FILE = path.join('reports', 'pipeline-state.json');
 
 const STEP_DEFAULTS: Omit<StepState, 'status' | 'detail' | 'timestamp'>[] = [
-  { n: 0, label: 'Scrape Locators',        icon: '🔍' },
-  { n: 1, label: 'AI Test Generation',     icon: '🤖' },
-  { n: 2, label: 'Verify Scenarios',       icon: '📋' },
-  { n: 3, label: 'Draft Test Plan',         icon: '📄' },
-  { n: 4, label: 'Execute E2E Tests',      icon: '🧪' },
-  { n: 5, label: 'Self-Heal Failures',     icon: '🔧' },
-  { n: 6, label: 'Generate Final Scripts', icon: '⚙️'  },
-  { n: 7, label: 'Push to GitHub',         icon: '🚀' },
+  { n: -1, label: 'Jira Sync',              icon: '🎫' },
+  { n: 0,  label: 'Scrape Locators',        icon: '🔍' },
+  { n: 1,  label: 'AI Test Generation',     icon: '🤖' },
+  { n: 2,  label: 'Verify Scenarios',       icon: '📋' },
+  { n: 3,  label: 'Draft Test Plan',        icon: '📄' },
+  { n: 4,  label: 'Execute E2E Tests',      icon: '🧪' },
+  { n: 5,  label: 'Self-Heal Failures',     icon: '🔧' },
+  { n: 6,  label: 'Generate Final Scripts', icon: '⚙️'  },
+  { n: 7,  label: 'Push to GitHub',         icon: '🚀' },
 ];
 
 function load(): PipelineState {

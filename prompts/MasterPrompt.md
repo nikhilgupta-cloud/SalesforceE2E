@@ -61,6 +61,14 @@ BUTTONS & ACTIONS
 - Partial name matching on buttons is dangerous in Salesforce — navigation bars contain buttons whose labels partially overlap with action button labels (e.g., "Edit" vs "Edit nav items"). Always use exact name matching.
 - Some objects do not expose action buttons (like Edit) directly on the detail page. They may be hidden behind a dropdown menu (e.g., "Show more actions" / kebab). Probe the DOM before assuming a direct Edit button exists.
 
+TAB NAVIGATION
+- Salesforce record pages always open on the Activity or Related tab — never on Details.
+- Fields like Billing Address, Payment Terms, Industry, Phone, Website, Stage, Amount, Close Date, Contract fields, and any custom metadata fields live on the Details tab.
+- ALWAYS call clickTab(page, 'Details') before reading or writing any such field on a record page.
+- The clickTab(page, tabName) helper is defined in every spec file. It checks aria-selected to avoid double-clicking an already active tab, then waits for the spinner to clear.
+- Fields inside modals or list views do NOT need clickTab — only record detail pages have this tab strip.
+- Other common tab names: 'Related', 'Activity', 'Quotes' (on Opportunity), 'Orders' (on Contract).
+
 FORM FIELDS & LOOKUPS
 - Salesforce lookup fields render a dropdown container that Playwright cannot see as visible, even when the dropdown is open. The individual option items inside it ARE accessible directly on the page. Never scope option searches through the container — target options at page level.
 - Options inside Salesforce dropdown containers may be outside the viewport. scrollIntoViewIfNeeded() does not work inside custom scrollable containers — use element.evaluate() with native scrollIntoView() instead.

@@ -67,7 +67,7 @@ async function callClaudeCode(systemPrompt: string, userPrompt: string, label = 
   const isWin      = process.platform === 'win32';
   const claudeArgs = isWin
     ? [path.join(os.homedir(), 'AppData', 'Roaming', 'npm',
-        'node_modules', '@anthropic-ai', 'claude-code', 'cli.js')]
+        'node_modules', '@anthropic-ai', 'claude-code', 'cli-wrapper.cjs')]
     : [] as string[];
   const claudeExe  = isWin ? 'node' : 'claude';
 
@@ -400,14 +400,18 @@ async function callClaude(
 
   const system = `You are a Salesforce Revenue Cloud QA engineer writing Playwright TypeScript tests.
 Rules (apply to every line of code):
-- NEVER use waitForLoadState('networkidle') — Salesforce never goes idle.
-- ALWAYS use .waitFor({ state: 'visible', timeout: 30000 }), NEVER isVisible().
-- Modal selector: '[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])'.
-- Call dismissAuraError(page) after every page.goto().
+- ALWAYS import { SFUtils } from '../utils/SFUtils';
+- Use SFUtils.goto(page, url) instead of page.goto().
+- Use SFUtils.waitForLoading(page) instead of manual spinner waits.
+- Use SFUtils.fillField(root, apiName, value) for all standard inputs.
+- Use SFUtils.fillName(root, 'firstName'|'lastName', value) for Name fields (Contact/Lead).
+- Use SFUtils.selectCombobox(page, root, apiName, label) for all dropdowns.
+- For CPQ/Revenue Cloud (Product Selection/Edit Lines), use SFUtils.getCPQFrame(page).
+- NEVER use [data-field-api-name="LastName"] directly — use SFUtils.fillName.
+- Call dismissAuraError(page) after every SFUtils.goto().
 - Use exact button matching: getByRole('button', { name: 'Save', exact: true }).
-- Use .first() on any locator that could match multiple elements.
-- actionTimeout is 30000ms.
-- Use native Playwright locators (lightning-input, lightning-combobox, lightning-lookup) — do not import or use SalesforceFormHandler.${scrapedLocators}${knowledgeContext}`;
+- TAB NAVIGATION: Always call clickTab(page, 'Details') before accessing fields on a record page.
+${scrapedLocators}${knowledgeContext}`;
 
   const updateContext = isUpdate ? `
 IMPORTANT — this is an UPDATE. The story was previously processed and these scenario rows already exist:
@@ -491,7 +495,7 @@ async function bootstrapSpecFile(objKey: string): Promise<void> {
 
   const cfg          = loadConfig();
   const masterPrompt = fs.existsSync(path.join('prompts', 'MasterPrompt.md'))
-    ? fs.readFileSync(path.join('prompts', 'MasterPrompt.md'), 'utf8').slice(0, 3000)
+    ? fs.readFileSync(path.join('prompts', 'MasterPrompt.md'), 'utf8').slice(0, 6000)
     : '';
 
   const header = await callClaudeCode(
@@ -647,11 +651,11 @@ async function processStory(
 
   console.log(`[generate] ${isNew ? 'NEW' : 'CHANGED'} ${usId} → ${obj.displayName}`);
 
-  if (!isNew) {
-    console.log(`[generate]   Removing old generated blocks for ${usId}…`);
-    removeScenarioSection(scenarioPath, usId);
-    removeSpecSection(specPath, usId);
-  }
+  // Always purge any existing blocks for this US-ID before writing new ones.
+  // This prevents duplicate test titles when a previous run failed mid-way
+  // (hash not stored) and the next run treats the story as NEW.
+  removeScenarioSection(scenarioPath, usId);
+  removeSpecSection(specPath, usId);
 
   bootstrapScenarioFile(scenarioPath, obj);
   await bootstrapSpecFile(objKey);
@@ -677,7 +681,9 @@ async function processStory(
   return isNew ? 'added' : 'updated';
 }
 
-export async function generateTestsFromUserStories(): Promise<GenerateResult> {
+export async function generateTestsFromUserStories(
+  jiraStories: Array<{ usId: string; objKey: string; storyContent: string }> = [],
+): Promise<GenerateResult> {
   // Reset module-level token accumulators for this run
   _totalTokensIn  = 0;
   _totalTokensOut = 0;
@@ -689,7 +695,19 @@ export async function generateTestsFromUserStories(): Promise<GenerateResult> {
   let failed    = 0;
   let anyChange = false;
 
-  // ── 1. Scan prompts/user-stories/ — one file per user story ──────────────
+  // ── 1. Jira stories passed directly — no file read needed ────────────────
+  if (jiraStories.length > 0) {
+    console.log(`[generate] Processing ${jiraStories.length} stories direct from Jira`);
+    for (const { usId, objKey, storyContent } of jiraStories) {
+      const r = await processStory(usId, storyContent, objKey, hashStore);
+      if (r === 'added')   { added++;   anyChange = true; }
+      if (r === 'updated') { updated++; anyChange = true; }
+      if (r === 'skipped') { skipped++; }
+      if (r === 'failed')  { failed++; }
+    }
+  }
+
+  // ── 2. Scan prompts/user-stories/ — manual single-file stories ───────────
   const promptsDir = path.join('prompts', 'user-stories');
   if (fs.existsSync(promptsDir)) {
     const files = fs.readdirSync(promptsDir).filter(
@@ -714,29 +732,32 @@ export async function generateTestsFromUserStories(): Promise<GenerateResult> {
     }
   }
 
-  // ── 2. Scan user-stories/ — multi-story files (e.g. CPQ_User_stories.md) ─
-  const extraDir = 'user-stories';
-  if (fs.existsSync(extraDir)) {
-    const files = fs.readdirSync(extraDir).filter(
-      f => f.endsWith('.md') && !f.startsWith('_') && fs.statSync(path.join(extraDir, f)).isFile(),
-    );
+  // ── 3. Scan user-stories/ — only when NOT coming from Jira directly ───────
+  //    (avoids double-processing the audit file that fetchJiraStories writes)
+  if (jiraStories.length === 0) {
+    const extraDir = 'user-stories';
+    if (fs.existsSync(extraDir)) {
+      const files = fs.readdirSync(extraDir).filter(
+        f => f.endsWith('.md') && !f.startsWith('_') && fs.statSync(path.join(extraDir, f)).isFile(),
+      );
 
-    for (const file of files) {
-      const content = fs.readFileSync(path.join(extraDir, file), 'utf8');
-      const stories = parseMultiStoryFile(content);
+      for (const file of files) {
+        const content = fs.readFileSync(path.join(extraDir, file), 'utf8');
+        const stories = parseMultiStoryFile(content);
 
-      if (stories.length === 0) {
-        console.warn(`[generate] No US-XXX sections found in user-stories/${file} — skipping`);
-        skipped++;
-        continue;
-      }
+        if (stories.length === 0) {
+          console.warn(`[generate] No US-XXX sections found in user-stories/${file} — skipping`);
+          skipped++;
+          continue;
+        }
 
-      for (const { usId, objKey, storyContent } of stories) {
-        const r = await processStory(usId, storyContent, objKey || null, hashStore);
-        if (r === 'added')   { added++;   anyChange = true; }
-        if (r === 'updated') { updated++; anyChange = true; }
-        if (r === 'skipped') { skipped++; }
-        if (r === 'failed')  { failed++; }
+        for (const { usId, objKey, storyContent } of stories) {
+          const r = await processStory(usId, storyContent, objKey || null, hashStore);
+          if (r === 'added')   { added++;   anyChange = true; }
+          if (r === 'updated') { updated++; anyChange = true; }
+          if (r === 'skipped') { skipped++; }
+          if (r === 'failed')  { failed++; }
+        }
       }
     }
   }

@@ -42,7 +42,7 @@ function callClaudeCode(systemPrompt: string, userPrompt: string): ClaudeResult 
   const isWin = process.platform === 'win32';
   const claudeArgs: string[] = isWin
     ? [path.join(os.homedir(), 'AppData', 'Roaming', 'npm',
-        'node_modules', '@anthropic-ai', 'claude-code', 'cli.js')]
+        'node_modules', '@anthropic-ai', 'claude-code', 'cli-wrapper.cjs')]
     : [];
   const claudeExe = isWin ? 'node' : 'claude';
 

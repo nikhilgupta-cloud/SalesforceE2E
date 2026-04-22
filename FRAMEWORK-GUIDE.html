@@ -338,6 +338,7 @@ td code{font-size:12px;}
     <div class="toc-group-label">Integrations</div>
     <a href="#jira">Jira Integration</a>
     <a href="#github">GitHub Push</a>
+    <a href="#mcp">MCP Servers</a>
   </div>
   <div class="toc-group">
     <div class="toc-group-label">Reference</div>
@@ -515,7 +516,7 @@ reports/dashboard.html</code></pre>
     <div>│   ├── opportunity.spec.ts</div>
     <div>│   └── quote.spec.ts</div>
     <div>├── <span class="dir">user-stories/</span>                  <span class="note"># Multi-story files (OBJECT N: NAME format)</span></div>
-    <div>│   └── CPQ_User_stories.md</div>
+    <div>│   └── CPQ_User_stories.md         <span class="note"># Audit copy written by Jira fetch — not read back by pipeline</span></div>
     <div>├── <span class="dir">prompts/</span></div>
     <div>│   ├── framework-config.json      <span class="note"># Object registry — edit this for a new project</span></div>
     <div>│   └── <span class="dir">user-stories/</span>              <span class="note"># Single-file user stories (one .md per US-XXX)</span></div>
@@ -554,10 +555,19 @@ reports/dashboard.html</code></pre>
 
 <!-- ── SECTION 5: Pipeline ─────────────────────────────────────────────────────── -->
 <section id="pipeline">
-  <h2><span class="sec-icon">⚙️</span> 8-Step Pipeline</h2>
+  <h2><span class="sec-icon">⚙️</span> 9-Step Pipeline</h2>
   <p>The pipeline is orchestrated by <code>scripts/run-pipeline.ts</code> and tracked in real-time on the dashboard. Each step updates <code>reports/pipeline-state.json</code> as it runs.</p>
 
   <div class="pipeline">
+
+    <div class="pipe-step">
+      <div class="pipe-line"></div>
+      <div class="pipe-num">🎫</div>
+      <div class="pipe-body">
+        <h4>Step -1 — Jira Sync <span class="step-tag">When JIRA_BASE_URL is set</span></h4>
+        <p>Connects to your Jira board via REST API v3, runs your configured JQL query, and fetches matching issues. Acceptance criteria are extracted directly from each ticket's description (or a dedicated custom field via <code>JIRA_AC_FIELD</code>). Each issue is classified to a Salesforce object using a four-tier priority system (custom field → label → component → keyword scan). The structured story data — as <code>JiraStoryEntry[]</code> — is passed <strong>directly</strong> into Step 1 in memory. No file round-trip. An audit copy is written to <code>user-stories/CPQ_User_stories.md</code> for inspection only. Silently skipped if <code>JIRA_BASE_URL</code> is not set.</p>
+      </div>
+    </div>
 
     <div class="pipe-step">
       <div class="pipe-line"></div>
@@ -573,7 +583,7 @@ reports/dashboard.html</code></pre>
       <div class="pipe-num">🤖</div>
       <div class="pipe-body">
         <h4>Step 1 — AI Test Generation <span class="step-tag">Smart delta</span></h4>
-        <p>Scans <code>user-stories/</code> and <code>prompts/user-stories/</code> for <code>.md</code> files. Each user story is hashed (MD5). New stories generate fresh test blocks; changed stories regenerate only their block; unchanged stories are skipped entirely. Generated code is wrapped in <code>// ── US-XXX START ──</code> / <code>END</code> markers and appended to the relevant spec file.</p>
+        <p>When Jira is configured, receives story data directly from Step -1 (<code>JiraStoryEntry[]</code>) — no file read. When running without Jira, falls back to scanning <code>prompts/user-stories/</code> (single-file format) then <code>user-stories/</code> (multi-story format). Either way, each user story is hashed (MD5). New stories generate fresh test blocks; changed stories regenerate only their block; unchanged stories are skipped entirely. Generated code is wrapped in <code>// ── US-XXX START ──</code> / <code>END</code> markers and appended to the relevant spec file.</p>
       </div>
     </div>
 
@@ -651,7 +661,7 @@ reports/dashboard.html</code></pre>
       <div class="agent-num">2</div>
       <div class="agent-body">
         <div class="agent-title">Story Reader Agent</div>
-        <div class="agent-desc">Parses user story markdown files. Handles both single-file format (<code>prompts/user-stories/</code>) and multi-story files (<code>user-stories/</code>). Detects object context from <code>OBJECT N: NAME</code> headers and extracts structured AC lists.</div>
+        <div class="agent-desc">Receives <code>JiraStoryEntry[]</code> directly from Step -1 when Jira is active — no file parsing needed. Falls back to scanning <code>prompts/user-stories/</code> (single-file format) then <code>user-stories/</code> (multi-story format) when Jira is not configured. Detects object context, extracts structured AC lists, and hashes each story for smart change detection.</div>
         <div class="agent-in">📁 <code>.claude/Agents/agent-2-story-reader.md</code></div>
       </div>
     </div>
@@ -701,40 +711,13 @@ reports/dashboard.html</code></pre>
 <!-- ── SECTION 7: User Stories ─────────────────────────────────────────────────── -->
 <section id="stories">
   <h2><span class="sec-icon">📖</span> Writing User Stories</h2>
-  <p>The framework supports two story file formats. Both are scanned automatically by the pipeline.</p>
+  <p>When Jira is configured (<code>JIRA_BASE_URL</code> is set), stories flow directly from Jira into the generator in memory — no files needed. For manual or offline use, the pipeline supports two file formats scanned after the Jira data.</p>
 
   <h3>Format A — Single-file per story (<code>prompts/user-stories/</code>)</h3>
-  <p>Best for individual stories added one at a time. File name doesn't matter — what matters is the heading.</p>
-  <pre><code><span class="comment"># US-001: As a Sales Rep, I want to create a Quote</span>
+  <p>Always scanned, even when Jira is active. Best for individual stories added manually. File name doesn't matter — what matters is the <code>US-XXX</code> heading.</p>
 
-<span class="comment">**Object:** Quote</span>
-
-<span class="comment">## Acceptance Criteria</span>
-<span class="comment">AC-001-01: Given a valid Opportunity, when I click New Quote, a Quote record is created</span>
-<span class="comment">AC-001-02: The Quote Status should default to "Draft"</span>
-<span class="comment">AC-001-03: Required fields (Account, Opportunity, Expiry Date) must be validated</span></code></pre>
-
-  <h3>Format B — Multi-story file (<code>user-stories/</code>)</h3>
-  <p>Best for exporting a full Jira sprint or project backlog. Group stories by object using <code>OBJECT N: NAME</code> headers.</p>
-  <pre><code><span class="str">OBJECT 1: QUOTE</span>
-
-<span class="comment">## US-005 — As a Sales user, I want the system to mark the Quote as 'Accepted'</span>
-As a Sales Rep,
-• I should be able to hand over the Quote to Legal by clicking 'Ready For Acceptance'...
-
-<span class="str">OBJECT 2: OPPORTUNITY</span>
-
-<span class="comment">## US-010 — As a Sales user, I want to convert an Opportunity to a Quote</span>
-...</code></pre>
-
-  <div class="callout warn">
-    <span class="callout-icon">⚠️</span>
-    <div class="callout-body">
-      <strong>Object detection:</strong> In multi-story files, the parser tracks the current object from <code>OBJECT N: NAME</code> headers. All <code>## US-XXX</code> stories below a header belong to that object until the next <code>OBJECT</code> header. Make sure your object names match one of the keys in <code>framework-config.json</code>.
-    </div>
-  </div>
-
-  <h3>Hash-based change detection</h3>
+  <h3>Format B — Multi-story file (<code>user-stories/</code>) <span class="step-tag">Fallback only</span></h3>
+  <p>Scanned <strong>only when Jira is not active</strong>. When <code>JIRA_BASE_URL</code> is set, the pipeline uses in-memory <code>JiraStoryEntry[]</code> and skips this directory entirely (the audit file written by the fetcher is not re-read). Use this format for offline sprint exports or when no Jira connection is available. Group stories by object using <code>OBJECT N: NAME</code> headers.</p>
   <p>The pipeline stores an MD5 hash of each processed story in <code>prompts/user-stories/.story-hashes.json</code>. On subsequent runs:</p>
   <div class="table-wrap">
     <table>
@@ -782,21 +765,30 @@ echo # Test Scenarios — Quote > generated\test-scenarios\quote-scenarios.md</c
 <section id="jira">
   <h2><span class="sec-icon">🎫</span> Jira Integration</h2>
   <p>
-    The framework can automatically pull user stories from Jira and convert them into the
-    multi-story markdown format expected by <code>generate-tests.ts</code> — all without any manual
-    copy-paste. This is handled by <code>scripts/fetch-jira-stories.ts</code>, which runs as
-    <strong>Step -1</strong> at the start of every pipeline when <code>JIRA_BASE_URL</code> is set.
+    The framework fetches user stories directly from Jira and streams them into the AI test generator
+    — no copy-paste, no intermediate file. <code>scripts/fetch-jira-stories.ts</code> runs as
+    <strong>Step -1</strong> and returns <code>JiraStoryEntry[]</code> in memory. Step 1 consumes
+    that data directly without reading any file from disk.
   </p>
 
   <div class="callout info">
     <span class="callout-icon">ℹ️</span>
     <div class="callout-body">
-      <strong>Automatic:</strong> When <code>JIRA_BASE_URL</code> is present in your <code>.env</code>,
-      the pipeline runs the Jira fetch before any other step — no extra command needed.
+      <strong>Automatic:</strong> When <code>JIRA_BASE_URL</code> is present in <code>.env</code>,
+      the pipeline runs Jira fetch before any other step — no extra command needed.
       If <code>JIRA_BASE_URL</code> is not set, Step -1 is silently skipped and the pipeline
-      uses whatever story files already exist in <code>user-stories/</code>.
+      falls back to story files in <code>prompts/user-stories/</code> and <code>user-stories/</code>.
     </div>
   </div>
+
+  <h3>How it works — direct data flow</h3>
+  <pre><code><span class="comment"># Old flow (file round-trip):</span>
+Jira API → fetch-jira-stories.ts → CPQ_User_stories.md → generate-tests.ts reads file → Claude
+
+<span class="comment"># New flow (direct, in memory):</span>
+Jira API → fetch-jira-stories.ts → JiraStoryEntry[] ──────────────────────────→ Claude
+                                       ↓ also writes
+                              CPQ_User_stories.md  ← audit trail only, not read back</code></pre>
 
   <h3>Setup — required .env variables</h3>
   <pre><code>JIRA_BASE_URL=https://yourcompany.atlassian.net
@@ -811,13 +803,13 @@ JIRA_PROJECT_KEY=CPQ                        <span class="comment"># The Jira pro
       <tbody>
         <tr>
           <td><code>JIRA_JQL</code></td>
-          <td><code>project = KEY AND issuetype = Task ORDER BY created ASC</code></td>
-          <td>Override the JQL query — e.g. filter by sprint, epic, or label</td>
+          <td><code>project = KEY AND issuetype = Story ORDER BY created ASC</code></td>
+          <td>Override the JQL query. See JQL tips below for issue-type and sprint guidance.</td>
         </tr>
         <tr>
           <td><code>JIRA_AC_FIELD</code></td>
           <td>—</td>
-          <td>Custom field ID for Acceptance Criteria (e.g. <code>customfield_10016</code>). If set, ACs are read from this field instead of the description body.</td>
+          <td>Custom field ID for Acceptance Criteria (e.g. <code>customfield_10016</code>). If set, ACs are read from this field instead of scanning the description body.</td>
         </tr>
         <tr>
           <td><code>JIRA_OBJECT_FIELD</code></td>
@@ -827,7 +819,7 @@ JIRA_PROJECT_KEY=CPQ                        <span class="comment"># The Jira pro
         <tr>
           <td><code>JIRA_OUTPUT_FILE</code></td>
           <td><code>user-stories/CPQ_User_stories.md</code></td>
-          <td>Override the output file path for fetched stories</td>
+          <td>Override the path for the audit copy written after each fetch.</td>
         </tr>
       </tbody>
     </table>
@@ -855,8 +847,43 @@ JIRA_PROJECT_KEY=CPQ                        <span class="comment"># The Jira pro
     </li>
   </ol>
 
-  <h3>Object detection — how Jira tickets are mapped to Salesforce objects</h3>
-  <p>The fetcher uses a four-tier priority system to decide which object a story belongs to. The first match wins:</p>
+  <h3>JQL — issue type guidance</h3>
+  <p>Jira projects use different issue types depending on how they were configured. Match your JQL to what your board actually uses:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Situation</th><th>JQL to use</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Board uses native <strong>Story</strong> type</td>
+          <td><code>project = KEY AND issuetype = Story ORDER BY created ASC</code></td>
+        </tr>
+        <tr>
+          <td>Board uses <strong>Task</strong> type but titles contain "User Story"</td>
+          <td><code>project = KEY AND issuetype = Task AND summary ~ "User Story" ORDER BY created ASC</code></td>
+        </tr>
+        <tr>
+          <td>Filter to current sprint only</td>
+          <td><code>project = KEY AND issuetype = Story AND sprint in openSprints() ORDER BY created ASC</code></td>
+        </tr>
+        <tr>
+          <td>Filter by label</td>
+          <td><code>project = KEY AND issuetype = Story AND labels = "sf-e2e" ORDER BY created ASC</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <strong>Common mistake:</strong> Using <code>issuetype = Story</code> when your Jira project only has
+      <code>Task</code> issue types returns 0 results. Run the fetch standalone first to verify:
+      <code>npx ts-node scripts/fetch-jira-stories.ts</code> — the log shows how many issues were fetched and whether ACs were found.
+    </div>
+  </div>
+
+  <h3>Object detection — how tickets map to Salesforce objects</h3>
+  <p>Four-tier priority. First match wins. E2E stories that span multiple objects are automatically duplicated into each relevant object group:</p>
   <div class="table-wrap">
     <table>
       <thead><tr><th>Priority</th><th>Source</th><th>Example</th></tr></thead>
@@ -864,21 +891,21 @@ JIRA_PROJECT_KEY=CPQ                        <span class="comment"># The Jira pro
         <tr>
           <td><strong>1 — Custom field</strong></td>
           <td>Value of <code>JIRA_OBJECT_FIELD</code> on the ticket</td>
-          <td>Field value <code>"Quote"</code> → maps to <code>quote</code> object key</td>
+          <td>Field value <code>"Quote"</code> → <code>quote</code></td>
         </tr>
         <tr>
-          <td><strong>2 — Jira component</strong></td>
-          <td>Ticket's Component(s) field</td>
-          <td>Component <code>"quote"</code> or <code>"Quote CPQ"</code> → <code>quote</code></td>
+          <td><strong>2 — Jira label</strong></td>
+          <td>Labels matching <code>sf-{key}</code> or <code>salesforce-{key}</code></td>
+          <td>Label <code>sf-account</code> → <code>account</code></td>
         </tr>
         <tr>
-          <td><strong>3 — Jira label</strong></td>
-          <td>Ticket labels matching <code>sf-{key}</code>, <code>salesforce-{key}</code>, or <code>{key}</code></td>
-          <td>Label <code>sf-quote</code> or <code>quote</code> → <code>quote</code></td>
+          <td><strong>3 — Jira component</strong></td>
+          <td>Ticket's Component field — exact match only</td>
+          <td>Component <code>"opportunity"</code> → <code>opportunity</code></td>
         </tr>
         <tr>
           <td><strong>4 — Keyword scan</strong></td>
-          <td>Word-boundary regex on ticket summary, then description</td>
+          <td>Word-boundary regex on summary, then description</td>
           <td>Summary contains <code>"quote"</code> → <code>quote</code></td>
         </tr>
       </tbody>
@@ -888,51 +915,52 @@ JIRA_PROJECT_KEY=CPQ                        <span class="comment"># The Jira pro
   <div class="callout warn">
     <span class="callout-icon">⚠️</span>
     <div class="callout-body">
-      <strong>Unresolved stories:</strong> If a ticket's object cannot be detected by any of the four methods,
-      it is written to the output file as an HTML comment block labelled
-      <em>⚠ UNRESOLVED STORIES</em>. The pipeline will log a warning for each one.
-      Fix by adding a Jira component matching an object key in <code>framework-config.json</code>,
-      or a label like <code>sf-quote</code>.
+      <strong>Unresolved stories:</strong> Tickets that cannot be mapped to any object are logged as warnings
+      and written to an <em>⚠ UNRESOLVED STORIES</em> comment block in the audit file.
+      Fix by adding a Jira label <code>sf-{key}</code> (e.g. <code>sf-quote</code>) or a component
+      matching an object key from <code>prompts/framework-config.json</code>.
     </div>
   </div>
 
   <h3>How ACs are extracted</h3>
-  <p>If <code>JIRA_AC_FIELD</code> is set, acceptance criteria are read from that custom field directly.
-  Otherwise the fetcher looks for an <em>"Acceptance Criteria"</em> heading inside the ticket description
-  and collects all bullet lines beneath it. Each AC is automatically numbered in
-  <code>AC-NNN-NN</code> format if it doesn't already have one.</p>
-
-  <h3>Output format</h3>
-  <p>Stories are written to <code>user-stories/CPQ_User_stories.md</code> (or <code>JIRA_OUTPUT_FILE</code>) in the multi-story format, grouped by Salesforce object:</p>
-  <pre><code>Salesforce CPQ — User Stories & Acceptance Criteria
-Source: Jira CPQ — fetched 2026-04-09
-Flow: Account → Contact → Opportunity → Quote (CPQ)
-________________________________________
-OBJECT 1: QUOTE
-
-## US-005 — As a Sales user, I want the system to mark the Quote as 'Accepted'
-As a Sales Rep...
-Acceptance Criteria:
-• AC-005-01: When I click 'Ready For Acceptance'...
-• AC-005-02: System triggers all existing create order validations...
-&lt;!-- Jira: CPQ-123 --&gt;
-
-________________________________________</code></pre>
-
-  <h3>Running standalone (without the pipeline)</h3>
-  <pre><code><span class="comment"># Fetch stories only — no test generation</span>
-npm run fetch:stories
-
-<span class="comment"># Then run the pipeline to generate tests from the fetched stories</span>
-npm run pipeline</code></pre>
+  <p>If <code>JIRA_AC_FIELD</code> is set, ACs are read from that custom field directly — most reliable.
+  Otherwise the fetcher scans the ticket description for a standalone <em>"Acceptance Criteria:"</em>
+  heading (anchored to the start of the line, so titles like "User Stories &amp; Acceptance Criteria"
+  are correctly ignored) and collects all bullet lines beneath it. The "As a…" user story sentence
+  is extracted separately as the story body. Each AC is auto-numbered in <code>AC-NNN-NN</code>
+  format if it does not already have one.</p>
 
   <div class="callout tip">
     <span class="callout-icon">💡</span>
     <div class="callout-body">
-      <strong>JQL tip:</strong> To pull only stories from the current sprint, use:
-      <code>JIRA_JQL=project = CPQ AND sprint in openSprints() AND issuetype = Story ORDER BY created ASC</code>
+      <strong>Best practice:</strong> Keep the ticket description clean — just the user story body and
+      an "Acceptance Criteria:" section with bullet points. Avoid pasting generated outputs back
+      into the description, as the AC extractor may pick up document headers as criteria.
     </div>
   </div>
+
+  <h3>Audit file</h3>
+  <p>After every fetch, stories are also written to <code>user-stories/CPQ_User_stories.md</code>
+  (or <code>JIRA_OUTPUT_FILE</code>) so you can inspect exactly what was fetched and how ACs were
+  parsed. This file is <strong>not read back</strong> by the pipeline when Jira data is available
+  — it exists purely for human review and debugging.</p>
+  <pre><code>OBJECT 1: ACCOUNT
+
+## US-005 — User Story: Salesforce E2E Process to Order Activation
+As a Sales Operations Manager, I want an automated end-to-end process...
+Acceptance Criteria:
+• AC-005-01: The system must identify an existing Account...
+• AC-005-02: If a Contact does not exist, the system must allow creation...
+&lt;!-- Jira: SCRUM-5 --&gt;
+
+________________________________________</code></pre>
+
+  <h3>Running standalone (without the pipeline)</h3>
+  <pre><code><span class="comment"># Fetch and inspect — writes audit file, shows what was parsed</span>
+npx ts-node scripts/fetch-jira-stories.ts
+
+<span class="comment"># Then run the full pipeline</span>
+npm run pipeline</code></pre>
 </section>
 
 <!-- ── SECTION 8b: GitHub Push ────────────────────────────────────────────────── -->
@@ -1051,6 +1079,119 @@ echo "https://your-user:ghp_xxx@github.com" >> ~/.git-credentials</code></pre>
       the pipeline without pushing (e.g. during local development), remove or comment out
       <code>GITHUB_TOKEN</code> from your <code>.env</code> — the step will still attempt a local commit
       but the push will fail gracefully and the pipeline will continue.
+    </div>
+  </div>
+</section>
+
+<!-- ── SECTION 8c: MCP Servers ───────────────────────────────────────────────────── -->
+<section id="mcp">
+  <h2><span class="sec-icon">🔌</span> MCP Servers</h2>
+  <p>
+    The framework integrates with <strong>Model Context Protocol (MCP)</strong> servers — lightweight
+    side-car processes that give Claude Code structured, permissioned access to external systems.
+    MCP servers are declared in <code>.claude/settings.json</code> and automatically started by
+    Claude Code whenever a conversation requires them. Credentials are stored separately in
+    <code>.claude/settings.local.json</code> (never commit this file).
+  </p>
+
+  <div class="callout info">
+    <span class="callout-icon">ℹ️</span>
+    <div class="callout-body">
+      <strong>Quick setup:</strong> Run <code>npx ts-node scripts/setup-mcp.ts</code> to interactively
+      configure all four servers and write credentials to <code>.claude/settings.local.json</code>.
+    </div>
+  </div>
+
+  <h3>Configured servers</h3>
+  <div class="card-grid">
+
+    <div class="card-sm">
+      <h4>🎭 Playwright MCP</h4>
+      <p><strong>Package:</strong> <code>@playwright/mcp@latest</code><br>
+      <strong>Mode:</strong> Headless</p>
+      <p>Gives Claude Code a real browser — navigate pages, click elements, fill forms, take screenshots,
+      and extract DOM state during test generation and self-healing. Enables Agent 1's live DOM scraping
+      without a separate Playwright process.</p>
+      <p><strong>No credentials required</strong> — Chromium is bundled.</p>
+    </div>
+
+    <div class="card-sm">
+      <h4>🐙 GitHub MCP</h4>
+      <p><strong>Package:</strong> <code>@modelcontextprotocol/server-github@latest</code><br>
+      <strong>Auth:</strong> Personal Access Token</p>
+      <p>Provides read/write access to GitHub repositories: list/create issues, open and review pull
+      requests, push commits, manage branches, and fetch file contents. Used by the pipeline's
+      Step 7 to commit QA results and by Claude Code when reviewing PRs.</p>
+      <pre style="margin:8px 0 0"><code>GITHUB_PERSONAL_ACCESS_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx</code></pre>
+    </div>
+
+    <div class="card-sm">
+      <h4>🎫 Jira MCP</h4>
+      <p><strong>Package:</strong> <code>mcp-atlassian@latest</code><br>
+      <strong>Auth:</strong> Atlassian API Token</p>
+      <p>Connects to your Atlassian Jira instance to search issues, read story details, fetch acceptance
+      criteria, and update ticket status. Replaces the legacy <code>scripts/fetch-jira-stories.ts</code>
+      REST approach with a conversational interface — Claude can now query Jira directly during AC
+      parsing (Agent 2) without any extra scripting.</p>
+      <pre style="margin:8px 0 0"><code>JIRA_URL=https://your-org.atlassian.net
+JIRA_USERNAME=you@yourorg.com
+JIRA_API_TOKEN=ATATTxxxxxxxxxxxxxxxx</code></pre>
+    </div>
+
+    <div class="card-sm">
+      <h4>☁️ Salesforce MCP</h4>
+      <p><strong>Package:</strong> <code>@salesforce/mcp@latest</code><br>
+      <strong>Auth:</strong> Username + Password + Instance URL</p>
+      <p>Direct Salesforce org access: run SOQL queries, read and write sObject records, describe
+      metadata, and inspect field schemas. Used during test generation to validate that field API names
+      exist before embedding them in selectors — eliminating the "invented field name" class of
+      failures.</p>
+      <pre style="margin:8px 0 0"><code>SF_USERNAME=user@org.com
+SF_PASSWORD=yourPassword
+SF_INSTANCE_URL=https://yourorg.my.salesforce.com</code></pre>
+    </div>
+
+  </div>
+
+  <h3>Configuration files</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>File</th><th>Purpose</th><th>Commit?</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>.claude/settings.json</code></td>
+          <td>Declares all MCP servers (commands, args, env placeholders). Safe to commit.</td>
+          <td><span class="badge pass">✔ Yes</span></td>
+        </tr>
+        <tr>
+          <td><code>.claude/settings.local.json</code></td>
+          <td>Holds real credentials that override <code>settings.json</code> values. <strong>Never commit.</strong></td>
+          <td><span class="badge fail">✖ No — add to .gitignore</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>How MCP servers fit in the pipeline</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Pipeline Step</th><th>MCP Server Used</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Step 0 — Story fetch</td><td>Jira MCP</td><td>Pull open stories from Jira sprint directly into Agent 2</td></tr>
+        <tr><td>Step 1 — Knowledge / DOM scrape</td><td>Playwright MCP</td><td>Browse live Salesforce org, extract real selectors</td></tr>
+        <tr><td>Step 3 — Field validation</td><td>Salesforce MCP</td><td>Confirm field API names exist before code generation</td></tr>
+        <tr><td>Step 6 — Self-healing</td><td>Playwright MCP + Salesforce MCP</td><td>Re-scrape changed selectors; verify field schema after fixes</td></tr>
+        <tr><td>Step 7 — GitHub push</td><td>GitHub MCP</td><td>Commit and push QA results with timestamped message</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <strong>Security reminder:</strong> <code>.claude/settings.local.json</code> contains plaintext
+      credentials. Ensure it is listed in <code>.gitignore</code> and never staged. Rotate tokens
+      immediately if accidentally committed.
     </div>
   </div>
 </section>

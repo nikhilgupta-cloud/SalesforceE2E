@@ -16,6 +16,7 @@ import { chromium, type Page, type BrowserContext } from '@playwright/test';
 import * as fs   from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
+import { loadConfig } from '../utils/FrameworkConfig';
 dotenv.config();
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -43,15 +44,22 @@ const OUTPUT_PATH = path.join(__dirname, '../knowledge/scraped-locators.json');
 const SESSION_FILE = path.join(__dirname, '../auth/session.json');
 
 /**
- * Object → New-record URL mapping.
- * The New form is the richest target — it shows all editable fields.
+ * Build object → New-record URL map from framework-config.json.
+ * Only objects whose spec file exists on disk are included — consistent
+ * with how run-pipeline.ts selects which tests to execute.
+ * sfApiName overrides the key-based default (important for CPQ objects
+ * like SBQQ__Quote__c whose API name differs from the config key).
  */
-const OBJECT_URLS: Record<string, string> = {
-  account:     '/lightning/o/Account/new',
-  contact:     '/lightning/o/Contact/new',
-  opportunity: '/lightning/o/Opportunity/new',
-  quote:       '/lightning/o/Quote/new',
-};
+function buildObjectUrls(): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const obj of loadConfig().objects) {
+    if (!fs.existsSync(path.join('tests', obj.specFile))) continue;
+    const sfName = obj.sfApiName ?? (obj.key.charAt(0).toUpperCase() + obj.key.slice(1));
+    map[obj.key] = `/lightning/o/${sfName}/new`;
+  }
+  return map;
+}
+const OBJECT_URLS = buildObjectUrls();
 
 // ── DOM Extraction (runs inside browser context) ──────────────────────────────
 
@@ -171,16 +179,28 @@ async function scrapeObject(
   page: Page,
   objectKey: string,
   urlPath: string,
+  opts: { recordType?: string } = {},
 ): Promise<ObjectLocatorMap> {
   console.log(`\n[scrape] → ${objectKey}: ${SF}${urlPath}`);
 
   await page.goto(`${SF}${urlPath}`, { waitUntil: 'domcontentloaded' });
   await dismissAuraError(page);
 
-  // 1. Bypass "Select Record Type" modal if it exists
+  // 1. Handle "Select Record Type" modal
   const nextBtn = page.getByRole('button', { name: 'Next', exact: true });
   if (await nextBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-    console.log(`[scrape] ℹ Record Type modal detected for ${objectKey}. Clicking Next...`);
+    if (opts.recordType) {
+      // Select the specific record type so we scrape the correct page layout
+      const rtLabel = page.locator('label').filter({ hasText: opts.recordType }).first();
+      if (await rtLabel.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await rtLabel.click();
+        console.log(`[scrape] ✓ Selected record type "${opts.recordType}" for ${objectKey}`);
+      } else {
+        console.warn(`[scrape] ⚠ Record type "${opts.recordType}" not found for ${objectKey} — org default will be used`);
+      }
+    } else {
+      console.log(`[scrape] ℹ Record Type modal detected for ${objectKey} — no recordType configured, using org default`);
+    }
     await nextBtn.click();
   }
 
@@ -250,10 +270,20 @@ export async function scrapeLocators(opts: { force?: boolean } = {}): Promise<{
   });
   const page = await context.newPage();
 
+  const cfgObjects = loadConfig().objects;
   const scraped: string[] = [];
   try {
     for (const [key, urlPath] of Object.entries(OBJECT_URLS)) {
-      db[key] = await scrapeObject(page, key, urlPath);
+      const objCfg = cfgObjects.find(o => o.key === key);
+      db[key] = await scrapeObject(page, key, urlPath, { recordType: objCfg?.recordType });
+
+      // Scrape any additional URLs (e.g. Quote Line Editor)
+      for (const extraPath of (objCfg?.extraScrapeUrls ?? [])) {
+        const extraKey = `${key}__extra__${extraPath.split('/').pop()}`;
+        console.log(`[scrape] ↳ extra URL for ${key}: ${extraPath}`);
+        db[extraKey] = await scrapeObject(page, extraKey, extraPath, { recordType: objCfg?.recordType });
+      }
+
       scraped.push(key);
     }
   } finally {
@@ -297,9 +327,17 @@ async function main() {
   });
   const page = await context.newPage();
 
+  const cfgObjects = loadConfig().objects;
   try {
     for (const [key, urlPath] of Object.entries(objectsToScrape)) {
-      db[key] = await scrapeObject(page, key, urlPath);
+      const objCfg = cfgObjects.find(o => o.key === key);
+      db[key] = await scrapeObject(page, key, urlPath, { recordType: objCfg?.recordType });
+
+      for (const extraPath of (objCfg?.extraScrapeUrls ?? [])) {
+        const extraKey = `${key}__extra__${extraPath.split('/').pop()}`;
+        console.log(`[scrape] ↳ extra URL for ${key}: ${extraPath}`);
+        db[extraKey] = await scrapeObject(page, extraKey, extraPath, { recordType: objCfg?.recordType });
+      }
     }
   } finally {
     await browser.close();

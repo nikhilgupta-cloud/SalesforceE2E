@@ -7,13 +7,16 @@ import * as fs   from 'fs';
 import * as path from 'path';
 
 export interface ObjectConfig {
-  key:          string;   // e.g. "account"
-  prefix:       string;   // e.g. "ACC"  (used in TC-ACC-001)
-  displayName:  string;   // e.g. "Account"
-  icon:         string;   // e.g. "🏢"
-  accent:       string;   // e.g. "#6366f1"  (ring/card colour on dashboard)
-  specFile:     string;   // e.g. "account.spec.ts"
-  scenarioFile: string;   // e.g. "account-scenarios.md"
+  key:              string;          // e.g. "account"
+  prefix:           string;          // e.g. "ACC"  (used in TC-ACC-001)
+  displayName:      string;          // e.g. "Account"
+  icon:             string;          // e.g. "🏢"
+  accent:           string;          // e.g. "#6366f1"  (ring/card colour on dashboard)
+  specFile:         string;          // e.g. "account.spec.ts"
+  scenarioFile:     string;          // e.g. "account-scenarios.md"
+  sfApiName?:       string;          // Salesforce object API name for URL derivation (e.g. "Account", "SBQQ__Quote__c")
+  recordType?:      string;          // Preferred Record Type label to select when the New-form modal prompts
+  extraScrapeUrls?: string[];        // Additional page paths to scrape (e.g. QLE editor — requires a live record ID)
 }
 
 export interface AppConfig {

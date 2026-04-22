@@ -259,10 +259,12 @@ function extractACsFromText(rawText: string, usNum: number): string[] {
     return STOP_KW.test(b) || STOP_NUM.test(b);
   };
 
-  /** Returns true if line (after stripping) is an "Acceptance Criteria" section heading. */
+  /** Returns true if line (after stripping) is an "Acceptance Criteria" section heading.
+   *  Requires "Acceptance Criteria" at the START of the bare line so that titles like
+   *  "User Stories & Acceptance Criteria" are NOT mistaken for a section heading. */
   const isACHeading = (l: string): boolean => {
     const b = bare(l);
-    return /acceptance criteria/i.test(b) && !AC_GROUP.test(b);
+    return (/^acceptance criteria/i.test(b) || /^workflow steps/i.test(b)) && !AC_GROUP.test(b);
   };
 
   /** Returns true if line (after stripping) is an "AC N:" group heading. */
@@ -302,7 +304,11 @@ function extractACsFromText(rawText: string, usNum: number): string[] {
 
       if (isACGroup(line)) continue;      // "AC N: Title" label — skip, collect bullets beneath
 
-      if (/^[•\-\*]/.test(line)) rawBullets.push(line);
+      // Leniency: if we are inside the AC section, treat lines starting with bullet symbols
+      // or lines that look like a bulleted step (Identity:, Verify:, etc.) as ACs.
+      if (/^[•\-\*]/.test(line) || /^\s*[A-Z][a-z]+:/.test(line)) {
+        rawBullets.push(line);
+      }
     }
   }
 
@@ -336,35 +342,33 @@ const OBJECT_KEYS = getObjectKeys(); // ordered list from framework-config.json
 function detectObjectKey(issue: JiraIssue): string {
   const fields = issue.fields;
 
-  // 1. Custom field configured via JIRA_OBJECT_FIELD
+  // 1. Custom field configured via JIRA_OBJECT_FIELD (High priority, exact)
   if (JIRA_OBJ_FIELD && fields[JIRA_OBJ_FIELD]) {
     const val = String(fields[JIRA_OBJ_FIELD]?.value ?? fields[JIRA_OBJ_FIELD]).toLowerCase();
-    const match = OBJECT_KEYS.find(k => val.includes(k));
+    const match = OBJECT_KEYS.find(k => val === k);
     if (match) return match;
   }
 
-  // 2. Jira components
-  const components: string[] = (fields.components ?? []).map((c: any) => c.name?.toLowerCase() ?? '');
-  for (const key of OBJECT_KEYS) {
-    if (components.some(c => c.includes(key))) return key;
-  }
-
-  // 3. Jira labels — supports "sf-account", "salesforce-account", "account"
+  // 2. Jira labels — HIGH PRECISION (sf-account, salesforce-account)
   const labels: string[] = (fields.labels ?? []).map((l: string) => l.toLowerCase());
   for (const key of OBJECT_KEYS) {
-    if (labels.some(l => l === key || l === `sf-${key}` || l === `salesforce-${key}`)) return key;
+    if (labels.some(l => l === `sf-${key}` || l === `salesforce-${key}`)) return key;
   }
 
-  // 4. Keyword scan of summary first, then full description
-  // Uses word-boundary regex to avoid "account" matching inside "acceptance" etc.
-  const summary     = (fields.summary ?? '').toLowerCase();
-  const description = descriptionToText(fields.description).toLowerCase();
+  // 3. Jira components — EXACT MATCH ONLY (avoid partials like "Salesforce" matching multiple)
+  const components: string[] = (fields.components ?? []).map((c: any) => c.name?.toLowerCase() ?? '');
+  for (const key of OBJECT_KEYS) {
+    if (components.some(c => c === key)) return key;
+  }
 
-  // Check summary first (more reliable signal)
+  // 4. Keyword scan of summary (word boundary check)
+  const summary = (fields.summary ?? '').toLowerCase();
   for (const key of OBJECT_KEYS) {
     if (new RegExp(`\\b${key}\\b`).test(summary)) return key;
   }
-  // Fall back to description
+
+  // 5. Keyword scan of description (Fallback)
+  const description = descriptionToText(fields.description).toLowerCase();
   for (const key of OBJECT_KEYS) {
     if (new RegExp(`\\b${key}\\b`).test(description)) return key;
   }
@@ -385,8 +389,8 @@ function extractTestData(text: string): string {
 
   // Heading patterns that indicate the start of a test data section
   const START = /test data|technical test|tc_\d{3}/i;
-  // Section heading that would end the test data block
-  const END_HDG = /^(acceptance criteria|user story|as a\b)/i;
+  // Section heading or generated-file artefact that ends the test data block
+  const END_HDG = /^(acceptance criteria|user story|as a\b|object \d+:|<!--)/i;
 
   let dataStart = -1;
   for (let i = 0; i < lines.length; i++) {
@@ -399,7 +403,7 @@ function extractTestData(text: string): string {
   const dataLines: string[] = [];
   for (let i = dataStart + 1; i < lines.length; i++) {
     const line = lines[i];
-    const b    = line.replace(/^[•\-\*\d.]\s*/, '').trim();
+    const b    = line.replace(/^[#•\-\*\d.]\s*/, '').trim();
     if (END_HDG.test(b)) break;
     // Include table rows, bullet pairs, and plain text lines
     if (line.startsWith('|') || /^[•\-\*]/.test(line) || b.length > 0) {
@@ -429,6 +433,34 @@ interface StoryBlock {
   jiraKey:  string;   // original CPQ-123 for traceability
 }
 
+/**
+ * Structured story entry passed directly to the test generator.
+ * Eliminates the file-read step in the pipeline — Jira data flows straight
+ * into processStory() without touching CPQ_User_stories.md.
+ */
+export interface JiraStoryEntry {
+  usId:         string;  // US-005
+  objKey:       string;  // account | contact | opportunity | quote
+  storyContent: string;  // formatted markdown block — same shape as parseMultiStoryFile output
+  jiraKey:      string;  // SCRUM-5 (traceability)
+}
+
+/** Convert a StoryBlock to the markdown format processStory() expects. */
+function storyToMarkdown(block: StoryBlock): string {
+  const parts: string[] = [`## ${block.usId} — ${block.title}`];
+  if (block.body) parts.push(block.body);
+  if (block.acs.length > 0) {
+    parts.push('Acceptance Criteria:');
+    parts.push(...block.acs);
+  }
+  if (block.testData) {
+    parts.push('');
+    parts.push('Technical Test Data:');
+    parts.push(block.testData);
+  }
+  return parts.join('\n');
+}
+
 function buildMarkdown(grouped: Map<string, StoryBlock[]>): string {
   const cfg   = loadConfig();
   const today = new Date().toISOString().split('T')[0];
@@ -445,10 +477,15 @@ function buildMarkdown(grouped: Map<string, StoryBlock[]>): string {
     const stories = grouped.get(obj.key) ?? [];
     if (stories.length === 0) continue;
 
-    lines.push(`OBJECT ${objIndex++}: ${obj.displayName.toUpperCase().split(' ')[0]}`);
+    lines.push(`OBJECT ${objIndex++}: ${obj.displayName.toUpperCase()}`);
     lines.push('');
 
+    // Deduplicate stories within the same object group by usId
+    const seenUsIds = new Set<string>();
     for (const story of stories) {
+      if (seenUsIds.has(story.usId)) continue;
+      seenUsIds.add(story.usId);
+
       lines.push(`## ${story.usId} — ${story.title}`);
       if (story.body) lines.push(story.body);
       if (story.acs.length > 0) {
@@ -467,7 +504,7 @@ function buildMarkdown(grouped: Map<string, StoryBlock[]>): string {
     lines.push('________________________________________');
   }
 
-  // Unresolved stories — written as comments only so the parser ignores them
+  // Unresolved stories
   const unknown = grouped.get('unknown') ?? [];
   if (unknown.length > 0) {
     lines.push('');
@@ -487,7 +524,7 @@ function buildMarkdown(grouped: Map<string, StoryBlock[]>): string {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
-export async function fetchJiraStories(): Promise<{ fetched: number; written: string }> {
+export async function fetchJiraStories(): Promise<{ fetched: number; written: string; stories: JiraStoryEntry[] }> {
   // Validate config
   if (!JIRA_BASE_URL || !JIRA_EMAIL || !JIRA_API_TOKEN || !JIRA_PROJECT) {
     throw new Error(
@@ -501,7 +538,7 @@ export async function fetchJiraStories(): Promise<{ fetched: number; written: st
   const issues = await fetchAllIssues();
   if (issues.length === 0) {
     console.log('[jira] No stories returned by JQL query.');
-    return { fetched: 0, written: OUTPUT_FILE };
+    return { fetched: 0, written: OUTPUT_FILE, stories: [] };
   }
 
   // Group stories by object key
@@ -520,12 +557,17 @@ export async function fetchJiraStories(): Promise<{ fetched: number; written: st
     const usNum  = issueNumber(issue.key);
     const usId   = `US-${String(usNum).padStart(3, '0')}`;
 
-    // Extract description body (strip AC section — we handle that separately)
+    // Extract description body — look for "As a/an..." user story sentence.
+    // Avoids false-cutting at "Acceptance Criteria" embedded in a document title.
     const fullText  = descriptionToText(issue.fields.description);
-    const acIdx     = fullText.toLowerCase().indexOf('acceptance criteria');
-    const bodyRaw   = (acIdx > -1 ? fullText.slice(0, acIdx) : fullText).trim();
-    // Strip stray ADF artefacts: standalone list numbers ("1.", "2.") on their own line
-    const bodyText  = bodyRaw.split('\n').filter(l => !/^\d+\.\s*$/.test(l.trim())).join('\n').trim();
+    const asAMatch  = fullText.match(/As an?\s+\w/i);
+    const acLineMatch = fullText.match(/\nAcceptance Criteria:?\s*\n/i);
+    const acBodyEnd = acLineMatch ? acLineMatch.index! : -1;
+    let bodyText = '';
+    if (asAMatch && asAMatch.index !== undefined) {
+      const end = acBodyEnd > asAMatch.index ? acBodyEnd : fullText.length;
+      bodyText = fullText.slice(asAMatch.index, end).replace(/\n{3,}/g, '\n').trim();
+    }
 
     // Extract ACs — prefer custom field, fall back to description
     let acs: string[];
@@ -533,6 +575,7 @@ export async function fetchJiraStories(): Promise<{ fetched: number; written: st
       const acText = descriptionToText(issue.fields[JIRA_AC_FIELD]);
       acs = extractACsFromText(`Acceptance Criteria:\n${acText}`, usNum);
     } else {
+      // ONLY pass the description text, not the whole file context
       acs = extractACsFromText(fullText, usNum);
     }
 
@@ -576,17 +619,30 @@ export async function fetchJiraStories(): Promise<{ fetched: number; written: st
     stories.sort((a, b) => parseInt(a.usId.slice(3)) - parseInt(b.usId.slice(3)));
   }
 
+  // Build structured entries for direct pipeline use (no file read needed downstream)
+  const stories: JiraStoryEntry[] = [];
+  const seenEntryKeys = new Set<string>();
+  for (const [objKey, blocks] of grouped) {
+    if (objKey === 'unknown') continue;
+    for (const block of blocks) {
+      const entryKey = `${block.usId}:${objKey}`;
+      if (seenEntryKeys.has(entryKey)) continue;
+      seenEntryKeys.add(entryKey);
+      stories.push({ usId: block.usId, objKey, storyContent: storyToMarkdown(block), jiraKey: block.jiraKey });
+    }
+  }
+
   const markdown = buildMarkdown(grouped);
 
   fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
   fs.writeFileSync(OUTPUT_FILE, markdown, 'utf8');
 
-  console.log(`[jira] ✅ ${issues.length} stories written to ${OUTPUT_FILE}`);
+  console.log(`[jira] ✅ ${issues.length} stories → ${stories.length} entries (${OUTPUT_FILE} kept for audit)`);
   if (unresolved > 0) {
     console.warn(`[jira] ⚠ ${unresolved} stories could not be mapped to a Salesforce object — check the UNRESOLVED section at the bottom of the file`);
   }
 
-  return { fetched: issues.length, written: OUTPUT_FILE };
+  return { fetched: issues.length, written: OUTPUT_FILE, stories };
 }
 
 // ── Standalone entry ──────────────────────────────────────────────────────────

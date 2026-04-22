@@ -39,6 +39,19 @@ async function dismissAuraError(page: Page) {
   }
 }
 
+async function clickTab(page: Page, tabName: string) {
+  // Salesforce record pages render Details / Related / Activity as role="tab".
+  // Always call this before accessing fields that live on a specific tab.
+  const tab = page.getByRole('tab', { name: tabName, exact: true }).first();
+  await tab.waitFor({ state: 'visible', timeout: 15000 });
+  const isActive = await tab.getAttribute('aria-selected').catch(() => null);
+  if (isActive !== 'true') {
+    await tab.click();
+    await page.locator('.slds-spinner').first()
+      .waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+  }
+}
+
 /**
  * Create a fresh Opportunity under the given existing account.
  * Used as a fallback when SF_TEST_OPP_PATH is not set in .env.

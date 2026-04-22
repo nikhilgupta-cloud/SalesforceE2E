@@ -490,6 +490,21 @@ body::after{
 .t-err{font-size:10px;color:rgba(244,63,94,.9);margin-top:4px;line-height:1.4;word-break:break-word;white-space:normal;}
 .t-dur{font-size:10px;color:var(--muted);flex-shrink:0;font-variant-numeric:tabular-nums;margin-top:3px;}
 
+/* ── MCP Integration ─────────────────────────── */
+.mcp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:36px;}
+.mcp-card{background:var(--glass);border:1px solid var(--border);border-radius:var(--r2);padding:20px;display:flex;align-items:flex-start;gap:14px;transition:transform .15s,border-color .15s;}
+.mcp-card:hover{transform:translateY(-2px);border-color:var(--border2);}
+.mcp-card.mcp-active{border-color:rgba(34,211,165,.25);}
+.mcp-icon{font-size:28px;flex-shrink:0;}
+.mcp-info{flex:1;min-width:0;}
+.mcp-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.mcp-pkg{font-size:10px;color:var(--muted);font-family:monospace;margin-bottom:6px;}
+.mcp-role{font-size:11px;color:var(--muted);line-height:1.4;}
+.mcp-badge{font-size:10px;font-weight:700;padding:4px 10px;border-radius:999px;flex-shrink:0;letter-spacing:.5px;white-space:nowrap;}
+.mcp-ok {background:rgba(34,211,165,.12);color:var(--pass);border:1px solid rgba(34,211,165,.3);}
+.mcp-cfg{background:rgba(245,158,11,.12);color:var(--run); border:1px solid rgba(245,158,11,.3);}
+.mcp-off{background:var(--glass2);          color:var(--muted);border:1px solid var(--border);}
+
 /* ── Footer ──────────────────────────────────── */
 .footer{text-align:center;padding:32px 0 0;font-size:11px;color:var(--muted2);}
 .footer a{color:var(--p1);text-decoration:none;}
@@ -610,6 +625,12 @@ ${steps.map(s => this.renderStep(s)).join('')}
       </div>
     </div>
   </div>
+</div>
+
+<!-- ── MCP Integration ────────────────────────────── -->
+<div class="sec">MCP Integration</div>
+<div class="mcp-grid">
+${this.renderMcpCards()}
 </div>
 
 <!-- ── Test Cases ─────────────────────────────────── -->
@@ -735,6 +756,42 @@ ${[...this.suites.entries()].map(([,s]) => this.renderSuiteSection(s)).join('')}
         </div>
         <div class="tile-grid">${tiles}</div>
       </div>`;
+  }
+
+  private renderMcpCards(): string {
+    const localPath = path.join('.claude', 'settings.local.json');
+    const basePath  = path.join('.claude', 'settings.json');
+
+    let configured: string[] = [];
+    for (const p of [basePath, localPath]) {
+      try {
+        const s = JSON.parse(fs.readFileSync(p, 'utf8'));
+        if (s.mcpServers) configured = Object.keys(s.mcpServers);
+      } catch { /* file absent or malformed */ }
+    }
+    const hasSecrets = fs.existsSync(localPath);
+
+    const servers = [
+      { key: 'playwright', icon: '🎭', name: 'Playwright MCP',  pkg: '@playwright/mcp',                        role: 'Live DOM inspection · Selector healing · Locator discovery' },
+      { key: 'github',     icon: '🐙', name: 'GitHub MCP',      pkg: '@modelcontextprotocol/server-github',    role: 'Issue creation · PR status · Report push' },
+      { key: 'jira',       icon: '📋', name: 'Jira MCP',        pkg: 'mcp-atlassian',                          role: 'Story sync · AC pull · Result write-back' },
+      { key: 'salesforce', icon: '☁️', name: 'Salesforce MCP',  pkg: '@salesforce/mcp',                        role: 'API test data · Field metadata · Record validation' },
+    ];
+
+    return servers.map(s => {
+      const isCfg  = configured.includes(s.key);
+      const cls    = isCfg && hasSecrets ? 'mcp-ok' : isCfg ? 'mcp-cfg' : 'mcp-off';
+      const label  = isCfg && hasSecrets ? '● Connected' : isCfg ? '○ Configured' : '○ Not set';
+      return `  <div class="mcp-card${isCfg ? ' mcp-active' : ''}">
+    <div class="mcp-icon">${s.icon}</div>
+    <div class="mcp-info">
+      <div class="mcp-name">${s.name}</div>
+      <div class="mcp-pkg">${esc(s.pkg)}</div>
+      <div class="mcp-role">${s.role}</div>
+    </div>
+    <div class="mcp-badge ${cls}">${label}</div>
+  </div>`;
+    }).join('\n');
   }
 }
 

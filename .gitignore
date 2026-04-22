@@ -3,6 +3,7 @@ node_modules/
 # Secrets — never commit
 .env
 auth/
+.claude/settings.local.json
 
 # Test artifacts
 test-results/

@@ -23,6 +23,21 @@ This agent improves test stability WITHOUT modifying business logic.
 
 ## Failure Classification (STRICT)
 
+### Legacy Category Mapping (backward compatibility)
+
+If `reports/results.json` contains Agent 5 legacy category names, remap them before classification:
+
+| Legacy (Agent 5 old) | Canonical (Agent 6) |
+|----------------------|---------------------|
+| `LOCATOR`            | `selector_failure`  |
+| `SYNC`               | `timing_failure`    |
+| `SF_SYSTEM`          | `environment_failure` |
+| `BUSINESS_LOGIC`     | Inspect error message: if a tab-locked field is referenced → `tab_navigation_failure`; if a record is missing → `data_failure`; otherwise → `selector_failure` |
+
+Always normalise to canonical names before routing to a fix strategy.
+
+---
+
 Classify each failure into ONE of:
 
 ### 1. selector_failure
@@ -63,7 +78,23 @@ Fix:
 
 ---
 
-### 4. environment_failure
+### 4. tab_navigation_failure
+Symptoms:
+- locator times out on a record detail page
+- field not found but locator pattern looks correct
+- error occurs immediately after page navigation (before any interaction)
+- error message references a field that lives on Details tab (Stage, Amount, Industry, Phone, etc.)
+
+Fix:
+- Insert `await clickTab(page, 'Details');` (or the relevant tab name) immediately after `waitForLoadState`
+- Confirm `clickTab` helper exists in the spec file header — if missing, add it
+- Do NOT change the field locator itself; only add the tab navigation step before it
+
+Priority check before classifying as selector_failure: if the failing line targets a record-page field and no `clickTab` call precedes it in the same test, reclassify as tab_navigation_failure first.
+
+---
+
+### 5. environment_failure
 Symptoms:
 - login/session expired
 - network failure
@@ -96,25 +127,59 @@ Use keyword-based + pattern-based classification.
 
 #### A. Selector Fix Strategy
 
-Priority order:
+**Step 1 — Check enriched locators (knowledge/scraped-locators.json)**
+- Find the failing field by label in `knowledge/scraped-locators.json`
+- If `apiName` is non-null → use Priority 1 selector immediately
+- If `apiName` is null → run `npm run enrich:locators` to backfill from Salesforce MCP,
+  then retry. If MCP unavailable, fall through.
 
-1. Check `knowledge/scraped-locators.json`
+**Step 2 — Salesforce MCP describe (if scraped-locators has null apiName)**
+Use the Salesforce MCP to resolve the field API name:
+```
+salesforce.describe({ object: "Account" })  // or Contact, Opportunity, Quote
+```
+Map the failing field label to `name` in the describe response → use `data-field-api-name`.
 
-2. Use scoped modal locator:
+**Step 3 — Apply locator by priority (STRICT — never skip levels)**
 
-const modal = page.locator('[role="dialog"]:not([aria-hidden="true"])');
+Priority 1 — API Name (most stable):
+```typescript
+modal.locator('[data-field-api-name="FieldApiName__c"] input').first()
+modal.locator('[data-field-api-name="StageName"] button').first()   // picklist
+```
 
+Priority 2 — Role-based:
+```typescript
+page.getByRole('button', { name: 'Save', exact: true }).first()
+```
 
-3. Apply fallback patterns:
+Priority 3 — Label-based:
+```typescript
+modal.getByLabel('Last Name').first()
+```
 
-lightning-input → filter({ hasText })
-lightning-combobox → button.first()
-lightning-lookup → input
+Priority 4 — LWC combobox fallback (picklists only):
+```typescript
+modal.locator('lightning-combobox:has-text("Stage") button').first()
+```
 
+Priority 5 — LWC input fallback:
+```typescript
+modal.locator('lightning-input').filter({ hasText: /Label/i }).locator('input').first()
+```
 
-4. Always enforce:
+**CRITICAL — Compound Name field (Contact / Lead / Person Account):**
+If a failure targets `[data-field-api-name="LastName"]` or `[data-field-api-name="FirstName"]`,
+these selectors find nothing because Name is a compound field. Fix immediately to:
+```typescript
+modal.locator('[data-field-api-name="Name"] input[name="lastName"]').first()
+modal.locator('[data-field-api-name="Name"] input[name="firstName"]').first()
+```
 
-.first()
+**Step 4 — Always scope to modal and enforce `.first()`**
+```typescript
+const modal = page.locator('[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])');
+```
 
 
 ---

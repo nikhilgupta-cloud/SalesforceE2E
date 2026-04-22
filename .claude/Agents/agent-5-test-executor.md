@@ -73,13 +73,17 @@ tests/*.js
 
 ## EXECUTION
 
-Run strictly in sequence:
+Run spec files in the order defined by `prompts/framework-config.json` (`objects[].key` sequence).
 
-Account → Contact → Opportunity → Quote
+**Discovery rule (MANDATORY — never hardcode the list):**
+1. Read `framework-config.json` → extract `objects[].specFile` in declared order.
+2. Keep only files that physically exist under `tests/`.
+3. Pass that resolved list to Playwright — nothing more, nothing less.
 
-Command:
+This means adding `contract.spec.ts`, `order.spec.ts`, or any future object to `framework-config.json`
+automatically includes it in execution without touching this agent or the pipeline script.
 
-npx playwright test tests/account.spec.ts tests/contact.spec.ts tests/opportunity.spec.ts tests/quote.spec.ts --headed
+Support targeted execution if the user provides a `--target` argument (pass the matching spec file only).
 
 ---
 
@@ -111,25 +115,34 @@ For each test extract:
 
 ## FAILURE CLASSIFICATION (VERY IMPORTANT)
 
-Every failure MUST be classified into one of:
+Every failure MUST be classified into one of the following categories.
+**These names MUST match exactly** — Agent 6 reads them verbatim to route fixes.
 
-1. SF_SYSTEM
-- Aura error popup
-- Page not loading
-- Salesforce internal issue
+1. `selector_failure`
+- Element not found in DOM
+- Selector mismatch / returns 0 elements
+- Strict mode violation (multiple matches)
 
-2. LOCATOR
-- Element not found
-- Selector mismatch
+2. `timing_failure`
+- Timeout waiting for element
+- Element present but not yet interactive (click intercepted)
+- Spinner never dismissed
 
-3. BUSINESS_LOGIC (MOST IMPORTANT)
-- Execution Status not updated
-- Order not created
-- Conditions not applied correctly
+3. `tab_navigation_failure`
+- Field locator times out on a record detail page
+- Field exists but test never called `clickTab('Details')` or `clickTab('Related')` before the lookup
+- Error occurs immediately after navigation, targeting a tab-locked field (Stage, Amount, Industry, Phone, etc.)
+- **Priority check**: if a failing line targets a record-page field and no `clickTab` precedes it, classify as `tab_navigation_failure` — NOT `selector_failure`
 
-4. SYNC
-- Timing issue
-- Element present but not ready
+4. `data_failure`
+- Missing prerequisite record (Account/Contact/Opportunity not found)
+- Lookup returns no results
+- Validation error from missing required field value
+
+5. `environment_failure`
+- Login / session expired
+- Network failure
+- Salesforce org unavailable or Aura system error blocking execution
 
 ---
 
@@ -151,8 +164,8 @@ Format:
       "tcId": "TC-QTE-003",
       "acId": "AC-005-26",
       "status": "FAILED",
-      "failureType": "BUSINESS_LOGIC",
-      "error": "Execution Status did not update"
+      "failureType": "tab_navigation_failure",
+      "error": "Execution Status did not update — clickTab('Details') missing before field lookup"
     }
   ]
 }
@@ -179,8 +192,8 @@ Failed: X
 Skipped: X
 
 Failures:
-TC-QTE-003 → BUSINESS_LOGIC
-TC-QTE-004 → LOCATOR
+TC-QTE-003 → tab_navigation_failure
+TC-QTE-004 → selector_failure
 ==================================
 
 ---

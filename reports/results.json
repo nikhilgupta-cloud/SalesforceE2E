@@ -61,18 +61,19 @@
   "suites": [],
   "errors": [
     {
-      "message": "Error: duplicate test title \"Contact Tests › TC-CON-001 — Verify Account Billing Address and Payment Terms (soft-fail)\", first declared in contact.spec.ts:53",
+      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\order.spec.ts: Unexpected token (40:45)\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[32m\u001b[39m\n \u001b[90m 39 |\u001b[39m \u001b[32mfunction getTestData(fixture = 'order'): OrderTestData {\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m \u001b[32m  const filePath = path.resolve(__dirname, `\u001b[39m\u001b[33m.\u001b[39m\u001b[33m.\u001b[39m\u001b[33m/\u001b[39mprompts\u001b[33m/\u001b[39mtest\u001b[33m-\u001b[39mdata\u001b[33m/\u001b[39m${fixture}\u001b[33m.\u001b[39mjson\u001b[32m`);\u001b[39m\n \u001b[90m    |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m \u001b[32m  if (fs.existsSync(filePath)) {\u001b[39m\n \u001b[90m 42 |\u001b[39m \u001b[32m    return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as OrderTestData;\u001b[39m\n \u001b[90m 43 |\u001b[39m \u001b[32m  }\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\order.spec.ts: Unexpected token (40:45)\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[32m\u001b[39m\n \u001b[90m 39 |\u001b[39m \u001b[32mfunction getTestData(fixture = 'order'): OrderTestData {\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m \u001b[32m  const filePath = path.resolve(__dirname, `\u001b[39m\u001b[33m.\u001b[39m\u001b[33m.\u001b[39m\u001b[33m/\u001b[39mprompts\u001b[33m/\u001b[39mtest\u001b[33m-\u001b[39mdata\u001b[33m/\u001b[39m${fixture}\u001b[33m.\u001b[39mjson\u001b[32m`);\u001b[39m\n \u001b[90m    |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m \u001b[32m  if (fs.existsSync(filePath)) {\u001b[39m\n \u001b[90m 42 |\u001b[39m \u001b[32m    return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as OrderTestData;\u001b[39m\n \u001b[90m 43 |\u001b[39m \u001b[32m  }\u001b[39m\u001b[0m",
       "location": {
-        "file": "D:\\SalesforceE2E1\\tests\\contact.spec.ts",
-        "line": 504,
-        "column": 7
+        "file": "D:\\SalesforceE2E1\\tests\\order.spec.ts",
+        "line": 40,
+        "column": 45
       },
-      "snippet": "\u001b[90m   at \u001b[39mcontact.spec.ts:504\n\n\u001b[0m \u001b[90m 502 |\u001b[39m   \u001b[90m// ── US-005 START ─────────────────────────────────────────────────────\u001b[39m\n \u001b[90m 503 |\u001b[39m   \u001b[90m// TC-CON-001 | AC Reference: AC-005-01\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 504 |\u001b[39m   test(\u001b[32m'TC-CON-001 — Verify Account Billing Address and Payment Terms (soft-fail)'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 505 |\u001b[39m     \u001b[36mconst\u001b[39m accountName \u001b[33m=\u001b[39m \u001b[32m'SBOTestAccount'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 506 |\u001b[39m\n \u001b[90m 507 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m`${SF}/lightning/o/Account/list?filterName=Recent`\u001b[39m\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+      "snippet": "\u001b[90m   at \u001b[39morder.spec.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[32m\u001b[39m\n \u001b[90m 39 |\u001b[39m \u001b[32mfunction getTestData(fixture = 'order'): OrderTestData {\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m \u001b[32m  const filePath = path.resolve(__dirname, `\u001b[39m\u001b[33m.\u001b[39m\u001b[33m.\u001b[39m\u001b[33m/\u001b[39mprompts\u001b[33m/\u001b[39mtest\u001b[33m-\u001b[39mdata\u001b[33m/\u001b[39m${fixture}\u001b[33m.\u001b[39mjson\u001b[32m`);\u001b[39m\n \u001b[90m    |\u001b[39m                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m \u001b[32m  if (fs.existsSync(filePath)) {\u001b[39m\n \u001b[90m 42 |\u001b[39m \u001b[32m    return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as OrderTestData;\u001b[39m\n \u001b[90m 43 |\u001b[39m \u001b[32m  }\u001b[39m\u001b[0m"
     }
   ],
   "stats": {
-    "startTime": "2026-04-17T05:27:40.824Z",
-    "duration": 421.68700000000035,
+    "startTime": "2026-04-22T03:32:28.973Z",
+    "duration": 304.413,
     "expected": 0,
     "skipped": 0,
     "unexpected": 0,

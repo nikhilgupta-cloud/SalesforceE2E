@@ -1,0 +1,21 @@
+{
+  "account": {
+    "Account_Name": "SBOTestAccount",
+    "Billing_Address": "123 Salesforce Way, San Francisco, CA 94105",
+    "Payment_Terms": "Net 30"
+  },
+  "contact": {
+    "First_Name": "David1",
+    "Last_Name": "John",
+    "Email": "David.John1@auto.com",
+    "Full_Name": "David1 John",
+    "Phone": "555-121212"
+  },
+  "opportunity": {
+    "Name": "Standard E2E - Q2 Order",
+    "Stage": "Prospecting",
+    "Close_Date": "12/31/2026",
+    "Amount": "10000",
+    "Probability": "10"
+  }
+}
