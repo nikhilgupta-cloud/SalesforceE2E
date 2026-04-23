@@ -1,5 +1,2 @@
 TC ID,Object,User Story,Title,Status,Duration (s),AC Reference,Error Message,File,Line,Run Date
-TC-ACC-001,Account,US-005,TC-ACC-001 — Verify Account Billing Address and Payment Terms under Details tab (soft-fail),passed,20.14,AC-005-01,,account.spec.ts,73,2026-04-23
-TC-ACC-002,Account,US-005,TC-ACC-002 — Create new Contact on Account record via Contacts related list,passed,17.68,AC-005-02,,account.spec.ts,101,2026-04-23
-TC-ACC-003,Account,US-005,TC-ACC-003 — Create Opportunity from Contact record via Opportunities related list,passed,22.77,AC-005-03,,account.spec.ts,158,2026-04-23
-TC-ACC-004,Account,US-005,TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity,passed,26.51,AC-005-04,,account.spec.ts,243,2026-04-23
+TC-ACC-004,Account,US-005,TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity,passed,23.42,AC-005-04,,account.spec.ts,245,2026-04-23

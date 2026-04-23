@@ -77,112 +77,6 @@
           "column": 6,
           "specs": [
             {
-              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms under Details tab (soft-fail)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 20135,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "[SOFT-FAIL][AC-005-01] Payment Terms is empty or not populated on Account.\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-04-23T12:58:30.579Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-0b6878451cfcf08904e9",
-              "file": "account.spec.ts",
-              "line": 73,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-002 — Create new Contact on Account record via Contacts related list",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 17677,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-23T12:58:51.913Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-4096589a576a95f8377c",
-              "file": "account.spec.ts",
-              "line": 101,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-003 — Create Opportunity from Contact record via Opportunities related list",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 22774,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-23T12:59:09.665Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-b5ddaa06db3b432e1f43",
-              "file": "account.spec.ts",
-              "line": 158,
-              "column": 7
-            },
-            {
               "title": "TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity",
               "ok": true,
               "tags": [],
@@ -198,12 +92,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 26507,
+                      "duration": 23420,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-23T12:59:32.493Z",
+                      "startTime": "2026-04-23T14:50:12.445Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -213,7 +107,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-531ed4647b1461da75de",
               "file": "account.spec.ts",
-              "line": 243,
+              "line": 245,
               "column": 5
             }
           ]
@@ -223,9 +117,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-23T12:58:27.653Z",
-    "duration": 92507.154,
-    "expected": 4,
+    "startTime": "2026-04-23T14:50:09.326Z",
+    "duration": 29679.835,
+    "expected": 1,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

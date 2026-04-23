@@ -31,11 +31,15 @@ export interface TestData {
     Amount?: string;
     Probability?: string;
   };
+  quote: {
+    Name: string;
+    Contract_Type?: string;
+  };
 }
 
 const FIXTURE_PATH = path.join(__dirname, '..', 'tests', 'fixtures', 'test-data.json');
 
-function loadFixture(): Partial<TestData> {
+function loadFixture(): Partial<TestData> & { Quote?: { Name?: string; Contract_Type?: string } } {
   try {
     if (fs.existsSync(FIXTURE_PATH)) {
       return JSON.parse(fs.readFileSync(FIXTURE_PATH, 'utf8'));
@@ -69,6 +73,10 @@ export function getTestData(): TestData {
       Close_Date: fixture.opportunity?.Close_Date || '12/31/2026',
       Amount: fixture.opportunity?.Amount || '10000',
       Probability: fixture.opportunity?.Probability || '10',
+    },
+    quote: {
+      Name: fixture.Quote?.Name || `AutoQuote-${timestamp}`,
+      Contract_Type: fixture.Quote?.Contract_Type || 'Subscription',
     },
   };
 }

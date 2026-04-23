@@ -12,10 +12,11 @@ AC-005-01: The system must identify an existing Account and verify that Billing 
 AC-005-02: On the Account record create the new contact.
 AC-005-03: An Opportunity must be created from the Contact’s perspective.
 AC-005-04: The system must verify that the newly created Contact is assigned as the Primary Contact Role on the Opportunity.
+QO-005-05: The system must create the Quote from the Opportunity.
 
 Technical Test Data:
 Test data is managed externally via tests/fixtures/test-data.json and loaded via getTestData() utility.
-Account, Contact, Opportunity fields: auto-loaded from fixture
+Account, Contact, Opportunity , Quote fields: auto-loaded from fixture
 Fallback: timestamp-suffixed names (AutoAcc-${Date.now()}) if fixture missing
 Price Book & Quote fields: defined in test-data.json
 
@@ -26,7 +27,7 @@ Establish: Create Contact (if missing) and link a new Opportunity.
 
 Technical Test Data:
 Test data is managed externally via tests/fixtures/test-data.json and loaded via getTestData() utility.
-Account, Contact, Opportunity fields: auto-loaded from fixture
+Account, Contact, Opportunity , Quote fields: auto-loaded from fixture
 Fallback: timestamp-suffixed names (AutoAcc-${Date.now()}) if fixture missing
 Price Book & Quote fields: defined in test-data.json
 Automated Workflow Steps:

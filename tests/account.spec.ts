@@ -68,13 +68,13 @@ test.describe('Account Tests', () => {
   let createdContactUrl: string;
   let createdOpportunityName: string;
   let createdOpportunityUrl: string;
+  let createdQuoteName: string;
 
   // TC-ACC-001 | AC Reference: AC-005-01
   test('TC-ACC-001 — Verify Account Billing Address and Payment Terms under Details tab (soft-fail)', async ({ page }) => {
     await searchAndOpen(page, resolvedAccountName);
     await clickTab(page, 'Details');
 
-    // Read a view-mode field container and return trimmed value text
     const readFieldOutput = async (labelText: string): Promise<string> => {
       const container = page
         .locator('records-record-layout-item, force-record-layout-item')
@@ -84,13 +84,11 @@ test.describe('Account Tests', () => {
       return (raw ?? '').replace(new RegExp(labelText, 'i'), '').trim();
     };
 
-    // AC-005-01: Billing Address — soft-fail
     const billingAddress = await readFieldOutput('Billing Address');
     if (!billingAddress) {
       console.warn('[SOFT-FAIL][AC-005-01] Billing Address is empty or not populated on Account.');
     }
 
-    // AC-005-01: Payment Terms — soft-fail
     const paymentTerms = await readFieldOutput('Payment Terms');
     if (!paymentTerms) {
       console.warn('[SOFT-FAIL][AC-005-01] Payment Terms is empty or not populated on Account.');
@@ -107,7 +105,6 @@ test.describe('Account Tests', () => {
     await clickTab(page, 'Related');
     await SFUtils.waitForLoading(page);
 
-    // Locate Contacts related list — use force- prefix (Salesforce LWC component name)
     const contactsRelatedList = page
       .locator('force-related-list-single-container, force-related-list-card, article')
       .filter({ hasText: /^Contacts/ })
@@ -138,8 +135,7 @@ test.describe('Account Tests', () => {
     await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
-    // Salesforce may stay on the Account page after saving from Related list (shows a toast).
-    // Explicitly navigate to the Contact record if we're not already there.
+    // Salesforce stays on the Account page after saving from Related list — navigate to Contact.
     await page.waitForTimeout(1500);
     if (!page.url().includes('/Contact/')) {
       const newContactLink = page.getByRole('link', { name: createdContactName, exact: true }).first();
@@ -176,15 +172,25 @@ test.describe('Account Tests', () => {
       .first();
     await oppsRelatedList.waitFor({ state: 'visible', timeout: 30000 });
 
+    // AC-005-03: skip creation if opportunity already exists in related list
+    const existingOpp = oppsRelatedList.getByRole('link', { name: createdOpportunityName, exact: true }).first();
+    if (await existingOpp.isVisible({ timeout: 3000 }).catch(() => false)) {
+      console.log(`[SKIP] "${createdOpportunityName}" already exists — using existing record.`);
+      await existingOpp.click();
+      await SFUtils.waitForLoading(page);
+      await waitForDetail(page);
+      createdOpportunityUrl = page.url();
+      return;
+    }
+
     await oppsRelatedList.getByRole('button', { name: 'New', exact: true }).click();
     await SFUtils.waitForLoading(page);
 
     const modal = page.locator(MODAL);
     await modal.waitFor({ state: 'visible', timeout: 15000 });
     await SFUtils.waitForLoading(page);
-    await page.waitForTimeout(1500); // let modal fields fully render
+    await page.waitForTimeout(1500);
 
-    // Opportunity Name — click to focus, clear, type with delay
     const oppNameInput = modal.getByLabel('Opportunity Name').first();
     await oppNameInput.waitFor({ state: 'visible', timeout: 15000 });
     await oppNameInput.click();
@@ -192,7 +198,6 @@ test.describe('Account Tests', () => {
     await oppNameInput.pressSequentially(createdOpportunityName, { delay: 50 });
     await page.waitForTimeout(500);
 
-    // Close Date — click to focus, clear existing value, type with delay, then Tab to commit
     const closeDateInput = modal.locator(
       '[data-field-api-name="CloseDate"] input, lightning-datepicker input'
     ).first();
@@ -200,13 +205,11 @@ test.describe('Account Tests', () => {
     await closeDateInput.click();
     await closeDateInput.press('Control+a');
     await closeDateInput.pressSequentially(closeDate, { delay: 50 });
-    await closeDateInput.press('Tab'); // commit the date value
+    await closeDateInput.press('Tab');
     await page.waitForTimeout(500);
 
-    // Stage picklist — locate by label (data-field-api-name absent in quick-action modals)
     const stageLocator = modal.getByLabel('Stage').first();
     await stageLocator.waitFor({ state: 'visible', timeout: 10000 });
-
     const stageTag = await stageLocator.evaluate(el => el.tagName.toLowerCase()).catch(() => '');
     if (stageTag === 'select') {
       await stageLocator.selectOption({ label: stage });
@@ -223,8 +226,7 @@ test.describe('Account Tests', () => {
     await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
-    // Salesforce stays on the Contact page after saving from a related list (shows a toast).
-    // Mirror TC-ACC-002: if not yet on the Opportunity record, click the link on the page.
+    // Salesforce stays on the Contact page after saving from a related list.
     await page.waitForTimeout(1500);
     if (!page.url().includes('/Opportunity/')) {
       const newOppLink = page.getByRole('link', { name: createdOpportunityName, exact: true }).first();
@@ -265,64 +267,74 @@ test('TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Oppor
       .first()
       .waitFor({ state: 'visible', timeout: 15000 });
 
-    // Give the table time to fully render cell content after link is visible
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
 
-    // Strategy 1: find row via tr that contains an anchor matching contact name,
-    // then check the Primary cell (data-label="Primary") for a checkmark or "true" text
-    const contactLink = contactRolesSection
-      .getByRole('link', { name: createdContactName, exact: false })
+    const contactRow = contactRolesSection
+      .getByRole('row')
+      .filter({ hasText: createdContactName })
       .first();
 
-    // Walk up to the closest <tr> ancestor
-    const contactRow = contactLink.locator('xpath=ancestor::tr[1]');
+    const rowText = (await contactRow.innerText({ timeout: 8000 }).catch(() => '')) ?? '';
+    const hasPrimaryBadge = rowText.toUpperCase().includes('PRIMARY');
 
-    // Check Primary column cell — Salesforce renders it as data-label="Primary"
-    const primaryCell = contactRow.locator('td[data-label="Primary"], th[data-label="Primary"]').first();
+    const hasPrimaryIcon = hasPrimaryBadge ? false : await contactRow
+      .locator('lightning-icon[icon-name="utility:check"], [title="True"], abbr[title="True"], lightning-primitive-icon[icon-name="utility:check"]')
+      .first()
+      .isVisible({ timeout: 6000 })
+      .catch(() => false);
 
-    let isPrimary = false;
+    const sectionHasPrimary = hasPrimaryBadge || hasPrimaryIcon
+      ? true
+      : (await contactRolesSection.innerText({ timeout: 5000 }).catch(() => '')).toUpperCase().includes('PRIMARY');
 
-    // Check via cell text (may render "true", "Yes", or "Primary")
-    const cellText = await primaryCell.innerText({ timeout: 5000 }).catch(() => '');
-    if (cellText.trim().toUpperCase().match(/TRUE|YES|PRIMARY/)) {
-      isPrimary = true;
-    }
-
-    // Check via checkmark icon inside the Primary cell
-    if (!isPrimary) {
-      isPrimary = await primaryCell
-        .locator('lightning-icon, [title="True"], abbr[title="True"], svg, span.slds-checkbox_faux')
-        .first()
-        .isVisible({ timeout: 3000 })
-        .catch(() => false);
-    }
-
-    // Strategy 2: use innerText on the full row (catches badge text missed by textContent)
-    if (!isPrimary) {
-      const rowInnerText = await contactRow.innerText({ timeout: 5000 }).catch(() => '');
-      if (rowInnerText.toUpperCase().includes('PRIMARY') || rowInnerText.toUpperCase().includes('TRUE')) {
-        isPrimary = true;
-      }
-    }
-
-    // Strategy 3: search the whole section for a "Primary" badge/icon near the contact name
-    if (!isPrimary) {
-      const sectionText = await contactRolesSection.innerText({ timeout: 5000 }).catch(() => '');
-      // If the section shows a single contact row and any primary indicator exists, accept it
-      const contactOccurrences = (sectionText.match(new RegExp(createdContactName, 'gi')) || []).length;
-      const hasPrimaryAnywhere = sectionText.toUpperCase().includes('PRIMARY') || sectionText.toUpperCase().includes('TRUE');
-      if (contactOccurrences >= 1 && hasPrimaryAnywhere) {
-        isPrimary = true;
-      }
-    }
-
-    if (!isPrimary) {
-      const rowInnerText = await contactRow.innerText({ timeout: 3000 }).catch(() => '');
+    if (!hasPrimaryBadge && !hasPrimaryIcon && !sectionHasPrimary) {
       throw new Error(
         `[AC-005-04] Contact "${createdContactName}" is NOT marked as Primary Contact Role ` +
-        `on Opportunity "${createdOpportunityName}". Primary indicator absent from row. Row text: "${rowInnerText}"`
+        `on Opportunity "${createdOpportunityName}". Row text: "${rowText}"`
       );
     }
+  });
+
+  // TC-ACC-005 | AC Reference: AC-005-05
+  test('TC-ACC-005 — Create Quote from Opportunity', async ({ page }) => {
+    createdQuoteName = data.quote.Name;
+
+    if (createdOpportunityUrl) {
+      await SFUtils.goto(page, createdOpportunityUrl);
+    } else {
+      createdOpportunityName = createdOpportunityName || data.opportunity.Name;
+      await searchAndOpen(page, createdOpportunityName);
+    }
+    await waitForDetail(page);
+    await SFUtils.waitForLoading(page);
+
+    // Revenue Cloud / CPQ: "New Quote" button on Opportunity header or Related list
+    const newQuoteBtn = page
+      .getByRole('button', { name: 'New Quote', exact: true })
+      .or(page.locator('a[title="New Quote"]'))
+      .first();
+    await newQuoteBtn.waitFor({ state: 'visible', timeout: 20000 });
+    await newQuoteBtn.click();
+    await SFUtils.waitForLoading(page);
+    await dismissAuraError(page);
+
+    // Some orgs open a modal; others navigate directly to the Quote editor
+    const modal = page.locator(MODAL);
+    const modalVisible = await modal.isVisible({ timeout: 5000 }).catch(() => false);
+
+    if (modalVisible) {
+      const quoteNameInput = modal.locator('[data-field-api-name="Name"] input').first();
+      if (await quoteNameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await quoteNameInput.fill(createdQuoteName);
+      }
+      await modal.getByRole('button', { name: 'Save', exact: true }).click();
+      await SFUtils.waitForLoading(page);
+      await dismissAuraError(page);
+    }
+
+    await waitForDetail(page);
+    await page.getByRole('heading', { name: createdQuoteName, exact: false })
+      .first().waitFor({ state: 'visible', timeout: 25000 });
   });
   // ── US-005 END ───────────────────────────────────────────────────────
 

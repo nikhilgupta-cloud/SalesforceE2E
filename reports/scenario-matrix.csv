@@ -1,5 +1,6 @@
 TC ID,Object,User Story,Scenario,Expected Result,AC Reference,Test Status,Duration (s),Error Message,Run Date
-TC-ACC-001,Account,US-005,Verify existing Account Billing Address and Payment Terms are populated under the Details tab,"Fields present → pass; fields empty → console.warn soft-fail, test continues",AC-005-01,passed,20.14,,2026-04-23
-TC-ACC-002,Account,US-005,Create a new Contact directly on the Account record via the Contacts related list,Contact is created and visible as a link in the Account's Contacts related list,AC-005-02,passed,17.68,,2026-04-23
-TC-ACC-003,Account,US-005,Create a new Opportunity from the Contact record via the Opportunities related list,Opportunity is saved and its record detail page opens with the correct name,AC-005-03,passed,22.77,,2026-04-23
-TC-ACC-004,Account,US-005,Verify newly created Contact is listed as the Primary Contact Role on the Opportunity,Contact appears in the Contact Roles related list; Primary indicator is confirmed true,AC-005-04,passed,26.51,,2026-04-23
+TC-ACC-001,Account,US-005,Verify Billing Address and Payment Terms on existing Account Details tab (soft-fail if absent),Fields present with values; console warning logged if empty — test does not fail,AC-005-01,not run,,,2026-04-23
+TC-ACC-002,Account,US-005,Create new Contact record from Account Related list,Contact saved and Contact detail page heading displays full name,AC-005-02,not run,,,2026-04-23
+TC-ACC-003,Account,US-005,Create Opportunity from Contact's Related list Opportunities section,Opportunity saved and Opportunity detail page heading displays opportunity name,AC-005-03,not run,,,2026-04-23
+TC-ACC-004,Account,US-005,Verify newly created Contact appears as Primary Contact Role on the Opportunity,Contact row visible in Contact Roles related list; Primary indicator confirmed,AC-005-04,passed,23.42,,2026-04-23
+TC-ACC-005,Account,US-005,Create Quote from Opportunity record,Quote created and Quote heading visible on resulting page,QO-005-05,not run,,,2026-04-23
