@@ -1,2 +1,2 @@
 TC ID,Object,User Story,Title,Status,Duration (s),AC Reference,Error Message,File,Line,Run Date
-TC-ACC-004,Account,US-005,TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity,failed,20.30,AC-005-04,"Error: [AC-005-04] Contact ""undefined"" is NOT marked as Primary Contact Role on Opportunity ""Auto Opportunity 8"". Primary indicator absent from row. Row text: """"",account.spec.ts,233,2026-04-23
+TC-ACC-004,Account,US-005,TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity,passed,25.03,AC-005-04,,account.spec.ts,243,2026-04-23

@@ -78,7 +78,7 @@
           "specs": [
             {
               "title": "TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -91,58 +91,23 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 20304,
-                      "error": {
-                        "message": "Error: [AC-005-04] Contact \"undefined\" is NOT marked as Primary Contact Role on Opportunity \"Auto Opportunity 8\". Primary indicator absent from row. Row text: \"\"",
-                        "stack": "Error: [AC-005-04] Contact \"undefined\" is NOT marked as Primary Contact Role on Opportunity \"Auto Opportunity 8\". Primary indicator absent from row. Row text: \"\"\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:317:13",
-                        "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 13,
-                          "line": 317
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 315 |\u001b[39m\n \u001b[90m 316 |\u001b[39m     \u001b[36mif\u001b[39m (\u001b[33m!\u001b[39mhasPrimaryBadge \u001b[33m&&\u001b[39m \u001b[33m!\u001b[39mhasPrimaryIcon) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 317 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 318 |\u001b[39m         \u001b[32m`[AC-005-04] Contact \"${createdContactName}\" is NOT marked as Primary Contact Role `\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 319 |\u001b[39m         \u001b[32m`on Opportunity \"${createdOpportunityName}\". Primary indicator absent from row. Row text: \"${rowText}\"`\u001b[39m\n \u001b[90m 320 |\u001b[39m       )\u001b[33m;\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 13,
-                            "line": 317
-                          },
-                          "message": "Error: [AC-005-04] Contact \"undefined\" is NOT marked as Primary Contact Role on Opportunity \"Auto Opportunity 8\". Primary indicator absent from row. Row text: \"\"\n\n\u001b[0m \u001b[90m 315 |\u001b[39m\n \u001b[90m 316 |\u001b[39m     \u001b[36mif\u001b[39m (\u001b[33m!\u001b[39mhasPrimaryBadge \u001b[33m&&\u001b[39m \u001b[33m!\u001b[39mhasPrimaryIcon) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 317 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 318 |\u001b[39m         \u001b[32m`[AC-005-04] Contact \"${createdContactName}\" is NOT marked as Primary Contact Role `\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 319 |\u001b[39m         \u001b[32m`on Opportunity \"${createdOpportunityName}\". Primary indicator absent from row. Row text: \"${rowText}\"`\u001b[39m\n \u001b[90m 320 |\u001b[39m       )\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:317:13\u001b[22m"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 25027,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-23T07:25:06.721Z",
+                      "startTime": "2026-04-23T07:37:13.586Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-be857-Contact-Role-on-Opportunity-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-be857-Contact-Role-on-Opportunity-chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 13,
-                        "line": 317
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "ad4620ead4e6d9cc2627-531ed4647b1461da75de",
               "file": "account.spec.ts",
-              "line": 233,
+              "line": 243,
               "column": 5
             }
           ]
@@ -152,11 +117,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-23T07:25:04.266Z",
-    "duration": 24357.965,
-    "expected": 0,
+    "startTime": "2026-04-23T07:37:11.184Z",
+    "duration": 29029.338,
+    "expected": 1,
     "skipped": 0,
-    "unexpected": 1,
+    "unexpected": 0,
     "flaky": 0
   }
 }
