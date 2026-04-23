@@ -5,17 +5,18 @@
     "Payment_Terms": "Net 30"
   },
   "contact": {
-    "First_Name": "David1",
-    "Last_Name": "John",
-    "Email": "David.John1@auto.com",
-    "Full_Name": "David1 John",
-    "Phone": "555-121212"
+    "Salutation": "Mr",
+    "First_Name": "John",
+    "Last_Name": "Doe",
+    "Email": "john.doe@auto.com",
+    "Full_Name": "John Doe",
+    "Phone": "555-0199"
   },
   "opportunity": {
-    "Name": "Standard E2E - Q2 Order",
+    "Name": "Auto Opportunity 8",
     "Stage": "Prospecting",
     "Close_Date": "12/31/2026",
-    "Amount": "10000",
+    "Amount": "15000",
     "Probability": "10"
   }
 }

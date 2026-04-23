@@ -228,7 +228,7 @@ async function healTest(failure: FailedTest): Promise<boolean> {
   for (let round = 1; round <= MAX_ROUNDS; round++) {
     console.log(`      → Round ${round}/${MAX_ROUNDS}`);
 
-    const fixedBlock = askClaude(failure, testBlock);
+    const fixedBlock = await askClaude(failure, testBlock);
     if (!fixedBlock || fixedBlock.trim() === testBlock.trim()) {
       console.log(`      ⚠ No change suggested in round ${round}`);
       continue;
@@ -292,10 +292,10 @@ function extractTestBlock(content: string, title: string): string | null {
 
 // ── Ask Claude Code CLI for a fix ─────────────────────────────────────────────
 
-function askClaude(
+async function askClaude(
   failure:  FailedTest,
   testCode: string,
-): string | null {
+): Promise<string | null> {
   const knowledgeContext = loadHealingKnowledge(failure.file);
 
   const errorText  = failure.errors.join('\n').substring(0, 1200);
@@ -329,13 +329,17 @@ ${testCode}
 - ALWAYS use .waitFor({ state: 'visible', timeout: 30000 }) for element waits
 - Modal selector: '[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])'
 - Call dismissAuraError(page) after every page.goto()
-- Use native Playwright locators (lightning-input, lightning-combobox, lightning-lookup) — do not use SalesforceFormHandler
+- ALWAYS use SFUtils methods (no raw locators for Salesforce fields):
+  - \`await SFUtils.fillField(root, 'ApiNameOrLabel', value);\`
+  - \`await SFUtils.selectCombobox(page, root, 'ApiNameOrLabel', 'Option');\`
+  - \`await SFUtils.fillLookup(page, root, 'ApiNameOrLabel', 'Value');\`
+  - \`await SFUtils.fillName(root, 'firstName'|'lastName', value);\`
 - For lookup-not-found errors: add \`await page.waitForTimeout(3000)\` immediately before the failing lookup — Salesforce's search index can lag after data is created
-- For timing failures: increase timeout on the relevant waitFor or add an explicit wait before the failing step
-- Return the COMPLETE fixed test function from \`test(\` through the closing \`});\``;
+- Return the COMPLETE fixed test function from \`test(\` through the closing \`});\`
+`;
 
   try {
-    const result = callClaudeCode(system, userPrompt);
+    const result = await callClaudeCode(system, userPrompt);
     if (!result) return null;
     _totalTokensIn  += result.tokensIn;
     _totalTokensOut += result.tokensOut;

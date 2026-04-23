@@ -1,7 +1,7 @@
-# Orphan Test Report — 2026-04-13
+# Orphan Test Report — 2026-04-22
 
-**Total tests:** 4  
-**Story-backed:** 4  
+**Total tests:** 15  
+**Story-backed:** 15  
 **Orphans:** 0  
 **Active story markers:** US-005
 

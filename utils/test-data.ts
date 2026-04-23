@@ -64,7 +64,7 @@ export function getTestData(): TestData {
       Phone: fixture.contact?.Phone || `555-${String(timestamp).slice(-4)}`,
     },
     opportunity: {
-      Name: fixture.opportunity?.Name || `AutoOpp-${timestamp}`,
+      Name: fixture.opportunity?.Name || (fixture.opportunity as any)?.Opportunity_Name || `AutoOpp-${timestamp}`,
       Stage: fixture.opportunity?.Stage || 'Prospecting',
       Close_Date: fixture.opportunity?.Close_Date || '12/31/2026',
       Amount: fixture.opportunity?.Amount || '10000',

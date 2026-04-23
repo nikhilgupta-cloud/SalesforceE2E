@@ -125,196 +125,45 @@ Use keyword-based + pattern-based classification.
 
 ### Step 3 — Apply Fix
 
-#### A. Selector Fix Strategy
+#### A. Selector Fix Strategy (DYNAMIC)
 
-**Step 1 — Check enriched locators (knowledge/scraped-locators.json)**
-- Find the failing field by label in `knowledge/scraped-locators.json`
-- If `apiName` is non-null → use Priority 1 selector immediately
-- If `apiName` is null → run `npm run enrich:locators` to backfill from Salesforce MCP,
-  then retry. If MCP unavailable, fall through.
+**Step 1 — ALWAYS Use SFUtils**
+The primary fix for any selector failure is to convert raw locators into `SFUtils` calls. This leverages the dynamic `scraped-locators.json` database.
 
-**Step 2 — Salesforce MCP describe (if scraped-locators has null apiName)**
-Use the Salesforce MCP to resolve the field API name:
-```
-salesforce.describe({ object: "Account" })  // or Contact, Opportunity, Quote
-```
-Map the failing field label to `name` in the describe response → use `data-field-api-name`.
+| Failure | Fix using SFUtils |
+|---------|-------------------|
+| Input/Textarea not found | `await SFUtils.fillField(modal, 'LabelOrApiName', value);` |
+| Picklist/Combobox error | `await SFUtils.selectCombobox(page, modal, 'LabelOrApiName', 'Option');` |
+| Lookup timeout | `await SFUtils.fillLookup(page, modal, 'LabelOrApiName', 'Value');` |
+| Name field error | `await SFUtils.fillName(modal, 'firstName'\|'lastName', value);` |
 
-**Step 3 — Apply locator by priority (STRICT — never skip levels)**
+**Step 2 — Identification Logic**
+1. Check `knowledge/scraped-locators.json` for the field's `apiName`.
+2. If no API Name exists, use the literal Label found on the screen (e.g., `'Salutation'`).
+3. `SFUtils.getField` will automatically resolve the best selector at runtime.
 
-Priority 1 — API Name (most stable):
+**Step 3 — Compound Name field (CRITICAL)**
+If healing a Contact/Lead form, NEVER use `LastName` as an API name. Use the `fillName` helper:
 ```typescript
-modal.locator('[data-field-api-name="FieldApiName__c"] input').first()
-modal.locator('[data-field-api-name="StageName"] button').first()   // picklist
+await SFUtils.fillName(modal, 'lastName', 'Smith');
 ```
-
-Priority 2 — Role-based:
-```typescript
-page.getByRole('button', { name: 'Save', exact: true }).first()
-```
-
-Priority 3 — Label-based:
-```typescript
-modal.getByLabel('Last Name').first()
-```
-
-Priority 4 — LWC combobox fallback (picklists only):
-```typescript
-modal.locator('lightning-combobox:has-text("Stage") button').first()
-```
-
-Priority 5 — LWC input fallback:
-```typescript
-modal.locator('lightning-input').filter({ hasText: /Label/i }).locator('input').first()
-```
-
-**CRITICAL — Compound Name field (Contact / Lead / Person Account):**
-If a failure targets `[data-field-api-name="LastName"]` or `[data-field-api-name="FirstName"]`,
-these selectors find nothing because Name is a compound field. Fix immediately to:
-```typescript
-modal.locator('[data-field-api-name="Name"] input[name="lastName"]').first()
-modal.locator('[data-field-api-name="Name"] input[name="firstName"]').first()
-```
-
-**Step 4 — Always scope to modal and enforce `.first()`**
-```typescript
-const modal = page.locator('[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])');
-```
-
 
 ---
 
 #### B. Timing Fix Strategy
-
-Add:
-
-await locator.waitFor({ state: 'visible', timeout: 30000 });
-
-
-Handle spinners:
-
-await page.locator('.sb-loading-mask').waitFor({ state: 'hidden' });
-
-
-Add safety:
-
+Use the robust helpers in `SFUtils`:
+```typescript
+await SFUtils.waitForLoading(page);
 await dismissAuraError(page);
-
-
----
-
-#### C. Data Fix Strategy
-
-Inject helper inside test block:
-
-async function createSupportingRecord(page) {
-// create Account / Opportunity dynamically
-}
-
-
-Call before failing step.
+```
+Add explicit waits only as a last resort:
+```typescript
+await locator.waitFor({ state: 'visible', timeout: 30000 });
+```
 
 ---
 
-#### D. Environment Failure
-
-DO NOT PATCH.
-
-Write to:
-
-reports/healing-report.md
-
-
----
-
-### Step 4 — Patch Rules
-
-- ONLY modify code inside:
-
-// ── US-XXX START ──
-// ── US-XXX END ──
-
-
-- NEVER touch manual code
-- NEVER change test intent
-
----
-
-### Step 5 — Re-run Test
-
-Run ONLY failed test:
-
-npx playwright test --grep "TC-{PREFIX}-{NUMBER}" --headed
-
-
----
-
-### Step 6 — Iteration Control
-
-- Max 3 rounds per failure
-- Track attempts per TC
-- Stop after success OR 3 failures
-
----
-
-### Step 7 — Cleanup
-
-Delete temporary files:
-
-probe-.ts
-probe-.txt
-
-
----
-
-## Advanced Recovery (If Selector Still Fails)
-
-1. Create probe script:
-
-await page.goto(${process.env.SF_SANDBOX_URL}/lightning/o/{Object}/new);
-const html = await page.locator('body').innerHTML();
-fs.writeFileSync('probe-output.txt', html);
-
-
-2. Extract real labels from DOM
-3. Rebuild locator dynamically
-4. Patch test
-
----
-
-## Output
-
-### 1. Updated Spec Files
-- `tests/{object}.spec.ts`
-
-### 2. Healing Report
-- `reports/healing-report.md`
-
-Format:
-
-TC: TC-XXX-001
-Failure: selector_failure
-Fix: Updated locator using modal scope
-Status: Healed
-
-
----
-
-## Constraints
-
-- Max 3 healing rounds
-- No hardcoded values
-- No SalesforceFormHandler usage
-- No change to business logic
-- No modification outside marker blocks
-
----
-
-## Success Criteria
-
-Agent is successful ONLY if:
-
-- All failures are classified correctly
-- Fixes are minimal and targeted
-- Tests pass after healing
-- No regression introduced
+#### C. Tab Navigation (MANDATORY FIX)
+If a field on a record detail page is not found:
+1. Insert `await clickTab(page, 'Details');` immediately after navigation.
+2. Ensure `SFUtils.waitForLoading(page)` is called after the tab click.

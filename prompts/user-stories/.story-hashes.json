@@ -1,18 +1,6 @@
 {
-  "US-005:contact": {
-    "hash": "d496aa3901635f02390efbfb7d9bc70d",
-    "objKey": "contact"
-  },
-  "US-005:opportunity": {
-    "hash": "d496aa3901635f02390efbfb7d9bc70d",
-    "objKey": "opportunity"
-  },
   "US-005:account": {
-    "hash": "d496aa3901635f02390efbfb7d9bc70d",
+    "hash": "ee5363322ce10a400492f50484a6d554",
     "objKey": "account"
-  },
-  "US-005:order": {
-    "hash": "d496aa3901635f02390efbfb7d9bc70d",
-    "objKey": "order"
   }
 }

@@ -1,1 +1,2 @@
 TC ID,Object,User Story,Title,Status,Duration (s),AC Reference,Error Message,File,Line,Run Date
+TC-ACC-003,Account,US-005,TC-ACC-003 — Create Opportunity from Contact record via Opportunities related list,failed,7.28,AC-005-03,"Error: keyboard.type: text: expected string, got undefined",account.spec.ts,147,2026-04-23

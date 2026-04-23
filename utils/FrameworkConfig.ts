@@ -42,19 +42,27 @@ export function loadConfig(): AppConfig {
   }
 }
 
+/** Active objects only — those without an "_inactive" marker in the config JSON. */
+function activeObjects(): ObjectConfig[] {
+  const raw = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8')) as AppConfig & {
+    objects: (ObjectConfig & { _inactive?: string })[];
+  };
+  return raw.objects.filter(o => !('_inactive' in o));
+}
+
 /** Record keyed by object key → full config (for generate-tests OBJECT_MAP) */
 export function getObjectMap(): Record<string, ObjectConfig> {
-  return Object.fromEntries(loadConfig().objects.map(o => [o.key, o]));
+  return Object.fromEntries(activeObjects().map(o => [o.key, o]));
 }
 
 /** Record keyed by object key → dashboard display meta (for DashboardReporter SUITE_META) */
 export function getSuiteMeta(): Record<string, { displayName: string; icon: string; accent: string }> {
   return Object.fromEntries(
-    loadConfig().objects.map(o => [o.key, { displayName: o.displayName, icon: o.icon, accent: o.accent }]),
+    activeObjects().map(o => [o.key, { displayName: o.displayName, icon: o.icon, accent: o.accent }]),
   );
 }
 
 /** Ordered list of object keys, e.g. ["account","contact","opportunity","quote"] */
 export function getObjectKeys(): string[] {
-  return loadConfig().objects.map(o => o.key);
+  return activeObjects().map(o => o.key);
 }

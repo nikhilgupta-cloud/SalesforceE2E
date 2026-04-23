@@ -38,11 +38,56 @@ export class SFUtils {
   }
 
   /**
-   * Finds a field by its API name, piercing Shadow DOM correctly.
-   * Handles IFrames if we are inside a CPQ/Revenue Cloud context.
+   * Finds a field by its API name or Label by checking the scraped locators database.
    */
-  static getField(root: Page | Locator | FrameLocator, apiName: string): Locator {
-    return root.locator(`[data-field-api-name="${apiName}"], [field-name="${apiName}"]`).first();
+  static getField(root: Page | Locator | FrameLocator, apiNameOrLabel: string): Locator {
+    // 1. Try direct API name attribute in DOM (most stable)
+    const apiSelector = `[data-field-api-name="${apiNameOrLabel}"], [field-name="${apiNameOrLabel}"]`;
+    
+    // 2. Load scraped locators for dynamic fallback
+    let scrapedSelector = '';
+    try {
+      const locatorsPath = 'knowledge/scraped-locators.json';
+      if (require('fs').existsSync(locatorsPath)) {
+        const db = JSON.parse(require('fs').readFileSync(locatorsPath, 'utf8'));
+        // Search across all objects for a matching API name or Label
+        for (const obj of Object.values(db) as any[]) {
+          const field = obj.fields?.find((f: any) => f.apiName === apiNameOrLabel || f.label === apiNameOrLabel);
+          if (field?.selector) {
+            scrapedSelector = `, ${field.selector}`;
+            break;
+          }
+        }
+      }
+    } catch (e) {}
+
+    // 3. Common LWC patterns as last resort
+    const fallbackSelector = `, lightning-input:has-text("${apiNameOrLabel}"), lightning-combobox:has-text("${apiNameOrLabel}"), lightning-lookup:has-text("${apiNameOrLabel}"), lightning-textarea:has-text("${apiNameOrLabel}")`;
+
+    return root.locator(`${apiSelector}${scrapedSelector}${fallbackSelector}`).first();
+  }
+
+  /**
+   * Reads the text value of a field in view mode (Detail tab).
+   */
+  static async getOutputValue(root: Page | Locator | FrameLocator, apiName: string): Promise<string> {
+    const field = this.getField(root, apiName);
+    
+    // Ensure the field is scrolled into view (Salesforce Detail tabs are often long/lazy-loaded)
+    await field.scrollIntoViewIfNeeded().catch(() => {});
+    
+    // Check if field exists at all before attempting to read it
+    const exists = await field.isVisible({ timeout: 5000 }).catch(() => false);
+    if (!exists) return '';
+    
+    // Salesforce output fields often wrap text in specific formatted components
+    const output = field.locator('.slds-form-element__static, lightning-formatted-text, lightning-formatted-address, lightning-formatted-name, slot').first();
+    
+    const text = await (await output.isVisible({ timeout: 2000 }).catch(() => false) 
+      ? output.innerText() 
+      : field.innerText());
+      
+    return text.trim();
   }
 
   /**
@@ -106,10 +151,23 @@ export class SFUtils {
 
   /**
    * Fills a sub-input within a compound field (like Name -> firstName/lastName)
+   * or separate First Name / Last Name fields if they are standalone.
    */
   static async fillName(root: Page | Locator | FrameLocator, subFieldName: 'firstName' | 'lastName', value: string) {
-    const field = this.getField(root, 'Name');
-    const input = field.locator(`input[name="${subFieldName}"]`).first();
+    const label = subFieldName === 'firstName' ? 'First Name' : 'Last Name';
+    
+    // 1. Try compound Name field first
+    const compoundField = root.locator(`[data-field-api-name="Name"], [field-name="Name"]`).first();
+    const compoundInput = compoundField.locator(`input[name="${subFieldName}"]`).first();
+    
+    // 2. Try standalone fields (e.g. lightning-input with First Name / Last Name label)
+    const standaloneField = root.locator(`lightning-input:has-text("${label}"), [data-field-api-name="${subFieldName.charAt(0).toUpperCase() + subFieldName.slice(1)}"]`).first();
+    const standaloneInput = standaloneField.locator('input').first();
+
+    const input = (await compoundInput.isVisible({ timeout: 2000 }).catch(() => false)) 
+      ? compoundInput 
+      : standaloneInput;
+
     await input.waitFor({ state: 'visible', timeout: 15000 });
     await input.fill(value);
     await input.press('Tab');
@@ -122,5 +180,94 @@ export class SFUtils {
     const btn = root.locator(`button:has-text("${text}"), input[type="button"][value="${text}"]`).first();
     await btn.waitFor({ state: 'visible' });
     await btn.click();
+  }
+
+  /**
+   * Focuses the Salesforce global search box, types the query, and presses Enter.
+   * Shared by searchAndOpen and searchExists.
+   */
+  private static async _triggerGlobalSearch(page: Page, query: string) {
+    // Ensure focus is on the page body so the '/' shortcut registers
+    await page.locator('body').click({ position: { x: 1, y: 1 }, force: true }).catch(() => {});
+
+    // '/' opens and focuses the Salesforce global search input
+    await page.keyboard.press('/');
+    await page.waitForTimeout(1000);
+
+    // If '/' didn't open it, try clicking the search trigger button
+    const searchTrigger = page.locator([
+      '.slds-global-header__item--search button',
+      '.forceSearchAssistantTrigger button',
+      'button[aria-label*="Search"]',
+      'button.search-button'
+    ].join(', ')).first();
+
+    const dropdownOpen = await page.locator('.forceSearchDesktop, [class*="searchBox"], .slds-combobox__form-element').first()
+      .isVisible({ timeout: 1500 }).catch(() => false);
+
+    if (!dropdownOpen) {
+      if (await searchTrigger.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await searchTrigger.click();
+        await page.waitForTimeout(800);
+      } else {
+        // ULTIMATE FALLBACK: Navigate directly to search results page via URL
+        console.warn(`Search trigger not found. Navigating directly to search for: ${query}`);
+        const currentUrl = page.url();
+        const baseUrl = currentUrl.split('/lightning/')[0];
+        await page.goto(`${baseUrl}/lightning/search/All/Home/result?q=${encodeURIComponent(query)}`);
+        await this.waitForLoading(page);
+        return; // Skip typing/pressing Enter as we are already at the results page
+      }
+    }
+
+    // Type directly — the input is focused after '/' or the trigger click
+    await page.keyboard.type(query, { delay: 30 });
+    await page.keyboard.press('Enter');
+    await this.waitForLoading(page);
+  }
+
+  /**
+   * Uses Salesforce global search to find a record and open it.
+   * Preferred over navigating Recent list views — finds any record regardless of recency.
+   */
+  static async searchAndOpen(page: Page, name: string): Promise<void> {
+    await this._triggerGlobalSearch(page, name);
+    
+    // Check if we've already navigated to a record page matching the name
+    // Must be a 'view' page, not just a 'search' results page
+    const currentUrl = page.url();
+    const currentTitle = await page.title().catch(() => '');
+    if (currentUrl.includes('/view') && currentTitle.toLowerCase().includes(name.toLowerCase())) {
+      console.log(`Already on record view page for "${name}"`);
+      await this.waitForAppReady(page);
+      return;
+    }
+
+    // Use exact role-based link match — avoids false matches in Opportunity/Account Name columns
+    const resultLink = page.getByRole('link', { name, exact: true }).first();
+
+    await resultLink.waitFor({ state: 'visible', timeout: 30000 }).catch(async () => {
+      const finalUrl = page.url();
+      const finalTitle = await page.title().catch(() => '');
+      if (finalUrl.includes('/view') && finalTitle.toLowerCase().includes(name.toLowerCase())) return;
+      throw new Error(`Search result for "${name}" not found after 30s. Current URL: ${finalUrl}`);
+    });
+
+    if (!page.url().includes('/view')) {
+      await resultLink.click();
+      await this.waitForLoading(page);
+      await this.waitForAppReady(page);
+    }
+  }
+
+  /**
+   * Returns true if a global search for `name` returns at least one matching link.
+   * Use this as a lighter-weight existence check before deciding whether to create a record.
+   */
+  static async searchExists(page: Page, name: string): Promise<boolean> {
+    await this._triggerGlobalSearch(page, name);
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return page.getByRole('link', { name: new RegExp(`^${escaped}$`, 'i') })
+      .first().isVisible({ timeout: 10000 }).catch(() => false);
   }
 }

@@ -228,6 +228,9 @@ type HashStore = Record<string, StoryRecord>; // keyed by US-XXX
 
 const HASH_STORE_PATH = path.join('prompts', 'user-stories', '.story-hashes.json');
 
+/** Track which US-IDs have been purged from all object files in this run to avoid duplicates */
+const purgedUsIds = new Set<string>();
+
 function loadHashStore(): HashStore {
   try { return JSON.parse(fs.readFileSync(HASH_STORE_PATH, 'utf8')); }
   catch { return {}; }
@@ -312,6 +315,43 @@ function detectObject(content: string): string | null {
 }
 
 /**
+ * Given a story's text, determine which ACTIVE objects the ACs actually operate on.
+ *
+ * The "OBJECT N: NAME" header names the business domain of the epic, but an E2E
+ * story like "Order Activation" may have ACs that only touch Account / Contact /
+ * Opportunity — with no steps on the Order record itself.  Blindly trusting the
+ * header produces tests for the wrong object.
+ *
+ * Logic (AC-content driven — header is never scored):
+ *  1. Extract only AC lines (lines matching /^AC-\d+/i).
+ *  2. Score each ACTIVE object key by how many AC lines mention it.
+ *  3. Return every object with score > 0 (deduplicated, order = config order).
+ *  4. Final fallback: if nothing scored, honour the header object.
+ */
+function resolveStoryObjects(storyContent: string, headerObjKey: string): string[] {
+  // If we have an explicit header object (from the "OBJECT N: NAME" section),
+  // use it as the definitive source. This prevents the same story from being
+  // duplicated across every object mentioned in its Acceptance Criteria.
+  if (headerObjKey) {
+    return [headerObjKey];
+  }
+
+  // Extract the AC lines specifically — ignore title, header, and prose
+  const acLines = storyContent
+    .split('\n')
+    .filter(l => /^AC-\d+/i.test(l.trim()))
+    .join('\n')
+    .toLowerCase();
+
+  if (!acLines) return []; // No ACs and no header — cannot map
+
+  const activeKeys = Object.keys(OBJECT_MAP);
+  const scored = activeKeys.filter(key => new RegExp(`\\b${key}\\b`).test(acLines));
+
+  return scored;
+}
+
+/**
  * Parse a multi-story file (e.g. CPQ_User_stories.md) that contains multiple
  * ## US-NNN sections across multiple objects.
  *
@@ -325,23 +365,27 @@ function parseMultiStoryFile(content: string): Array<{ usId: string; objKey: str
   const lines = content.split('\n');
   const stories: Array<{ usId: string; objKey: string; storyContent: string }> = [];
 
-  let currentObjKey = '';
+  let headerObjKey  = '';
   let currentUsId   = '';
   let currentLines: string[] = [];
 
   const flush = () => {
-    if (currentUsId && currentLines.length > 0) {
-      stories.push({ usId: currentUsId, objKey: currentObjKey, storyContent: currentLines.join('\n').trim() });
+    if (!currentUsId || currentLines.length === 0) return;
+    const storyContent = currentLines.join('\n').trim();
+    const objKeys = resolveStoryObjects(storyContent, headerObjKey);
+    for (const objKey of objKeys) {
+      stories.push({ usId: currentUsId, objKey, storyContent });
     }
   };
 
   for (const line of lines) {
-    // "OBJECT 1: ACCOUNT" or "OBJECT 2: CONTACT" — update current object
-    const objMatch = line.match(/^OBJECT\s+\d+:\s*(\w+)/i);
+    // "OBJECT 1: ACCOUNT" or "OBJECT 2: ORDER" — captures the epic-level label
+    // Using trim() to handle leading whitespace or formatting marks
+    const objMatch = line.trim().match(/^OBJECT\s+\d+:\s*(\w+)/i);
     if (objMatch) {
       const objName = objMatch[1].toLowerCase();
       for (const key of Object.keys(OBJECT_MAP)) {
-        if (objName.startsWith(key)) { currentObjKey = key; break; }
+        if (objName.startsWith(key)) { headerObjKey = key; break; }
       }
       continue;
     }
@@ -403,11 +447,11 @@ Rules (apply to every line of code):
 - ALWAYS import { SFUtils } from '../utils/SFUtils';
 - Use SFUtils.goto(page, url) instead of page.goto().
 - Use SFUtils.waitForLoading(page) instead of manual spinner waits.
-- Use SFUtils.fillField(root, apiName, value) for all standard inputs.
-- Use SFUtils.fillName(root, 'firstName'|'lastName', value) for Name fields (Contact/Lead).
-- Use SFUtils.selectCombobox(page, root, apiName, label) for all dropdowns.
-- For CPQ/Revenue Cloud (Product Selection/Edit Lines), use SFUtils.getCPQFrame(page).
-- NEVER use [data-field-api-name="LastName"] directly — use SFUtils.fillName.
+- Use SFUtils.fillField(root, 'ApiNameOrLabel', value) for all standard inputs.
+- Use SFUtils.fillName(root, 'firstName'|'lastName', value) for Name fields.
+- Use SFUtils.selectCombobox(page, root, 'ApiNameOrLabel', label) for all dropdowns.
+- Use SFUtils.fillLookup(page, root, 'ApiNameOrLabel', value) for all lookups.
+- Field Identification: Prefer ApiName if known, otherwise use the exact Label string.
 - Call dismissAuraError(page) after every SFUtils.goto().
 - Use exact button matching: getByRole('button', { name: 'Save', exact: true }).
 - TAB NAVIGATION: Always call clickTab(page, 'Details') before accessing fields on a record page.
@@ -651,11 +695,25 @@ async function processStory(
 
   console.log(`[generate] ${isNew ? 'NEW' : 'CHANGED'} ${usId} → ${obj.displayName}`);
 
-  // Always purge any existing blocks for this US-ID before writing new ones.
-  // This prevents duplicate test titles when a previous run failed mid-way
-  // (hash not stored) and the next run treats the story as NEW.
+  // 1. Purge the current object files (always)
   removeScenarioSection(scenarioPath, usId);
   removeSpecSection(specPath, usId);
+
+  // 2. GLOBAL PURGE: If this is the first time we see this US-ID in this run,
+  // clean it out of ALL OTHER object files. This fixes the "duplicate tests"
+  // issue where a story might have moved from one object to another or was
+  // previously (erroneously) mapped to multiple objects.
+  if (!purgedUsIds.has(usId)) {
+    for (const key of Object.keys(OBJECT_MAP)) {
+      if (key === objKey) continue;
+      const o = OBJECT_MAP[key];
+      const otherScenarioPath = path.join('generated', 'test-scenarios', o.scenarioFile);
+      const otherSpecPath     = path.join('tests', o.specFile);
+      removeScenarioSection(otherScenarioPath, usId);
+      removeSpecSection(otherSpecPath, usId);
+    }
+    purgedUsIds.add(usId);
+  }
 
   bootstrapScenarioFile(scenarioPath, obj);
   await bootstrapSpecFile(objKey);

@@ -4,14 +4,16 @@
  */
 import { test, type Page } from '@playwright/test';
 import * as dotenv from 'dotenv';
+import { getTestData } from '../utils/test-data';
 dotenv.config();
 
 const SF = process.env.SF_SANDBOX_URL!;
+const data = getTestData();
 
 const MODAL = '[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])';
 
-// Existing account — never created by tests
-const EXISTING_ACCOUNT = 'Autotest1';
+// Existing account from test-data.json
+const EXISTING_ACCOUNT = data.account.Account_Name;
 
 // Optional: set SF_TEST_OPP_PATH in .env to skip Opportunity creation entirely.
 // e.g. SF_TEST_OPP_PATH=/lightning/r/Opportunity/006xxxxxxxxxxxxxxx/view

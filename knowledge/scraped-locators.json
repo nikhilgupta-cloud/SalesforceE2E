@@ -1,13 +1,48 @@
 {
   "account": {
-    "scrapedAt": "2026-04-22T03:28:40.375Z",
+    "scrapedAt": "2026-04-23T06:11:33.061Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Account/new",
     "fields": [
       {
-        "label": "*Account Currency",
+        "label": "Phone",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Phone\") input",
+        "apiName": null
+      },
+      {
+        "label": "Account Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Account Name\") input",
+        "apiName": null
+      },
+      {
+        "label": "Fax",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Fax\") input",
+        "apiName": null
+      },
+      {
+        "label": "Parent Account",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "lightning-lookup:has-text(\"Parent Account\") input",
+        "apiName": null
+      },
+      {
+        "label": "Website",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Website\") input",
+        "apiName": null
+      },
+      {
+        "label": "Account Currency",
         "componentTag": "lightning-combobox",
         "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"*Account Currency\") button",
+        "selector": "lightning-combobox:has-text(\"Account Currency\") button",
         "apiName": null
       },
       {
@@ -18,10 +53,24 @@
         "apiName": null
       },
       {
+        "label": "Employees",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Employees\") input",
+        "apiName": null
+      },
+      {
         "label": "Industry",
         "componentTag": "lightning-combobox",
         "inputType": "combobox",
         "selector": "lightning-combobox:has-text(\"Industry\") button",
+        "apiName": null
+      },
+      {
+        "label": "Annual Revenue",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Annual Revenue\") input",
         "apiName": null
       },
       {
@@ -39,18 +88,81 @@
         "apiName": null
       },
       {
+        "label": "Billing City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Billing City\") input",
+        "apiName": null
+      },
+      {
+        "label": "Billing State/Province",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Billing State/Province\") input",
+        "apiName": null
+      },
+      {
+        "label": "Billing Zip/Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Billing Zip/Postal Code\") input",
+        "apiName": null
+      },
+      {
+        "label": "Billing Country",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Billing Country\") input",
+        "apiName": null
+      },
+      {
         "label": "Shipping Street",
         "componentTag": "lightning-textarea",
         "inputType": "text",
         "selector": "lightning-textarea:has-text(\"Shipping Street\") textarea",
         "apiName": null
+      },
+      {
+        "label": "Shipping City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Shipping City\") input",
+        "apiName": null
+      },
+      {
+        "label": "Shipping State/Province",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Shipping State/Province\") input",
+        "apiName": null
+      },
+      {
+        "label": "Shipping Zip/Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Shipping Zip/Postal Code\") input",
+        "apiName": null
+      },
+      {
+        "label": "Shipping Country",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Shipping Country\") input",
+        "apiName": null
       }
     ]
   },
   "contact": {
-    "scrapedAt": "2026-04-22T03:28:48.317Z",
+    "scrapedAt": "2026-04-23T06:11:39.857Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Contact/new",
     "fields": [
+      {
+        "label": "Phone",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Phone\") input",
+        "apiName": null
+      },
       {
         "label": "Salutation",
         "componentTag": "lightning-combobox",
@@ -59,10 +171,59 @@
         "apiName": null
       },
       {
-        "label": "*Contact Currency",
+        "label": "First Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"First Name\") input",
+        "apiName": null
+      },
+      {
+        "label": "Last Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Last Name\") input",
+        "apiName": null
+      },
+      {
+        "label": "Mobile",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Mobile\") input",
+        "apiName": null
+      },
+      {
+        "label": "Account Name",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "lightning-lookup:has-text(\"Account Name\") input",
+        "apiName": null
+      },
+      {
+        "label": "Email",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Email\") input",
+        "apiName": null
+      },
+      {
+        "label": "Title",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Title\") input",
+        "apiName": null
+      },
+      {
+        "label": "Reports To",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "lightning-lookup:has-text(\"Reports To\") input",
+        "apiName": null
+      },
+      {
+        "label": "Contact Currency",
         "componentTag": "lightning-combobox",
         "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"*Contact Currency\") button",
+        "selector": "lightning-combobox:has-text(\"Contact Currency\") button",
         "apiName": null
       },
       {
@@ -73,6 +234,34 @@
         "apiName": null
       },
       {
+        "label": "Mailing City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Mailing City\") input",
+        "apiName": null
+      },
+      {
+        "label": "Mailing State/Province",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Mailing State/Province\") input",
+        "apiName": null
+      },
+      {
+        "label": "Mailing Zip/Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Mailing Zip/Postal Code\") input",
+        "apiName": null
+      },
+      {
+        "label": "Mailing Country",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Mailing Country\") input",
+        "apiName": null
+      },
+      {
         "label": "Other Street",
         "componentTag": "lightning-textarea",
         "inputType": "text",
@@ -80,10 +269,87 @@
         "apiName": null
       },
       {
+        "label": "Other City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Other City\") input",
+        "apiName": null
+      },
+      {
+        "label": "Other State/Province",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Other State/Province\") input",
+        "apiName": null
+      },
+      {
+        "label": "Other Zip/Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Other Zip/Postal Code\") input",
+        "apiName": null
+      },
+      {
+        "label": "Other Country",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Other Country\") input",
+        "apiName": null
+      },
+      {
+        "label": "Fax",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Fax\") input",
+        "apiName": null
+      },
+      {
         "label": "Lead Source",
         "componentTag": "lightning-combobox",
         "inputType": "combobox",
         "selector": "lightning-combobox:has-text(\"Lead Source\") button",
+        "apiName": null
+      },
+      {
+        "label": "Home Phone",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Home Phone\") input",
+        "apiName": null
+      },
+      {
+        "label": "Birthdate",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Birthdate\") input",
+        "apiName": null
+      },
+      {
+        "label": "Other Phone",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Other Phone\") input",
+        "apiName": null
+      },
+      {
+        "label": "Department",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Department\") input",
+        "apiName": null
+      },
+      {
+        "label": "Assistant",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Assistant\") input",
+        "apiName": null
+      },
+      {
+        "label": "Asst. Phone",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Asst. Phone\") input",
         "apiName": null
       },
       {
@@ -96,14 +362,42 @@
     ]
   },
   "opportunity": {
-    "scrapedAt": "2026-04-22T03:28:56.477Z",
+    "scrapedAt": "2026-04-23T06:11:47.087Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Opportunity/new",
     "fields": [
       {
-        "label": "*Stage",
+        "label": "Close Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Close Date\") input",
+        "apiName": null
+      },
+      {
+        "label": "Opportunity Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Opportunity Name\") input",
+        "apiName": null
+      },
+      {
+        "label": "Stage",
         "componentTag": "lightning-combobox",
         "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"*Stage\") button",
+        "selector": "lightning-combobox:has-text(\"Stage\") button",
+        "apiName": null
+      },
+      {
+        "label": "Account Name",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "lightning-lookup:has-text(\"Account Name\") input",
+        "apiName": null
+      },
+      {
+        "label": "Probability (%)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Probability (%)\") input",
         "apiName": null
       },
       {
@@ -114,10 +408,31 @@
         "apiName": null
       },
       {
-        "label": "*Opportunity Currency",
+        "label": "Amount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Amount\") input",
+        "apiName": null
+      },
+      {
+        "label": "C-NNACV",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"C-NNACV\") input",
+        "apiName": null
+      },
+      {
+        "label": "Opportunity Currency",
         "componentTag": "lightning-combobox",
         "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"*Opportunity Currency\") button",
+        "selector": "lightning-combobox:has-text(\"Opportunity Currency\") button",
+        "apiName": null
+      },
+      {
+        "label": "Is Deal Registration",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Is Deal Registration\") input",
         "apiName": null
       },
       {
@@ -135,6 +450,13 @@
         "apiName": null
       },
       {
+        "label": "Next Step",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "lightning-input:has-text(\"Next Step\") input",
+        "apiName": null
+      },
+      {
         "label": "Description",
         "componentTag": "lightning-textarea",
         "inputType": "text",
@@ -144,7 +466,7 @@
     ]
   },
   "quote": {
-    "scrapedAt": "2026-04-22T03:29:04.198Z",
+    "scrapedAt": "2026-04-23T06:11:54.353Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/SBQQ__Quote__c/new",
     "fields": []
   }

@@ -7,25 +7,20 @@
  */
 import { test, type Page } from '@playwright/test';
 import { SFUtils } from '../utils/SFUtils';
+import { getTestData } from '../utils/test-data';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 const SF    = process.env.SF_SANDBOX_URL!;
 const MODAL = '[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])';
+const data  = getTestData();
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-
-async function goTo(page: Page, path: string) {
-  await page.goto(`${SF}${path}`, { waitUntil: 'domcontentloaded' });
-  await page.locator('lightning-app, .slds-page-header, .desktop').first()
-    .waitFor({ state: 'attached', timeout: 30000 }).catch(() => {});
-  // Dismiss any stale modal left over from a prior test
-  await page.locator(MODAL).waitFor({ state: 'hidden', timeout: 3000 }).catch(() => {});
-}
 
 async function waitForDetail(page: Page) {
   // List-view pages keep .slds-page-header hidden (slds-hide); use attached so both list and detail pass
   await page.locator('.slds-page-header').first().waitFor({ state: 'attached', timeout: 45000 }).catch(() => {});
+  await SFUtils.waitForLoading(page);
 }
 
 async function dismissAuraError(page: Page) {
@@ -38,212 +33,148 @@ async function dismissAuraError(page: Page) {
 
 async function clickTab(page: Page, tabName: string) {
   // Salesforce record pages render Details / Related / Activity as role="tab".
-  // Always call this before accessing fields that live on a specific tab.
   const tab = page.getByRole('tab', { name: tabName, exact: true }).first();
   await tab.waitFor({ state: 'visible', timeout: 15000 });
   const isActive = await tab.getAttribute('aria-selected').catch(() => null);
   if (isActive !== 'true') {
     await tab.click();
-    await page.locator('.slds-spinner').first()
-      .waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+    await SFUtils.waitForLoading(page);
   }
+}
+
+async function searchAndOpen(page: Page, name: string) {
+  await SFUtils.searchAndOpen(page, name);
+  await waitForDetail(page);
+  await dismissAuraError(page);
 }
 
 // ── Suite ─────────────────────────────────────────────────────────────────────
 
 test.describe('Account Tests', () => {
+  test.describe.configure({ mode: 'serial' });
 
   test.beforeEach(async ({ page }) => {
-    await goTo(page, '/lightning/o/Account/list?filterName=Recent');
-    await waitForDetail(page);
+    // Start at Home or any stable page before searching
+    await SFUtils.goto(page, `${SF}/lightning/page/home`);
     await dismissAuraError(page);
   });
 
-  // AI-generated tests will be inserted here automatically when user stories are processed.
-  // Run: npm run pipeline
-
-
   // ── US-005 START ─────────────────────────────────────────────────────
-  // ── US-005 | Salesforce E2E: Account Verify → Contact → Opportunity → Contact Role
+  // ── Shared state across serial tests ─────────────────────────────────────
+  const resolvedAccountName: string = data.account.Account_Name;
+  let createdContactFirstName: string;
+  let createdContactLastName: string;
+  let createdContactName: string;
+  let createdOpportunityName: string;
 
   // TC-ACC-001 | AC Reference: AC-005-01
-test('TC-ACC-001 — Verify Account Billing Address and Payment Terms', async ({ page }) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const d       = require('../tests/fixtures/test-data.json');
-    const accName: string = d?.account?.Account_Name ?? `AutoAcc-${Date.now()}`;
-
-    await page.goto(`${SF}/lightning/o/Account/list?filterName=Recent`);
-    await page.waitForLoadState('domcontentloaded');
-    await dismissAuraError(page);
-
-    // Open target Account
-    const accLink = page.getByRole('link', { name: accName, exact: false }).first();
-    await accLink.waitFor({ state: 'visible', timeout: 20000 });
-    await accLink.click();
-    await page.locator('.slds-spinner').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
-    await dismissAuraError(page);
-
-    // AC-005-01: Must click Details tab before accessing fields
+  test('TC-ACC-001 — Verify Account Billing Address and Payment Terms under Details tab (soft-fail)', async ({ page }) => {
+    await searchAndOpen(page, resolvedAccountName);
     await clickTab(page, 'Details');
 
-    // Scroll down so address section is in view — no element lookup, no auto-retry wait
-    await page.evaluate(() => window.scrollBy(0, 400));
-    await page.waitForTimeout(400);
+    // Read a view-mode field container and return trimmed value text
+    const readFieldOutput = async (labelText: string): Promise<string> => {
+      const container = page
+        .locator('records-record-layout-item, force-record-layout-item')
+        .filter({ hasText: new RegExp(labelText, 'i') })
+        .first();
+      const raw = await container.textContent({ timeout: 5000 }).catch(() => '');
+      return (raw ?? '').replace(new RegExp(labelText, 'i'), '').trim();
+    };
 
-    // Soft-fail: Billing Address — try multiple selectors in priority order
-    let billingText = '';
-    for (const sel of [
-      '[data-field-api-name="BillingAddress"]',
-      '[data-field-api-name="BillingStreet"]',
-      'lightning-formatted-address',
-    ]) {
-      const el = page.locator(sel).first();
-      if (await el.count() > 0) {
-        billingText = await el.textContent({ timeout: 5000 }).catch(() => '') ?? '';
-        if (billingText.trim()) break;
-      }
-    }
-    if (!billingText.trim()) {
-      console.warn('[SOFT-FAIL] AC-005-01: BillingAddress is empty or missing on Account.');
+    // AC-005-01: Billing Address — soft-fail
+    const billingAddress = await readFieldOutput('Billing Address');
+    if (!billingAddress) {
+      console.warn('[SOFT-FAIL][AC-005-01] Billing Address is empty or not populated on Account.');
     }
 
-    // Soft-fail: Payment Terms (org may expose as custom or managed field)
-    let paymentText = '';
-    for (const sel of [
-      '[data-field-api-name="Payment_Terms__c"]',
-      '[data-field-api-name="PaymentTerms__c"]',
-    ]) {
-      const el = page.locator(sel).first();
-      if (await el.count() > 0) {
-        paymentText = await el.textContent({ timeout: 5000 }).catch(() => '') ?? '';
-        if (paymentText.trim()) break;
-      }
+    // AC-005-01: Payment Terms — soft-fail
+    const paymentTerms = await readFieldOutput('Payment Terms');
+    if (!paymentTerms) {
+      console.warn('[SOFT-FAIL][AC-005-01] Payment Terms is empty or not populated on Account.');
     }
-    if (!paymentText.trim()) {
-      console.warn('[SOFT-FAIL] AC-005-01: Payment Terms is empty or missing on Account.');
-    }
-
-    // Hard guard: page header must still be visible (account opened successfully)
-    await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 10000 });
   });
 
   // TC-ACC-002 | AC Reference: AC-005-02
-  test('TC-ACC-002 — Create Contact for Account When None Exists', async ({ page }) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const d          = require('../tests/fixtures/test-data.json');
-    const accName    = d?.account?.Account_Name    ?? `AutoAcc-${Date.now()}`;
-    const firstName  = d?.contact?.First_Name       ?? 'AutoFirst';
-    const lastName   = d?.contact?.Last_Name        ?? `AutoLast-${Date.now()}`;
-    const email      = d?.contact?.Email            ?? `auto.${Date.now()}@test.com`;
+  test('TC-ACC-002 — Create new Contact on Account record via Contacts related list', async ({ page }) => {
+    const ts = Date.now();
+    createdContactFirstName = data.contact.First_Name;
+    createdContactLastName  = data.contact.Last_Name;
+    createdContactName      = `${createdContactFirstName} ${createdContactLastName}`;
 
-    await SFUtils.goto(page, `${SF}/lightning/o/Account/list?filterName=Recent`);
-    await dismissAuraError(page);
-
-    // Open Account
-    const accLink = page.getByRole('link', { name: accName, exact: false }).first();
-    await accLink.waitFor({ state: 'visible', timeout: 20000 });
-    await accLink.click();
-    await SFUtils.waitForLoading(page);
-    await dismissAuraError(page);
-
-    // Check Related tab for an existing Contact
+    await searchAndOpen(page, resolvedAccountName);
     await clickTab(page, 'Related');
     await SFUtils.waitForLoading(page);
 
-    const contactsPanel = page
-      .locator('records-related-list-single-container, force-related-list-single-container')
-      .filter({ hasText: /^Contacts/i })
+    // Locate Contacts related list — use force- prefix (Salesforce LWC component name)
+    const contactsRelatedList = page
+      .locator('force-related-list-single-container, force-related-list-card, article')
+      .filter({ hasText: /^Contacts/ })
       .first();
+    await contactsRelatedList.waitFor({ state: 'visible', timeout: 30000 });
 
-    const existingContact = contactsPanel.getByRole('link').first();
-    const hasContact = await existingContact.isVisible({ timeout: 5000 }).catch(() => false);
-
-    if (hasContact) {
-      // AC-005-02: Contact already exists — skip creation, log and pass
-      console.info('[SKIP] AC-005-02: Existing Contact found — creation step bypassed.');
+    // AC-005-02: skip creation if contact already exists
+    const existingContact = contactsRelatedList.getByRole('link', { name: createdContactName, exact: false }).first();
+    if (await existingContact.isVisible({ timeout: 3000 }).catch(() => false)) {
+      console.log(`[SKIP] "${createdContactName}" already exists — skipping creation.`);
+      await existingContact.click();
+      await SFUtils.waitForLoading(page);
+      await waitForDetail(page);
       return;
     }
 
-    // AC-005-02: No contact — open New Contact modal from the Contacts related list
-    await contactsPanel.getByRole('button', { name: 'New', exact: true }).click();
+    await contactsRelatedList.getByRole('button', { name: 'New', exact: true }).click();
     await SFUtils.waitForLoading(page);
 
     const modal = page.locator(MODAL);
-    await modal.waitFor({ state: 'visible', timeout: 20000 });
+    await modal.waitFor({ state: 'visible', timeout: 15000 });
 
-    // Fill name using SFUtils.fillName (never use [data-field-api-name="LastName"] directly)
-    await SFUtils.fillName(modal, 'firstName', firstName);
-    await SFUtils.fillName(modal, 'lastName', lastName);
-
-    // Fill email via SFUtils.fillField
-    await SFUtils.fillField(modal, 'Email', email);
+    await SFUtils.fillName(modal, 'firstName', createdContactFirstName);
+    await SFUtils.fillName(modal, 'lastName', createdContactLastName);
 
     await modal.getByRole('button', { name: 'Save', exact: true }).click();
     await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
-    // Verify Contact record page loaded
-    await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 30000 });
-    await page.getByRole('heading', { name: lastName, exact: false }).first()
-      .waitFor({ state: 'visible', timeout: 15000 });
+    // Verify Contact is now visible in the Account's Contacts related list
+    await page
+      .getByRole('link', { name: createdContactName, exact: false })
+      .first()
+      .waitFor({ state: 'visible', timeout: 20000 });
   });
 
   // TC-ACC-003 | AC Reference: AC-005-03
-  test('TC-ACC-003 — Create Opportunity from Contact Record', async ({ page }) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const d          = require('../tests/fixtures/test-data.json');
-    const accName    = d?.account?.Account_Name    ?? `AutoAcc-${Date.now()}`;
-    const lastName   = d?.contact?.Last_Name        ?? 'AutoLast';
-    const oppName    = d?.opportunity?.Name         ?? `AutoOpp-${Date.now()}`;
-    const closeDate  = d?.opportunity?.Close_Date   ?? '12/31/2026';
-    const stage      = d?.opportunity?.Stage        ?? 'Prospecting';
+  test('TC-ACC-003 — Create Opportunity from Contact record via Opportunities related list', async ({ page }) => {
+    const ts = Date.now();
+    createdOpportunityName = data.opportunity.Name;
+    const closeDate        = data.opportunity.Close_Date;
+    const stage            = data.opportunity.Stage;
 
-    await SFUtils.goto(page, `${SF}/lightning/o/Account/list?filterName=Recent`);
-    await dismissAuraError(page);
-
-    // Navigate: Account → Related → Contacts → open Contact
-    const accLink = page.getByRole('link', { name: accName, exact: false }).first();
-    await accLink.waitFor({ state: 'visible', timeout: 20000 });
-    await accLink.click();
-    await SFUtils.waitForLoading(page);
-    await dismissAuraError(page);
-
+    await searchAndOpen(page, createdContactName);
     await clickTab(page, 'Related');
     await SFUtils.waitForLoading(page);
 
-    const contactsPanel = page
-      .locator('records-related-list-single-container, force-related-list-single-container')
-      .filter({ hasText: /^Contacts/i })
+    // Locate Opportunities related list and click New
+    const oppsRelatedList = page
+      .locator('records-related-list-single-container, article')
+      .filter({ hasText: 'Opportunities' })
       .first();
+    
+    await oppsRelatedList.scrollIntoViewIfNeeded().catch(() => {});
+    await page.waitForTimeout(1000);
 
-    const contactLink = contactsPanel
-      .getByRole('link', { name: lastName, exact: false })
-      .first();
-    await contactLink.waitFor({ state: 'visible', timeout: 15000 });
-    await contactLink.click();
-    await SFUtils.waitForLoading(page);
-    await dismissAuraError(page);
-    await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 30000 });
-
-    // AC-005-03: Trigger New Opportunity from Contact action bar
-    const newOppBtn = page.getByRole('button', { name: 'New Opportunity', exact: true });
-    const newOppVisible = await newOppBtn.isVisible({ timeout: 4000 }).catch(() => false);
-
-    if (newOppVisible) {
-      await newOppBtn.click();
-    } else {
-      // Fallback: activity/action overflow menu
-      await page.getByRole('button', { name: 'more actions', exact: false }).first().click();
-      await page.getByRole('menuitem', { name: 'New Opportunity', exact: false }).first().click();
-    }
-
+    const newBtn = oppsRelatedList.getByRole('button', { name: 'New', exact: true });
+    await newBtn.waitFor({ state: 'visible', timeout: 15000 });
+    await newBtn.click().catch(async () => {
+        await oppsRelatedList.locator('.slds-card__header-link, h2').first().click().catch(() => {});
+        await newBtn.click();
+    });
     await SFUtils.waitForLoading(page);
 
     const modal = page.locator(MODAL);
-    await modal.waitFor({ state: 'visible', timeout: 20000 });
+    await modal.waitFor({ state: 'visible', timeout: 15000 });
 
-    // Fill Opportunity fields
-    await SFUtils.fillField(modal, 'Name', oppName);
+    await SFUtils.fillField(modal, 'Name', createdOpportunityName);
     await SFUtils.fillField(modal, 'CloseDate', closeDate);
     await SFUtils.selectCombobox(page, modal, 'StageName', stage);
 
@@ -251,92 +182,57 @@ test('TC-ACC-001 — Verify Account Billing Address and Payment Terms', async ({
     await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
-    // Assert Opportunity record page loaded with correct name
-    await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 30000 });
-    await page.getByRole('heading', { name: oppName, exact: false }).first()
-      .waitFor({ state: 'visible', timeout: 15000 });
+    // Verify Opportunity record detail page opened with correct name
+    await waitForDetail(page);
+    await page
+      .getByRole('heading', { name: createdOpportunityName, exact: false })
+      .first()
+      .waitFor({ state: 'visible', timeout: 20000 });
   });
 
   // TC-ACC-004 | AC Reference: AC-005-04
-  test('TC-ACC-004 — Verify Contact is Primary Contact Role on Opportunity', async ({ page }) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const d         = require('../tests/fixtures/test-data.json');
-    const oppName   = d?.opportunity?.Name   ?? 'AutoOpp';
-    const lastName  = d?.contact?.Last_Name  ?? 'AutoLast';
-
-    await SFUtils.goto(page, `${SF}/lightning/o/Opportunity/list?filterName=Recent`);
-    await dismissAuraError(page);
-
-    // Open Opportunity
-    const oppLink = page.getByRole('link', { name: oppName, exact: false }).first();
-    await oppLink.waitFor({ state: 'visible', timeout: 20000 });
-    await oppLink.click();
-    await SFUtils.waitForLoading(page);
-    await dismissAuraError(page);
-    await page.locator('.slds-page-header').first().waitFor({ state: 'visible', timeout: 30000 });
-
-    // AC-005-04: Navigate to Related tab to locate Contact Roles
+  test('TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity', async ({ page }) => {
+    await searchAndOpen(page, createdOpportunityName);
     await clickTab(page, 'Related');
     await SFUtils.waitForLoading(page);
 
-    const rolesPanel = page
-      .locator('records-related-list-single-container, force-related-list-single-container')
-      .filter({ hasText: /Contact Roles/i })
+    // Locate Contact Roles related list
+    const contactRolesSection = page
+      .locator('records-related-list-single-container, article')
+      .filter({ hasText: 'Contact Roles' })
       .first();
-    await rolesPanel.waitFor({ state: 'visible', timeout: 15000 });
+    await contactRolesSection.waitFor({ state: 'visible', timeout: 20000 });
 
-    // Check if contact row already present
-    const contactRow = rolesPanel
-      .locator('tr, li')
-      .filter({ hasText: new RegExp(lastName, 'i') })
-      .first();
-    const rowVisible = await contactRow.isVisible({ timeout: 8000 }).catch(() => false);
-
-    if (!rowVisible) {
-      // Contact Role not yet set — open Edit / Add via related list button
-      const editRolesBtn = rolesPanel.getByRole('button', { name: /Edit|Add/i }).first();
-      await editRolesBtn.waitFor({ state: 'visible', timeout: 10000 });
-      await editRolesBtn.click();
-      await SFUtils.waitForLoading(page);
-
-      const modal = page.locator(MODAL);
-      await modal.waitFor({ state: 'visible', timeout: 20000 });
-
-      // Locate the contact row inside the modal and check Primary checkbox
-      const modalRow = modal
-        .locator('tr')
-        .filter({ hasText: new RegExp(lastName, 'i') })
-        .first();
-      await modalRow.waitFor({ state: 'visible', timeout: 10000 });
-
-      const primaryCheckbox = modalRow.locator('input[type="checkbox"]').first();
-      const isChecked = await primaryCheckbox.isChecked().catch(() => false);
-      if (!isChecked) {
-        await primaryCheckbox.check();
-      }
-
-      await modal.getByRole('button', { name: 'Save', exact: true }).click();
-      await SFUtils.waitForLoading(page);
-      await dismissAuraError(page);
-    }
-
-    // Final hard assertion: Contact row is present in Contact Roles panel
-    await rolesPanel
-      .locator('tr, li')
-      .filter({ hasText: new RegExp(lastName, 'i') })
+    // Hard assertion: Contact MUST appear in Contact Roles
+    await contactRolesSection
+      .getByRole('link', { name: createdContactName, exact: false })
       .first()
       .waitFor({ state: 'visible', timeout: 15000 });
 
-    // Verify Primary indicator is visible for the contact
-    const primaryIndicator = rolesPanel
-      .locator('tr')
-      .filter({ hasText: new RegExp(lastName, 'i') })
-      .locator(
-        'lightning-primitive-icon[icon-name="utility:check"], [data-label="Primary"], ' +
-        'td:has(input[type="checkbox"]:checked), td:has-text("Primary")'
-      )
+    // Hard assertion: Contact MUST be marked Primary
+    const contactRow = contactRolesSection
+      .getByRole('row')
+      .filter({ hasText: createdContactName })
       .first();
-    await primaryIndicator.waitFor({ state: 'visible', timeout: 10000 });
+
+    // Salesforce renders Primary = true as a check icon or "True" text in the cell
+    const isPrimaryIcon = await contactRow
+      .locator('lightning-icon[icon-name="utility:check"], [title="True"], abbr[title="True"]')
+      .first()
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+
+    if (!isPrimaryIcon) {
+      // Fallback: inspect raw cell text for a truthy indicator
+      console.warn('[AC-005-04] Primary icon not found via icon locator — attempting text fallback.');
+      const rowText = (await contactRow.textContent({ timeout: 5000 }).catch(() => '')) ?? '';
+      if (!rowText.toLowerCase().includes('true')) {
+        throw new Error(
+          `[AC-005-04] Contact "${createdContactName}" is NOT marked as Primary Contact Role ` +
+          `on Opportunity "${createdOpportunityName}". Primary indicator absent from row.`
+        );
+      }
+    }
   });
   // ── US-005 END ───────────────────────────────────────────────────────
 

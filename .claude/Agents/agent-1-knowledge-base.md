@@ -36,6 +36,8 @@ Load and surface the correct domain knowledge for the Salesforce object(s) under
    - CPQ/Revenue Cloud-specific interaction patterns
 4. Also check `knowledge/scraped-locators.json` if it exists — this contains verified live-DOM selectors scraped from the actual org. Prefer these over text-filter assumptions.
 
+5. Do not attempt to locate the global search input via CSS or XPath. To use global search, press the / hotkey, then use page.keyboard.type(query)
+
 ## Output
 Structured domain context passed in-memory to Agents 2, 3, 4, and 6. Do not write a file — pass directly to the next agent.
 

@@ -70,83 +70,91 @@ const OBJECT_URLS = buildObjectUrls();
  */
 function extractLocatorsFromDOM(): LocatorEntry[] {
   const results: LocatorEntry[] = [];
-  const seenLabels = new Set<string>();
+  const seenKeys = new Set<string>();
 
-  // Recursive function to pierce Shadow DOM boundaries
   function walk(node: Document | Element | ShadowRoot) {
     if (!node) return;
 
-    const tagName = (node as Element).tagName?.toLowerCase();
-    
-    // Process lightning components
-    if (tagName && tagName.startsWith('lightning-')) {
-      const el = node as HTMLElement;
-      
-      // Find label (might be in light DOM or shadow DOM)
-      const labelEl = el.querySelector('label') || el.shadowRoot?.querySelector('label');
-      const label = labelEl?.innerText?.trim() ?? '';
-      
-      // Climb the DOM tree to find the API name if it's on a wrapper
-      let apiName = el.getAttribute('data-field-api-name') ?? el.getAttribute('field-name');
-      if (!apiName) {
-        let parent: HTMLElement | null = el.parentElement;
-        while (parent && !apiName) {
-          apiName = parent.getAttribute('data-field-api-name') ?? parent.getAttribute('field-name');
-          parent = parent.parentElement;
-        }
-      }
+    // Process Salesforce Lightning components
+    if (node instanceof Element) {
+      const tag = node.tagName.toLowerCase();
 
-      if (label && !seenLabels.has(label)) {
-        seenLabels.add(label);
-        
-        let inputType = 'unknown';
-        let fallbackSelector = '';
+      if (tag.startsWith('lightning-')) {
+        const el = node as HTMLElement;
 
-        if (tagName === 'lightning-input') {
-          const typeAttr = el.getAttribute('type') || (el.querySelector('input')?.type);
-          inputType = typeAttr === 'checkbox' ? 'checkbox' : typeAttr === 'date' ? 'date' : 'text';
-          fallbackSelector = `lightning-input:has-text("${label}") input`;
-        } 
-        else if (tagName === 'lightning-combobox') {
-          inputType = 'combobox';
-          fallbackSelector = `lightning-combobox:has-text("${label}") button`;
-        } 
-        else if (tagName === 'lightning-lookup') {
-          inputType = 'lookup';
-          fallbackSelector = `lightning-lookup:has-text("${label}") input`;
-        }
-        else if (tagName === 'lightning-textarea') {
-          inputType = 'text';
-          fallbackSelector = `lightning-textarea:has-text("${label}") textarea`;
-        }
-        else if (tagName === 'lightning-input-field') {
-          inputType = 'unknown';
-          fallbackSelector = `lightning-input-field:has-text("${label}") input`;
+        // Primary: direct label attribute (most reliable for LWC components)
+        // Fallback: querySelector into light DOM then shadow DOM
+        const label: string =
+          el.getAttribute('label') ||
+          (el as any).label ||
+          el.querySelector('label')?.innerText?.trim() ||
+          el.shadowRoot?.querySelector('label')?.innerText?.trim() ||
+          '';
+
+        // API name: direct attribute first, then climb parent chain
+        let apiName: string | null =
+          el.getAttribute('data-field-api-name') ||
+          el.getAttribute('field-name') ||
+          null;
+        if (!apiName) {
+          let parent: HTMLElement | null = el.parentElement;
+          while (parent && !apiName) {
+            apiName =
+              parent.getAttribute('data-field-api-name') ||
+              parent.getAttribute('field-name') ||
+              null;
+            parent = parent.parentElement;
+          }
         }
 
-        if (fallbackSelector) {
-          results.push({
-            label,
-            componentTag: tagName,
-            inputType,
-            selector: apiName ? `[data-field-api-name="${apiName}"] input` : fallbackSelector,
-            apiName: apiName ?? null,
-          });
+        // Deduplicate on tag + label + apiName
+        const uniqueKey = `${tag}|${label}|${apiName}`;
+        if (label && !seenKeys.has(uniqueKey)) {
+          seenKeys.add(uniqueKey);
+
+          let inputType = 'unknown';
+          let fallbackSelector = '';
+
+          if (tag === 'lightning-input') {
+            const typeAttr = el.getAttribute('type') || (el.querySelector('input') as HTMLInputElement | null)?.type || 'text';
+            inputType = typeAttr === 'checkbox' ? 'checkbox' : typeAttr === 'date' ? 'date' : 'text';
+            fallbackSelector = `lightning-input:has-text("${label}") input`;
+          } else if (tag === 'lightning-combobox') {
+            inputType = 'combobox';
+            fallbackSelector = `lightning-combobox:has-text("${label}") button`;
+          } else if (tag === 'lightning-lookup') {
+            inputType = 'lookup';
+            fallbackSelector = `lightning-lookup:has-text("${label}") input`;
+          } else if (tag === 'lightning-textarea') {
+            inputType = 'text';
+            fallbackSelector = `lightning-textarea:has-text("${label}") textarea`;
+          } else if (tag === 'lightning-input-field') {
+            inputType = 'unknown';
+            fallbackSelector = `lightning-input-field:has-text("${label}") input`;
+          }
+
+          if (fallbackSelector) {
+            results.push({
+              label,
+              componentTag: tag,
+              inputType,
+              selector: apiName ? `[data-field-api-name="${apiName}"] input` : fallbackSelector,
+              apiName,
+            });
+          }
         }
       }
     }
 
-    // Traverse light DOM children
-    const children = (node as Element).children;
-    if (children) {
-      for (let i = 0; i < children.length; i++) {
-        walk(children[i]);
-      }
+    // Traverse ALL child nodes (childNodes > children — covers ShadowRoot & Document uniformly)
+    const children = node.childNodes;
+    for (let i = 0; i < children.length; i++) {
+      walk(children[i] as Element);
     }
-    
-    // CRITICAL: Step inside the shadow root if it exists
-    if ((node as Element).shadowRoot) {
-      walk((node as Element).shadowRoot!);
+
+    // CRITICAL: pierce the Shadow DOM barrier
+    if (node instanceof Element && node.shadowRoot) {
+      walk(node.shadowRoot);
     }
   }
 

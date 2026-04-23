@@ -10,14 +10,18 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {},
+    "metadata": {
+      "actualWorkers": 1
+    },
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "D:/SalesforceE2E1/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 1
+        },
         "id": "chromium",
         "name": "chromium",
         "testDir": "D:/SalesforceE2E1/tests",
@@ -58,25 +62,101 @@
     "workers": 1,
     "webServer": null
   },
-  "suites": [],
-  "errors": [
+  "suites": [
     {
-      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\order.spec.ts: Unexpected token (40:45)\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[32m\u001b[39m\n \u001b[90m 39 |\u001b[39m \u001b[32mfunction getTestData(fixture = 'order'): OrderTestData {\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m \u001b[32m  const filePath = path.resolve(__dirname, `\u001b[39m\u001b[33m.\u001b[39m\u001b[33m.\u001b[39m\u001b[33m/\u001b[39mprompts\u001b[33m/\u001b[39mtest\u001b[33m-\u001b[39mdata\u001b[33m/\u001b[39m${fixture}\u001b[33m.\u001b[39mjson\u001b[32m`);\u001b[39m\n \u001b[90m    |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m \u001b[32m  if (fs.existsSync(filePath)) {\u001b[39m\n \u001b[90m 42 |\u001b[39m \u001b[32m    return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as OrderTestData;\u001b[39m\n \u001b[90m 43 |\u001b[39m \u001b[32m  }\u001b[39m\u001b[0m",
-      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\order.spec.ts: Unexpected token (40:45)\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[32m\u001b[39m\n \u001b[90m 39 |\u001b[39m \u001b[32mfunction getTestData(fixture = 'order'): OrderTestData {\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m \u001b[32m  const filePath = path.resolve(__dirname, `\u001b[39m\u001b[33m.\u001b[39m\u001b[33m.\u001b[39m\u001b[33m/\u001b[39mprompts\u001b[33m/\u001b[39mtest\u001b[33m-\u001b[39mdata\u001b[33m/\u001b[39m${fixture}\u001b[33m.\u001b[39mjson\u001b[32m`);\u001b[39m\n \u001b[90m    |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m \u001b[32m  if (fs.existsSync(filePath)) {\u001b[39m\n \u001b[90m 42 |\u001b[39m \u001b[32m    return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as OrderTestData;\u001b[39m\n \u001b[90m 43 |\u001b[39m \u001b[32m  }\u001b[39m\u001b[0m",
-      "location": {
-        "file": "D:\\SalesforceE2E1\\tests\\order.spec.ts",
-        "line": 40,
-        "column": 45
-      },
-      "snippet": "\u001b[90m   at \u001b[39morder.spec.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m \u001b[32m\u001b[39m\n \u001b[90m 39 |\u001b[39m \u001b[32mfunction getTestData(fixture = 'order'): OrderTestData {\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m \u001b[32m  const filePath = path.resolve(__dirname, `\u001b[39m\u001b[33m.\u001b[39m\u001b[33m.\u001b[39m\u001b[33m/\u001b[39mprompts\u001b[33m/\u001b[39mtest\u001b[33m-\u001b[39mdata\u001b[33m/\u001b[39m${fixture}\u001b[33m.\u001b[39mjson\u001b[32m`);\u001b[39m\n \u001b[90m    |\u001b[39m                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m \u001b[32m  if (fs.existsSync(filePath)) {\u001b[39m\n \u001b[90m 42 |\u001b[39m \u001b[32m    return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as OrderTestData;\u001b[39m\n \u001b[90m 43 |\u001b[39m \u001b[32m  }\u001b[39m\u001b[0m"
+      "title": "account.spec.ts",
+      "file": "account.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Account Tests",
+          "file": "account.spec.ts",
+          "line": 53,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC-ACC-003 — Create Opportunity from Contact record via Opportunities related list",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 7276,
+                      "error": {
+                        "message": "Error: keyboard.type: text: expected string, got undefined",
+                        "stack": "Error: keyboard.type: text: expected string, got undefined\n    at Function._triggerGlobalSearch (D:\\SalesforceE2E1\\utils\\SFUtils.ts:224:25)\n    at Function.searchAndOpen (D:\\SalesforceE2E1\\utils\\SFUtils.ts:234:5)\n    at searchAndOpen (D:\\SalesforceE2E1\\tests\\account.spec.ts:46:3)\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:153:5",
+                        "location": {
+                          "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                          "column": 25,
+                          "line": 224
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:224\n\n\u001b[0m \u001b[90m 222 |\u001b[39m\n \u001b[90m 223 |\u001b[39m     \u001b[90m// Type directly — the input is focused after '/' or the trigger click\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 224 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mtype(query\u001b[33m,\u001b[39m { delay\u001b[33m:\u001b[39m \u001b[35m30\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 225 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Enter'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 226 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mwaitForLoading(page)\u001b[33m;\u001b[39m\n \u001b[90m 227 |\u001b[39m   }\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                            "column": 25,
+                            "line": 224
+                          },
+                          "message": "Error: keyboard.type: text: expected string, got undefined\n\n\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:224\n\n\u001b[0m \u001b[90m 222 |\u001b[39m\n \u001b[90m 223 |\u001b[39m     \u001b[90m// Type directly — the input is focused after '/' or the trigger click\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 224 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mtype(query\u001b[33m,\u001b[39m { delay\u001b[33m:\u001b[39m \u001b[35m30\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 225 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Enter'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 226 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mwaitForLoading(page)\u001b[33m;\u001b[39m\n \u001b[90m 227 |\u001b[39m   }\u001b[0m\n\u001b[2m    at Function._triggerGlobalSearch (D:\\SalesforceE2E1\\utils\\SFUtils.ts:224:25)\u001b[22m\n\u001b[2m    at Function.searchAndOpen (D:\\SalesforceE2E1\\utils\\SFUtils.ts:234:5)\u001b[22m\n\u001b[2m    at searchAndOpen (D:\\SalesforceE2E1\\tests\\account.spec.ts:46:3)\u001b[22m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:153:5\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-23T06:32:36.064Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-3e1d5--Opportunities-related-list-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-3e1d5--Opportunities-related-list-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                        "column": 25,
+                        "line": 224
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-b5ddaa06db3b432e1f43",
+              "file": "account.spec.ts",
+              "line": 147,
+              "column": 5
+            }
+          ]
+        }
+      ]
     }
   ],
+  "errors": [],
   "stats": {
-    "startTime": "2026-04-22T03:32:28.973Z",
-    "duration": 304.413,
+    "startTime": "2026-04-23T06:32:33.654Z",
+    "duration": 11339.397,
     "expected": 0,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }

@@ -161,119 +161,41 @@ Each test MUST:
 
 ---
 
-## LOCATOR RULES
+## LOCATOR RULES (STRICT — DO NOT OVERRIDE)
 
-### MANDATORY: Check knowledge/scraped-locators.json FIRST
-Before generating ANY locator, read `knowledge/scraped-locators.json` for the target object.
-If a field has `"apiName"` set (non-null), use Priority 1. Otherwise fall through the hierarchy.
+### MANDATORY: PREFER SFUtils FOR COMPLEX ACTIONS
+When performing complex UI actions (like waiting for load states, dismissing Aura errors, or navigating tabs), ALWAYS use the `SFUtils` helper class (e.g., `await SFUtils.waitForLoading(page)`). 
+For standard form fields, you may use raw Playwright locators, but you MUST follow the Priority Hierarchy below and use `data-field-api-name` from scraped-locators.json.
 
-If the Salesforce MCP is available, call `salesforce.describe({ object: "ObjectName" })`
-to resolve label → API name before writing any locator. Run `npm run enrich:locators` if
-scraped-locators.json still has null apiName entries.
+### GLOBAL SEARCH RULE (CRITICAL)
+If a test requires searching globally, NEVER write a CSS/XPath locator for the search bar. You must press `/` to focus the input, and then type directly using `await page.keyboard.type('search string')`.
+By tweaking it to this, you keep your brilliant Global Search fix, encourage the use of SFUtils for stability, but protect the AI's ability to map standard fields using the JSON locators we scraped!
 
-### Priority Hierarchy (STRICT — never skip levels)
+| Action | SFUtils Method |
+|--------|----------------|
+| Fill Text/Date/Email | `await SFUtils.fillField(root, 'ApiNameOrLabel', value);` |
+| Select Picklist | `await SFUtils.selectCombobox(page, root, 'ApiNameOrLabel', 'OptionLabel');` |
+| Fill Lookup | `await SFUtils.fillLookup(page, root, 'ApiNameOrLabel', 'Value');` |
+| Fill Name (Contact) | `await SFUtils.fillName(root, 'firstName'\|'lastName', value);` |
+| Click Button | `await SFUtils.clickButton(root, 'ButtonText');` |
 
-**Priority 1 — API Name (most stable, survives label renames)**
+### Field Identification
+1. If the field has an API Name (check `knowledge/scraped-locators.json`), use it.
+2. If no API Name is found, use the exact Label string (e.g. `'Salutation'`, `'Billing Address'`).
+3. `SFUtils` will automatically resolve the correct selector.
+
+### Modal Scope
 ```typescript
-// Text / date / email / phone inputs
-modal.locator('[data-field-api-name="FieldApiName__c"] input').first()
-
-// Picklist / combobox
-modal.locator('[data-field-api-name="StageName"] button').first()
-```
-
-**Priority 2 — Role-based (buttons, tabs, links, options)**
-```typescript
-page.getByRole('button', { name: 'Save', exact: true }).first()
-page.getByRole('tab',    { name: 'Details', exact: true }).first()
-page.getByRole('option', { name: 'Prospecting', exact: true }).first()
-```
-
-**Priority 3 — Label-based (text / date / email / phone inputs in modals)**
-```typescript
-modal.getByLabel('Last Name').first()
-modal.getByLabel('Email').first()
-```
-
-**Priority 4 — LWC combobox fallback (picklists only, when API name unknown)**
-```typescript
-modal.locator('lightning-combobox:has-text("Lead Source") button').first()
-```
-
-**Priority 5 — LWC input fallback (text inputs only, when label ambiguous)**
-```typescript
-modal.locator('lightning-input').filter({ hasText: /Label/i }).locator('input').first()
-```
-
-**Priority 6 — Checkbox**
-```typescript
-modal.locator('[data-field-api-name="IsActive__c"] input[type="checkbox"]').first()
-// Fallback:
-modal.locator('lightning-input').filter({ hasText: /Label/i }).locator('input[type="checkbox"]').first()
-```
-
-**Priority 7 — XPath (LAST RESORT ONLY — document why)**
-
-### Compound Name field (CRITICAL — Contact / Lead / Person Account)
-`FirstName` and `LastName` are NOT standalone `data-field-api-name` fields.
-They live as sub-inputs inside the compound `data-field-api-name="Name"` wrapper.
-ALWAYS use the `name=` attribute to target them:
-```typescript
-// ✅ CORRECT
-modal.locator('[data-field-api-name="Name"] input[name="lastName"]').first()
-modal.locator('[data-field-api-name="Name"] input[name="firstName"]').first()
-
-// ❌ WRONG — these selectors find nothing
-modal.locator('[data-field-api-name="LastName"] input')
-modal.locator('[data-field-api-name="FirstName"] input')
-```
-
-### Lookup fields
-```typescript
-modal.locator('lightning-lookup').filter({ hasText: /Label/i }).locator('input').first()
-```
-
-Modal Scope (always scope form interactions to modal):
-```typescript
-const modal = page.locator('[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])');
+const modal = page.locator(SFUtils.MODAL);
+await modal.waitFor({ state: 'visible' });
 ```
 
 ---
 
 ## TAB NAVIGATION (MANDATORY)
-
-Salesforce record pages open on Activity or Related tab — never on Details.
-Fields like Stage, Amount, Close Date, Industry, Phone, Website, Billing Address, Payment Terms, and all custom/metadata fields live on the Details tab.
-
-### Rules:
-1. ALWAYS call `clickTab(page, 'Details')` before reading or writing any field on a record detail page.
-2. NEVER target a field on a record page without first ensuring the correct tab is active.
-3. Fields inside modals or list views do NOT need `clickTab` — only record detail pages have the tab strip.
-4. Known tab names per object:
-   - All objects: `'Details'`, `'Related'`, `'Activity'`
-   - Opportunity: `'Quotes'`
-   - Contract: `'Orders'`
-
-### clickTab helper (already in every spec file — do NOT redefine, just call it):
-```typescript
-async function clickTab(page: Page, tabName: string) {
-  const tab = page.getByRole('tab', { name: tabName, exact: true }).first();
-  await tab.waitFor({ state: 'visible', timeout: 15000 });
-  const isActive = await tab.getAttribute('aria-selected').catch(() => null);
-  if (isActive !== 'true') await tab.click();
-  await page.locator('.slds-spinner').waitFor({ state: 'hidden' }).catch(() => {});
-}
-```
-
-### Usage pattern for record detail pages:
-```typescript
-// Navigate to record
-await page.goto(`${process.env.SF_SANDBOX_URL}/...`);
-await page.waitForLoadState('domcontentloaded');
-// ALWAYS switch to Details tab before accessing fields
-await clickTab(page, 'Details');
-// Now safe to read/write fields
-```
+Salesforce record pages often open on the wrong tab.
+ALWAYS call `await clickTab(page, 'Details')` before accessing fields on a record detail page.
+Note: Modals do NOT have tabs; only record detail pages do.
 
 ---
 
