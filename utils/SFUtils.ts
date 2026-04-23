@@ -127,15 +127,24 @@ export class SFUtils {
    */
   static async selectCombobox(page: Page, root: Page | Locator | FrameLocator, apiName: string, label: string) {
     const field = this.getField(root, apiName);
-    const trigger = field.locator('button, input[role="combobox"]').first();
-    
+
+    // Native <select> (picklist in some modal layouts)
+    const nativeSelect = field.locator('select').first();
+    if (await nativeSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await nativeSelect.selectOption({ label });
+      await this.waitForLoading(page);
+      return;
+    }
+
+    // Lightning combobox — input[role="combobox"] or button trigger
+    const trigger = field.locator('input[role="combobox"], button').first();
     await trigger.waitFor({ state: 'visible' });
     await trigger.click();
-    
-    // Dropdowns are often in a portal at the end of <body>
+
+    // Options render in a portal at the end of <body>
     const option = page.locator('lightning-base-combobox-item, [role="option"]')
       .filter({ hasText: new RegExp(`^${label}$`, 'i') }).first();
-    
+
     await option.waitFor({ state: 'visible', timeout: 10000 });
     await option.click();
     await this.waitForLoading(page);

@@ -65,7 +65,9 @@ test.describe('Account Tests', () => {
   let createdContactFirstName: string;
   let createdContactLastName: string;
   let createdContactName: string;
+  let createdContactUrl: string;
   let createdOpportunityName: string;
+  let createdOpportunityUrl: string;
 
   // TC-ACC-001 | AC Reference: AC-005-01
   test('TC-ACC-001 — Verify Account Billing Address and Payment Terms under Details tab (soft-fail)', async ({ page }) => {
@@ -97,7 +99,6 @@ test.describe('Account Tests', () => {
 
   // TC-ACC-002 | AC Reference: AC-005-02
   test('TC-ACC-002 — Create new Contact on Account record via Contacts related list', async ({ page }) => {
-    const ts = Date.now();
     createdContactFirstName = data.contact.First_Name;
     createdContactLastName  = data.contact.Last_Name;
     createdContactName      = `${createdContactFirstName} ${createdContactLastName}`;
@@ -114,12 +115,13 @@ test.describe('Account Tests', () => {
     await contactsRelatedList.waitFor({ state: 'visible', timeout: 30000 });
 
     // AC-005-02: skip creation if contact already exists
-    const existingContact = contactsRelatedList.getByRole('link', { name: createdContactName, exact: false }).first();
+    const existingContact = contactsRelatedList.getByRole('link', { name: createdContactName, exact: true }).first();
     if (await existingContact.isVisible({ timeout: 3000 }).catch(() => false)) {
-      console.log(`[SKIP] "${createdContactName}" already exists — skipping creation.`);
+      console.log(`[SKIP] "${createdContactName}" already exists — using existing record.`);
       await existingContact.click();
       await SFUtils.waitForLoading(page);
       await waitForDetail(page);
+      createdContactUrl = page.url();
       return;
     }
 
@@ -136,72 +138,121 @@ test.describe('Account Tests', () => {
     await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
-    // Verify Contact is now visible in the Account's Contacts related list
-    await page
-      .getByRole('link', { name: createdContactName, exact: false })
-      .first()
-      .waitFor({ state: 'visible', timeout: 20000 });
+    // Salesforce may stay on the Account page after saving from Related list (shows a toast).
+    // Explicitly navigate to the Contact record if we're not already there.
+    await page.waitForTimeout(1500);
+    if (!page.url().includes('/Contact/')) {
+      const newContactLink = page.getByRole('link', { name: createdContactName, exact: true }).first();
+      await newContactLink.waitFor({ state: 'visible', timeout: 15000 });
+      await newContactLink.click();
+      await SFUtils.waitForLoading(page);
+    }
+
+    await waitForDetail(page);
+    await page.getByRole('heading', { name: createdContactName, exact: false })
+      .first().waitFor({ state: 'visible', timeout: 15000 });
+    createdContactUrl = page.url();
   });
 
   // TC-ACC-003 | AC Reference: AC-005-03
   test('TC-ACC-003 — Create Opportunity from Contact record via Opportunities related list', async ({ page }) => {
-    const ts = Date.now();
     createdOpportunityName = data.opportunity.Name;
     const closeDate        = data.opportunity.Close_Date;
     const stage            = data.opportunity.Stage;
 
-    await searchAndOpen(page, createdContactName);
+    if (createdContactUrl) {
+      await SFUtils.goto(page, createdContactUrl);
+    } else {
+      createdContactName = createdContactName || `${data.contact.First_Name} ${data.contact.Last_Name}`;
+      await searchAndOpen(page, createdContactName);
+    }
+    await waitForDetail(page);
     await clickTab(page, 'Related');
     await SFUtils.waitForLoading(page);
 
-    // Locate Opportunities related list and click New
     const oppsRelatedList = page
-      .locator('records-related-list-single-container, article')
-      .filter({ hasText: 'Opportunities' })
+      .locator('force-related-list-single-container, force-related-list-card, article')
+      .filter({ hasText: /^Opportunities/ })
       .first();
-    
-    await oppsRelatedList.scrollIntoViewIfNeeded().catch(() => {});
-    await page.waitForTimeout(1000);
+    await oppsRelatedList.waitFor({ state: 'visible', timeout: 30000 });
 
-    const newBtn = oppsRelatedList.getByRole('button', { name: 'New', exact: true });
-    await newBtn.waitFor({ state: 'visible', timeout: 15000 });
-    await newBtn.click().catch(async () => {
-        await oppsRelatedList.locator('.slds-card__header-link, h2').first().click().catch(() => {});
-        await newBtn.click();
-    });
+    await oppsRelatedList.getByRole('button', { name: 'New', exact: true }).click();
     await SFUtils.waitForLoading(page);
 
     const modal = page.locator(MODAL);
     await modal.waitFor({ state: 'visible', timeout: 15000 });
+    await SFUtils.waitForLoading(page);
+    await page.waitForTimeout(1500); // let modal fields fully render
 
-    await SFUtils.fillField(modal, 'Name', createdOpportunityName);
-    await SFUtils.fillField(modal, 'CloseDate', closeDate);
-    await SFUtils.selectCombobox(page, modal, 'StageName', stage);
+    // Opportunity Name — click to focus, clear, type with delay
+    const oppNameInput = modal.getByLabel('Opportunity Name').first();
+    await oppNameInput.waitFor({ state: 'visible', timeout: 15000 });
+    await oppNameInput.click();
+    await oppNameInput.clear();
+    await oppNameInput.pressSequentially(createdOpportunityName, { delay: 50 });
+    await page.waitForTimeout(500);
+
+    // Close Date — click to focus, clear existing value, type with delay, then Tab to commit
+    const closeDateInput = modal.locator(
+      '[data-field-api-name="CloseDate"] input, lightning-datepicker input'
+    ).first();
+    await closeDateInput.waitFor({ state: 'visible', timeout: 15000 });
+    await closeDateInput.click();
+    await closeDateInput.press('Control+a');
+    await closeDateInput.pressSequentially(closeDate, { delay: 50 });
+    await closeDateInput.press('Tab'); // commit the date value
+    await page.waitForTimeout(500);
+
+    // Stage picklist — locate by label (data-field-api-name absent in quick-action modals)
+    const stageLocator = modal.getByLabel('Stage').first();
+    await stageLocator.waitFor({ state: 'visible', timeout: 10000 });
+
+    const stageTag = await stageLocator.evaluate(el => el.tagName.toLowerCase()).catch(() => '');
+    if (stageTag === 'select') {
+      await stageLocator.selectOption({ label: stage });
+    } else {
+      await stageLocator.click();
+      await page.waitForTimeout(300);
+      const stageOption = page.getByRole('option', { name: stage, exact: true });
+      await stageOption.waitFor({ state: 'visible', timeout: 10000 });
+      await stageOption.click();
+    }
+    await page.waitForTimeout(400);
 
     await modal.getByRole('button', { name: 'Save', exact: true }).click();
     await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
-    // Verify Opportunity record detail page opened with correct name
     await waitForDetail(page);
-    await page
-      .getByRole('heading', { name: createdOpportunityName, exact: false })
-      .first()
-      .waitFor({ state: 'visible', timeout: 20000 });
+    await page.getByRole('heading', { name: createdOpportunityName, exact: false })
+      .first().waitFor({ state: 'visible', timeout: 20000 });
+    createdOpportunityUrl = page.url();
   });
 
   // TC-ACC-004 | AC Reference: AC-005-04
   test('TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity', async ({ page }) => {
-    await searchAndOpen(page, createdOpportunityName);
+    // Navigate directly to the opportunity URL saved in TC-ACC-003
+    // Falls back to test-data name search if TC-ACC-003 didn't run (e.g. isolated test run)
+    if (createdOpportunityUrl) {
+      await SFUtils.goto(page, createdOpportunityUrl);
+    } else {
+      createdOpportunityName = createdOpportunityName || data.opportunity.Name;
+      await searchAndOpen(page, createdOpportunityName);
+    }
+    await waitForDetail(page);
     await clickTab(page, 'Related');
     await SFUtils.waitForLoading(page);
 
-    // Locate Contact Roles related list
+    // Scroll down to trigger lazy-loaded related lists, then wait for Contact Roles
+    await page.evaluate(() => window.scrollBy(0, 600));
+    await page.waitForTimeout(1500);
+
+    // Locate Contact Roles related list — force- prefix matches Salesforce LWC component
     const contactRolesSection = page
-      .locator('records-related-list-single-container, article')
+      .locator('force-related-list-single-container, force-related-list-card, article')
       .filter({ hasText: 'Contact Roles' })
       .first();
-    await contactRolesSection.waitFor({ state: 'visible', timeout: 20000 });
+    await contactRolesSection.waitFor({ state: 'visible', timeout: 35000 });
 
     // Hard assertion: Contact MUST appear in Contact Roles
     await contactRolesSection
@@ -215,23 +266,21 @@ test.describe('Account Tests', () => {
       .filter({ hasText: createdContactName })
       .first();
 
-    // Salesforce renders Primary = true as a check icon or "True" text in the cell
-    const isPrimaryIcon = await contactRow
+    // Salesforce renders Primary as a "PRIMARY" text badge (slds-badge), check icon, or "True" attribute
+    const rowText = (await contactRow.textContent({ timeout: 5000 }).catch(() => '')) ?? '';
+    const hasPrimaryBadge = rowText.toUpperCase().includes('PRIMARY');
+
+    const hasPrimaryIcon = hasPrimaryBadge ? false : await contactRow
       .locator('lightning-icon[icon-name="utility:check"], [title="True"], abbr[title="True"]')
       .first()
-      .isVisible({ timeout: 5000 })
+      .isVisible({ timeout: 3000 })
       .catch(() => false);
 
-    if (!isPrimaryIcon) {
-      // Fallback: inspect raw cell text for a truthy indicator
-      console.warn('[AC-005-04] Primary icon not found via icon locator — attempting text fallback.');
-      const rowText = (await contactRow.textContent({ timeout: 5000 }).catch(() => '')) ?? '';
-      if (!rowText.toLowerCase().includes('true')) {
-        throw new Error(
-          `[AC-005-04] Contact "${createdContactName}" is NOT marked as Primary Contact Role ` +
-          `on Opportunity "${createdOpportunityName}". Primary indicator absent from row.`
-        );
-      }
+    if (!hasPrimaryBadge && !hasPrimaryIcon) {
+      throw new Error(
+        `[AC-005-04] Contact "${createdContactName}" is NOT marked as Primary Contact Role ` +
+        `on Opportunity "${createdOpportunityName}". Primary indicator absent from row. Row text: "${rowText}"`
+      );
     }
   });
   // ── US-005 END ───────────────────────────────────────────────────────
