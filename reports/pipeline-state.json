@@ -1,5 +1,5 @@
 {
-  "runDate": "2026-04-23T07:33:35.222Z",
+  "runDate": "2026-04-23T12:58:15.467Z",
   "steps": [
     {
       "n": -1,
@@ -14,10 +14,10 @@
       "label": "Scrape Locators",
       "icon": "🔍",
       "status": "skipped",
-      "detail": "Locator map is 82m old (< 24h) — using cache",
-      "timestamp": "13:03:37",
-      "startedAtMs": 1776929617221,
-      "durationMs": 7
+      "detail": "Locator map is 406m old (< 24h) — using cache",
+      "timestamp": "18:28:17",
+      "startedAtMs": 1776949097704,
+      "durationMs": 11
     },
     {
       "n": 1,
@@ -25,9 +25,9 @@
       "icon": "🤖",
       "status": "skipped",
       "detail": "No changes — 1 stories unchanged",
-      "timestamp": "13:03:37",
-      "startedAtMs": 1776929617242,
-      "durationMs": 15
+      "timestamp": "18:28:17",
+      "startedAtMs": 1776949097729,
+      "durationMs": 18
     },
     {
       "n": 2,
@@ -35,7 +35,7 @@
       "icon": "📋",
       "status": "skipped",
       "detail": "No story changes — skipped",
-      "timestamp": "13:03:37"
+      "timestamp": "18:28:17"
     },
     {
       "n": 3,
@@ -43,27 +43,27 @@
       "icon": "📄",
       "status": "skipped",
       "detail": "No story changes — skipped",
-      "timestamp": "13:03:37"
+      "timestamp": "18:28:17"
     },
     {
       "n": 4,
       "label": "Execute E2E Tests",
       "icon": "🧪",
       "status": "completed",
-      "detail": "1/1 tests passed",
-      "timestamp": "13:07:40",
-      "startedAtMs": 1776929831531,
-      "durationMs": 28694
+      "detail": "4/4 tests passed",
+      "timestamp": "18:30:00",
+      "startedAtMs": 1776949107799,
+      "durationMs": 92398
     },
     {
       "n": 5,
       "label": "Self-Heal Failures",
       "icon": "🔧",
       "status": "completed",
-      "detail": "All healed",
-      "timestamp": "13:07:40",
-      "startedAtMs": 1776929698850,
-      "durationMs": 161558
+      "detail": "No failures",
+      "timestamp": "18:30:00",
+      "startedAtMs": 1776949200809,
+      "durationMs": 21
     },
     {
       "n": 6,
@@ -79,8 +79,8 @@
       "icon": "🚀",
       "status": "running",
       "detail": "Git push...",
-      "timestamp": "13:07:40",
-      "startedAtMs": 1776929860499
+      "timestamp": "18:30:00",
+      "startedAtMs": 1776949200939
     }
   ]
 }
