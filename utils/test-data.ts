@@ -14,6 +14,8 @@ import * as path from 'path';
 export interface TestData {
   account: {
     Account_Name: string;
+    /** alias — AI generators may use camelCase */
+    name?: string;
     Billing_Address?: string;
     Payment_Terms?: string;
   };
@@ -23,6 +25,11 @@ export interface TestData {
     Email: string;
     Full_Name: string;
     Phone?: string;
+    /** aliases — AI generators may use camelCase */
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
   };
   opportunity: {
     Name: string;
@@ -30,10 +37,19 @@ export interface TestData {
     Close_Date: string;
     Amount?: string;
     Probability?: string;
+    /** aliases — AI generators may use camelCase */
+    name?: string;
+    stage?: string;
+    closeDate?: string;
   };
   quote: {
     Name: string;
     Contract_Type?: string;
+    /** aliases — AI generators may use camelCase */
+    name?: string;
+    priceBook?: string;
+    expirationDate?: string;
+    expiryDate?: string;
   };
 }
 
@@ -54,29 +70,51 @@ export function getTestData(): TestData {
   const fixture = loadFixture();
   const timestamp = Date.now();
 
+  const accountName   = fixture.account?.Account_Name || 'SBOTestAccount';
+  const firstName     = fixture.contact?.First_Name || `First${timestamp}`;
+  const lastName      = fixture.contact?.Last_Name  || `Last${timestamp}`;
+  const email         = fixture.contact?.Email      || `test${timestamp}@auto.com`;
+  const phone         = fixture.contact?.Phone      || `555-${String(timestamp).slice(-4)}`;
+  const oppName       = fixture.opportunity?.Name   || (fixture.opportunity as any)?.Opportunity_Name || `AutoOpp-${timestamp}`;
+  const stage         = fixture.opportunity?.Stage  || 'Prospecting';
+  const closeDate     = fixture.opportunity?.Close_Date || '12/31/2026';
+  const quoteName     = fixture.Quote?.Name         || `AutoQuote-${timestamp}`;
+
   return {
     account: {
-      Account_Name: fixture.account?.Account_Name || 'SBOTestAccount',
+      Account_Name:    accountName,
+      name:            accountName,          // camelCase alias
       Billing_Address: fixture.account?.Billing_Address || '123 Salesforce Way, San Francisco, CA 94105',
-      Payment_Terms: fixture.account?.Payment_Terms || 'Net 30',
+      Payment_Terms:   fixture.account?.Payment_Terms   || 'Net 30',
     },
     contact: {
-      First_Name: fixture.contact?.First_Name || `First${timestamp}`,
-      Last_Name: fixture.contact?.Last_Name || `Last${timestamp}`,
-      Email: fixture.contact?.Email || `test${timestamp}@auto.com`,
-      Full_Name: fixture.contact?.Full_Name || `First${timestamp} Last${timestamp}`,
-      Phone: fixture.contact?.Phone || `555-${String(timestamp).slice(-4)}`,
+      First_Name: firstName,
+      Last_Name:  lastName,
+      Email:      email,
+      Phone:      phone,
+      Full_Name:  fixture.contact?.Full_Name || `${firstName} ${lastName}`,
+      firstName,                             // camelCase alias
+      lastName,                              // camelCase alias
+      email,                                 // camelCase alias
+      phone,                                 // camelCase alias
     },
     opportunity: {
-      Name: fixture.opportunity?.Name || (fixture.opportunity as any)?.Opportunity_Name || `AutoOpp-${timestamp}`,
-      Stage: fixture.opportunity?.Stage || 'Prospecting',
-      Close_Date: fixture.opportunity?.Close_Date || '12/31/2026',
-      Amount: fixture.opportunity?.Amount || '10000',
-      Probability: fixture.opportunity?.Probability || '10',
+      Name:       oppName,
+      Stage:      stage,
+      Close_Date: closeDate,
+      Amount:     fixture.opportunity?.Amount      || '10000',
+      Probability:fixture.opportunity?.Probability || '10',
+      name:       oppName,                   // camelCase alias
+      stage,                                 // camelCase alias
+      closeDate,                             // camelCase alias
     },
     quote: {
-      Name: fixture.Quote?.Name || `AutoQuote-${timestamp}`,
+      Name:          quoteName,
       Contract_Type: fixture.Quote?.Contract_Type || 'Subscription',
+      name:          quoteName,              // camelCase alias
+      priceBook:     'Standard Price Book',  // not in fixture; hardcoded safe default
+      expirationDate:'12/31/2026',           // not in fixture; hardcoded safe default
+      expiryDate:    '12/31/2026',           // camelCase alias variant
     },
   };
 }

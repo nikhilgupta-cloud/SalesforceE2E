@@ -245,15 +245,25 @@ async function healTest(failure: FailedTest): Promise<boolean> {
     console.log(`      ✏ Fix applied — re-running test…`);
 
     // Re-run only this test using its TC-ID as the grep pattern
+    // We output to a temp file to avoid overwriting the main results.json
     const tcId = failure.title.match(/^(TC-[A-Z]+-\d+)/)?.[1] ?? failure.title;
+    const tempResults = path.join(os.tmpdir(), `heal-res-${Date.now()}.json`);
     const runResult = spawnSync(
       'npx',
-      ['playwright', 'test', `tests/${failure.file}`, '--grep', tcId, '--headed'],
-      { stdio: 'inherit', shell: true },
+      ['playwright', 'test', `tests/${failure.file}`, '--grep', tcId, '--reporter=json'],
+      { 
+        stdio: 'pipe', 
+        shell: true,
+        env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: tempResults }
+      },
     );
 
-    if (runResult.status === 0) {
+    const healedSuccessfully = runResult.status === 0;
+
+    if (healedSuccessfully) {
       console.log(`      ✅ Healed in round ${round}: ${failure.title}`);
+      // Patch the main results.json to reflect the pass
+      updateMainResults(failure.title, 'passed');
       return true;
     }
 
@@ -265,6 +275,66 @@ async function healTest(failure: FailedTest): Promise<boolean> {
   // All rounds exhausted without a passing fix
   console.log(`      ✗ Could not heal after ${MAX_ROUNDS} rounds: ${failure.title}`);
   return false;
+}
+
+/**
+ * Patches the main reports/results.json file to update a test's status.
+ * This preserves the original passing tests while marking healed ones as passed.
+ */
+function updateMainResults(testTitle: string, newStatus: 'passed' | 'failed') {
+  const resultsPath = path.join('reports', 'results.json');
+  if (!fs.existsSync(resultsPath)) return;
+
+  try {
+    const data = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+
+    function walk(suite: any) {
+      if (suite.specs) {
+        for (const spec of suite.specs) {
+          if (spec.title === testTitle) {
+            for (const test of spec.tests) {
+              test.status = newStatus;
+              if (test.results && test.results.length > 0) {
+                test.results[0].status = newStatus;
+                // Clear errors on success
+                if (newStatus === 'passed') {
+                  test.results[0].errors = [];
+                }
+              }
+            }
+          }
+        }
+      }
+      if (suite.suites) suite.suites.forEach(walk);
+    }
+
+    walk(data);
+    
+    // Recalculate summary totals
+    let passed = 0, failed = 0, skipped = 0;
+    function count(suite: any) {
+      if (suite.specs) {
+        for (const spec of suite.specs) {
+          for (const test of spec.tests) {
+            if (test.status === 'expected' || test.status === 'passed') passed++;
+            else if (test.status === 'unexpected' || test.status === 'failed') failed++;
+            else skipped++;
+          }
+        }
+      }
+      if (suite.suites) suite.suites.forEach(count);
+    }
+    count(data);
+    
+    if (data.stats) {
+      data.stats.expected = passed;
+      data.stats.unexpected = failed;
+    }
+
+    fs.writeFileSync(resultsPath, JSON.stringify(data, null, 2));
+  } catch (e) {
+    console.error(`      ⚠ Failed to patch results.json: ${e}`);
+  }
 }
 
 // ── Extract the test(...) block from spec file content ────────────────────────

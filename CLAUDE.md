@@ -71,6 +71,31 @@ Test data may come from:
 - Inline AC values
 - Runtime generation
 
+### ⚠️ EXACT KEY NAMES — DO NOT INVENT OR CAMELCASE (CRITICAL)
+
+`getTestData()` returns a typed `TestData` object. Always use these exact keys:
+
+| Object | Correct Key | ❌ Wrong (never use) |
+|--------|------------|----------------------|
+| account | `data.account.Account_Name` | `data.account.name`, `data.account.accountName` |
+| contact | `data.contact.First_Name` | `data.contact.firstName`, `data.contact.first_name` |
+| contact | `data.contact.Last_Name` | `data.contact.lastName`, `data.contact.last_name` |
+| contact | `data.contact.Email` | `data.contact.email` |
+| contact | `data.contact.Phone` | `data.contact.phone` |
+| contact | `data.contact.Full_Name` | `data.contact.fullName` |
+| opportunity | `data.opportunity.Name` | `data.opportunity.name`, `data.opportunity.oppName` |
+| opportunity | `data.opportunity.Stage` | `data.opportunity.stage` |
+| opportunity | `data.opportunity.Close_Date` | `data.opportunity.closeDate`, `data.opportunity.close_date` |
+| quote | `data.quote.Name` | `data.quote.name`, `data.quote.quoteName` |
+| quote | `data.quote.Contract_Type` | `data.quote.contractType` |
+
+Fields **not in test-data.json** (use hardcoded fallbacks, never read from `data`):
+- `priceBook` → `'Standard Price Book'`
+- `expirationDate` / `expiryDate` → `'12/31/2026'`
+
+❌ NEVER use optional chaining (`?.`) when accessing typed `TestData` fields — the keys always exist  
+❌ NEVER invent keys not in the `TestData` interface in `utils/test-data.ts`
+
 ### Rules:
 1. Map data to objects:
    - `data.account` → Account

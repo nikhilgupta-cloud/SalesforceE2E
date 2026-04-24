@@ -445,13 +445,26 @@ function extractExistingScenarios(scenarioPath: string, usId: string): string {
   return content.match(re)?.[1]?.trim() ?? '';
 }
 
+/** Extract existing test(...) blocks for a specific US from a spec file */
+function extractExistingTestCode(specPath: string, usId: string): string {
+  if (!fs.existsSync(specPath)) return '';
+  const content = fs.readFileSync(specPath, 'utf8');
+  const startMark = SPEC_START(usId);
+  const endMark   = SPEC_END(usId);
+  const si = content.indexOf(startMark);
+  const ei = content.indexOf(endMark);
+  if (si === -1 || ei === -1) return '';
+  return content.slice(si + startMark.length, ei).trim();
+}
+
 // ── Claude-backed generation ──────────────────────────────────────────────────
 
 async function callClaude(
   storyContent:      string,
   objKey:            string,
   startId:           number,
-  existingScenarios: string,  // empty string means NEW, non-empty means UPDATE
+  existingScenarios: string,  // empty string means NEW
+  existingTestCode:  string,  // empty string means NEW
 ): Promise<{ scenarios: string; testCode: string } | null> {
 
   const obj          = OBJECT_MAP[objKey];
@@ -487,15 +500,18 @@ Rules (apply to every line of code):
 ${scrapedLocators}${knowledgeContext}`;
 
   const updateContext = isUpdate ? `
-IMPORTANT — this is an UPDATE. The story was previously processed and these scenario rows already exist:
---- EXISTING SCENARIOS ---
+IMPORTANT — this is an UPDATE. The story was previously processed and these are the STABLE results:
+
+--- EXISTING SCENARIO ROWS ---
 ${existingScenarios}
---- END EXISTING ---
+
+--- EXISTING STABLE TEST CODE ---
+${existingTestCode}
+
 Your job:
-- Keep TC-IDs whose AC criteria are UNCHANGED (copy their existing rows and test code exactly).
-- Add new TC-IDs for ADDED acceptance criteria (starting at ${idStr}).
-- OMIT tests for REMOVED acceptance criteria entirely.
-- UPDATE test logic for CHANGED acceptance criteria (keep the TC-ID if possible).
+1. **Reuse Stable Code:** If an AC's criteria is UNCHANGED, you MUST copy its existing test() block from the stable code above exactly. Do not rewrite it.
+2. **Add New Tests:** Add new TC-IDs for the ADDED criteria you found in the updated story.
+3. **Consistency:** Ensure the TC-IDs in the scenarios table match the TC-IDs in the test code.
 ` : '';
 
   const user = `${isUpdate ? 'UPDATE' : 'NEW'} user story:
@@ -750,8 +766,9 @@ async function processStory(
 
   const startId           = nextTcId(obj.prefix, scenarioPath);
   const existingScenarios = isNew ? '' : extractExistingScenarios(scenarioPath, usId);
+  const existingTestCode  = isNew ? '' : extractExistingTestCode(specPath, usId);
 
-  const result = await callClaude(storyContent, objKey, startId, existingScenarios);
+  const result = await callClaude(storyContent, objKey, startId, existingScenarios, existingTestCode);
   if (!result) {
     console.error(`[generate] ❌ Generation failed for ${usId} (${objKey}) — Claude CLI returned null`);
     return 'failed';
