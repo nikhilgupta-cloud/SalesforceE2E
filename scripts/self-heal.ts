@@ -297,13 +297,31 @@ async function askClaude(
   testCode: string,
 ): Promise<string | null> {
   const knowledgeContext = loadHealingKnowledge(failure.file);
+  
+  // Load Scraped Locators for the object to give the healer "sight"
+  let scrapedContext = '';
+  try {
+    const objKey = failure.file.replace('.spec.ts', '').toLowerCase();
+    const locators = JSON.parse(fs.readFileSync('knowledge/scraped-locators.json', 'utf8'));
+    if (locators[objKey]) {
+      scrapedContext = `\n\n--- VERIFIED LOCATORS FOR ${objKey.toUpperCase()} ---\n${JSON.stringify(locators[objKey].fields, null, 2)}`;
+    }
+  } catch (e) {}
+
+  // Load SFUtils signatures so the healer knows what methods actually exist
+  let sfUtilsSignatures = '';
+  try {
+    const sfUtilsContent = fs.readFileSync('utils/SFUtils.ts', 'utf8');
+    const methods = sfUtilsContent.match(/static async \w+\(.*?\)/g) || [];
+    sfUtilsSignatures = `\n\n--- AVAILABLE SFUtils METHODS ---\n${methods.join('\n')}`;
+  } catch (e) {}
 
   const errorText  = failure.errors.join('\n').substring(0, 1200);
   const stdoutText = failure.stdout.join('').substring(0, 600);
 
-  const system = `You are a Salesforce Revenue Cloud QA automation engineer who writes concise, reliable Playwright TypeScript tests. Return only raw TypeScript code — never use markdown code fences, never add explanations.${knowledgeContext}`;
+  const system = `You are a Salesforce Revenue Cloud QA automation engineer. Return only raw TypeScript code — never use markdown code fences, never add explanations.${knowledgeContext}${scrapedContext}${sfUtilsSignatures}`;
 
-  const userPrompt = `A Salesforce E2E Playwright test is failing. Return ONLY the fixed TypeScript test function — no markdown fences, no explanation, no extra text.
+  const userPrompt = `A Salesforce E2E Playwright test is failing. Return ONLY the fixed TypeScript test function.
 
 ## Failing Test: ${failure.title}
 
@@ -312,29 +330,21 @@ async function askClaude(
 ${errorText}
 \`\`\`
 
-### Console output during the test run
-\`\`\`
-${stdoutText}
-\`\`\`
-
 ### Current test code
 \`\`\`typescript
 ${testCode}
 \`\`\`
 
+## Healing Strategy (MANDATORY)
+1. **Business Logic Check:** If the error is "element not interactable", check if the record might be in a Read-Only state (Approved/Locked). If so, add a step to change the status or use a different record.
+2. **Shadow DOM / Configurator:** If the failure is inside the Configurator, ALWAYS scope to \`page.locator('c-product-configurator')\`.
+3. **Pricing Asynchronicity:** If the error is a price mismatch (e.g. expected $100 but found $0), ensure \`waitForRlmSpinners(page)\` and a wait for the pricing toast are present.
+4. **Selector Fix:** Prefer \`SFUtils\` methods. Use the "VERIFIED LOCATORS" provided in the context to find the correct API Name or Label.
+5. **Wait for Lookup:** If a lookup fails to find a record created earlier in the test, add \`await page.waitForTimeout(3000)\` before the lookup to allow for search indexing.
+
 ## Fix rules
 - Keep the same TC-ID and the exact test name string
-- Make the MINIMAL change that fixes the root cause
-- NEVER use waitForLoadState('networkidle') — Salesforce never goes idle
-- ALWAYS use .waitFor({ state: 'visible', timeout: 30000 }) for element waits
-- Modal selector: '[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])'
-- Call dismissAuraError(page) after every page.goto()
-- ALWAYS use SFUtils methods (no raw locators for Salesforce fields):
-  - \`await SFUtils.fillField(root, 'ApiNameOrLabel', value);\`
-  - \`await SFUtils.selectCombobox(page, root, 'ApiNameOrLabel', 'Option');\`
-  - \`await SFUtils.fillLookup(page, root, 'ApiNameOrLabel', 'Value');\`
-  - \`await SFUtils.fillName(root, 'firstName'|'lastName', value);\`
-- For lookup-not-found errors: add \`await page.waitForTimeout(3000)\` immediately before the failing lookup — Salesforce's search index can lag after data is created
+- Use \`SFUtils\` methods for all Salesforce field interactions.
 - Return the COMPLETE fixed test function from \`test(\` through the closing \`});\`
 `;
 

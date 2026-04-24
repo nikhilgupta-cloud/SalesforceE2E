@@ -16,7 +16,7 @@ Load and surface the correct domain knowledge for the Salesforce object(s) under
 | Object Key | Domain Files to Load |
 |---|---|
 | quote, quotelineitem | `quote-lifecycle.md`, `pricing.md` |
-| product2, productcategory | `product-modeling.md` |
+| product2, productcategory | `product-modeling.md`, `cml-scripting.md` |
 | pricebookentry, pricing | `pricing.md` |
 | contract, asset | `contract-lifecycle.md` |
 | order, orderitem | `order-management.md` |
@@ -28,18 +28,20 @@ Load and surface the correct domain knowledge for the Salesforce object(s) under
 
 ## Process
 1. Read `knowledge/agentforce-rm/INDEX.md` to confirm the object-to-domain mapping.
-2. Load each resolved domain file in full from `knowledge/agentforce-rm/`.
-3. Extract and structure per object:
+2. **Bundle Detection (CRITICAL):** If testing Quote or Product, check for "Bundle" or "Configuration" keywords. If found, ALWAYS load `cml-scripting.md`.
+3. Load each resolved domain file in full from `knowledge/agentforce-rm/`.
+4. Extract and structure per object:
    - Canonical field names and labels as they appear in the Salesforce UI
    - Known UI patterns, Shadow DOM quirks, and LWC component names
    - Known platform limitations and gotchas
    - CPQ/Revenue Cloud-specific interaction patterns
-4. Also check `knowledge/scraped-locators.json` if it exists — this contains verified live-DOM selectors scraped from the actual org. Prefer these over text-filter assumptions.
+5. Also check `knowledge/scraped-locators.json` if it exists — this contains verified live-DOM selectors scraped from the actual org. Prefer these over text-filter assumptions.
 
-5. Do not attempt to locate the global search input via CSS or XPath. To use global search, press the / hotkey, then use page.keyboard.type(query)
+6. Do not attempt to locate the global search input via CSS or XPath. To use global search, press the / hotkey, then use page.keyboard.type(query).
 
 ## Output
-Structured domain context passed in-memory to Agents 2, 3, 4, and 6. Do not write a file — pass directly to the next agent.
+Structured domain context passed in-memory to Agents 2, 3, 4, and 6. 
+**Must include a `isBundleFlow: true/false` flag in the output context.**
 
 ## Constraints
 - Do not skip this step for Revenue Cloud objects.

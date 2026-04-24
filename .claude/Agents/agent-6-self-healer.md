@@ -23,86 +23,40 @@ This agent improves test stability WITHOUT modifying business logic.
 
 ## Failure Classification (STRICT)
 
-### Legacy Category Mapping (backward compatibility)
-
-If `reports/results.json` contains Agent 5 legacy category names, remap them before classification:
-
-| Legacy (Agent 5 old) | Canonical (Agent 6) |
-|----------------------|---------------------|
-| `LOCATOR`            | `selector_failure`  |
-| `SYNC`               | `timing_failure`    |
-| `SF_SYSTEM`          | `environment_failure` |
-| `BUSINESS_LOGIC`     | Inspect error message: if a tab-locked field is referenced → `tab_navigation_failure`; if a record is missing → `data_failure`; otherwise → `selector_failure` |
-
-Always normalise to canonical names before routing to a fix strategy.
-
----
-
 Classify each failure into ONE of:
 
 ### 1. selector_failure
-Symptoms:
-- locator not found
-- multiple elements found
-- strict mode violation
-
-Fix:
-- Use `.first()`
-- Use better scoped locator
-- Prefer scraped locators
-
----
+Symptoms: locator not found, multiple elements, strict mode violation.
+Fix: Use SFUtils, `.first()`, or scraped API names.
 
 ### 2. timing_failure
-Symptoms:
-- timeout errors
-- element not ready
-- click intercepted
+Symptoms: timeout, click intercepted.
+Fix: Add `SFUtils.waitForLoading(page)`, `dismissAuraError`, or `locator.waitFor()`.
 
+### 3. configurator_failure (NEW)
+Symptoms: Failure inside `c-product-configurator`.
+Fix: 
+- Scope locators to `page.locator('c-product-configurator')`.
+- Use `.locator('lightning-combobox')` or `.locator('lightning-input')` with text filters.
+
+### 4. pricing_failure (NEW)
+Symptoms: Price is $0.00, toast missing.
 Fix:
-- Add `.waitFor({ state: 'visible' })`
-- Add wait for spinner disappearance
-- Add `dismissAuraError(page)`
+- Increase pricing wait timeout to 15s.
+- Add `await page.getByRole('button', { name: 'Reprice All' }).click()` before validation.
+- Ensure `waitForRlmSpinners` is called.
 
----
+### 5. tab_navigation_failure
+Symptoms: field timeout on record page.
+Fix: Insert `await clickTab(page, 'Details')` before the failing step.
 
-### 3. data_failure
-Symptoms:
-- missing records
-- lookup failures
-- validation errors
+### 6. data_failure
+Symptoms: missing records, lookup null.
+Fix: Update `test-data.json` or add record creation steps.
 
-Fix:
-- Create prerequisite data dynamically
-- Add helper inside test
-
----
-
-### 4. tab_navigation_failure
-Symptoms:
-- locator times out on a record detail page
-- field not found but locator pattern looks correct
-- error occurs immediately after page navigation (before any interaction)
-- error message references a field that lives on Details tab (Stage, Amount, Industry, Phone, etc.)
-
-Fix:
-- Insert `await clickTab(page, 'Details');` (or the relevant tab name) immediately after `waitForLoadState`
-- Confirm `clickTab` helper exists in the spec file header — if missing, add it
-- Do NOT change the field locator itself; only add the tab navigation step before it
-
-Priority check before classifying as selector_failure: if the failing line targets a record-page field and no `clickTab` call precedes it in the same test, reclassify as tab_navigation_failure first.
-
----
-
-### 5. environment_failure
-Symptoms:
-- login/session expired
-- network failure
-- Salesforce org issue
-
-Fix:
-- DO NOT auto-fix
-- Log and exit
+### 7. environment_failure
+Symptoms: login/session expired.
+Fix: Exit and request `npm run pipeline`.
 
 ---
 
@@ -110,60 +64,40 @@ Fix:
 
 ### Step 1 — Read Failures
 - Parse `reports/results.json`
-- Extract:
-  - TC ID
-  - Error message
-  - Spec file
-  - Step failure
+- Extract: TC ID, Error, Spec, FailureType.
 
----
-
-### Step 2 — Classify Failure
-Use keyword-based + pattern-based classification.
-
----
-
-### Step 3 — Apply Fix
+### Step 2 — Apply Fix Strategy
 
 #### A. Selector Fix Strategy (DYNAMIC)
+**ALWAYS Use SFUtils**
+Convert raw locators to:
+- `await SFUtils.fillField(modal, 'LabelOrApiName', value);`
+- `await SFUtils.selectCombobox(page, modal, 'LabelOrApiName', 'Option');`
 
-**Step 1 — ALWAYS Use SFUtils**
-The primary fix for any selector failure is to convert raw locators into `SFUtils` calls. This leverages the dynamic `scraped-locators.json` database.
-
-| Failure | Fix using SFUtils |
-|---------|-------------------|
-| Input/Textarea not found | `await SFUtils.fillField(modal, 'LabelOrApiName', value);` |
-| Picklist/Combobox error | `await SFUtils.selectCombobox(page, modal, 'LabelOrApiName', 'Option');` |
-| Lookup timeout | `await SFUtils.fillLookup(page, modal, 'LabelOrApiName', 'Value');` |
-| Name field error | `await SFUtils.fillName(modal, 'firstName'\|'lastName', value);` |
-
-**Step 2 — Identification Logic**
-1. Check `knowledge/scraped-locators.json` for the field's `apiName`.
-2. If no API Name exists, use the literal Label found on the screen (e.g., `'Salutation'`).
-3. `SFUtils.getField` will automatically resolve the best selector at runtime.
-
-**Step 3 — Compound Name field (CRITICAL)**
-If healing a Contact/Lead form, NEVER use `LastName` as an API name. Use the `fillName` helper:
+#### B. Configurator Fix (NEW)
+If `configurator_failure`:
 ```typescript
-await SFUtils.fillName(modal, 'lastName', 'Smith');
+const config = page.locator('c-product-configurator');
+// Re-attempt interaction using scoped filter
+await config.locator('lightning-combobox').filter({ hasText: /AttributeLabel/i }).locator('button').click();
 ```
+
+#### C. Pricing Fix (NEW)
+If `pricing_failure`:
+1. Search for `Reprice All` button.
+2. If found, insert `await page.getByRole('button', { name: 'Reprice All' }).click(); await waitForRlmSpinners(page);` before the assertion.
 
 ---
 
-#### B. Timing Fix Strategy
-Use the robust helpers in `SFUtils`:
-```typescript
-await SFUtils.waitForLoading(page);
-await dismissAuraError(page);
-```
-Add explicit waits only as a last resort:
-```typescript
-await locator.waitFor({ state: 'visible', timeout: 30000 });
-```
+## re-run & Validation
+After applying fix:
+1. Run: `npx playwright test {specFile}`
+2. If PASSED → Update TC to PASSED in `results.json`.
+3. If FAILED → Retry healing (Max 3 iterations).
 
 ---
 
-#### C. Tab Navigation (MANDATORY FIX)
-If a field on a record detail page is not found:
-1. Insert `await clickTab(page, 'Details');` immediately after navigation.
-2. Ensure `SFUtils.waitForLoading(page)` is called after the tab click.
+## CONSTRAINTS
+- DO NOT change business values (prices, dates).
+- DO NOT delete valid assertions.
+- ALWAYS use timestamp-based data if fixing data failures.

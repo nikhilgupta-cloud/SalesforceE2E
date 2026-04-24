@@ -1,2 +1,2 @@
 TC ID,Object,User Story,Title,Status,Duration (s),AC Reference,Error Message,File,Line,Run Date
-TC-ACC-004,Account,US-005,TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity,passed,23.42,AC-005-04,,account.spec.ts,245,2026-04-23
+TC-ACC-005,Account,US-005,TC-ACC-005 — Create Quote from Opportunity,failed,31.62,QO-005-05,TimeoutError: locator.waitFor: Timeout 15000ms exceeded.,account.spec.ts,299,2026-04-24

@@ -77,8 +77,8 @@
           "column": 6,
           "specs": [
             {
-              "title": "TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity",
-              "ok": true,
+              "title": "TC-ACC-005 — Create Quote from Opportunity",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -91,23 +91,58 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 23420,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 31622,
+                      "error": {
+                        "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('article').filter({ hasText: /Quotes/i }).getByRole('button', { name: 'New', exact: true }).first() to be visible\u001b[22m\n",
+                        "stack": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('article').filter({ hasText: /Quotes/i }).getByRole('button', { name: 'New', exact: true }).first() to be visible\u001b[22m\n\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:347:25",
+                        "location": {
+                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
+                          "column": 25,
+                          "line": 347
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 345 |\u001b[39m       \u001b[90m// Last resort: look for any \"New\" button inside a Quotes-labelled related list\u001b[39m\n \u001b[90m 346 |\u001b[39m       \u001b[36mconst\u001b[39m fallbackBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'article'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[35m/Quotes/i\u001b[39m })\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'New'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m       \u001b[36mawait\u001b[39m fallbackBtn\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m       buttonToClick \u001b[33m=\u001b[39m fallbackBtn\u001b[33m;\u001b[39m\n \u001b[90m 349 |\u001b[39m     }\n \u001b[90m 350 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
+                            "column": 25,
+                            "line": 347
+                          },
+                          "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('article').filter({ hasText: /Quotes/i }).getByRole('button', { name: 'New', exact: true }).first() to be visible\u001b[22m\n\n\n\u001b[0m \u001b[90m 345 |\u001b[39m       \u001b[90m// Last resort: look for any \"New\" button inside a Quotes-labelled related list\u001b[39m\n \u001b[90m 346 |\u001b[39m       \u001b[36mconst\u001b[39m fallbackBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'article'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[35m/Quotes/i\u001b[39m })\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'New'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 347 |\u001b[39m       \u001b[36mawait\u001b[39m fallbackBtn\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 348 |\u001b[39m       buttonToClick \u001b[33m=\u001b[39m fallbackBtn\u001b[33m;\u001b[39m\n \u001b[90m 349 |\u001b[39m     }\n \u001b[90m 350 |\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:347:25\u001b[22m"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-23T14:50:12.445Z",
+                      "startTime": "2026-04-24T06:02:29.593Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-bf989-eate-Quote-from-Opportunity-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-bf989-eate-Quote-from-Opportunity-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
+                        "column": 25,
+                        "line": 347
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-531ed4647b1461da75de",
+              "id": "ad4620ead4e6d9cc2627-e0587f41f4c21bdd1d0e",
               "file": "account.spec.ts",
-              "line": 245,
+              "line": 299,
               "column": 5
             }
           ]
@@ -117,11 +152,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-23T14:50:09.326Z",
-    "duration": 29679.835,
-    "expected": 1,
+    "startTime": "2026-04-24T06:02:25.376Z",
+    "duration": 39602.255000000005,
+    "expected": 0,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }

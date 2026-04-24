@@ -16,7 +16,7 @@ This agent MUST generate real, executable, non-vague tests.
 
 ## Inputs
 - Structured AC JSON from Agent 2
-- Domain context from Agent 1
+- Domain context from Agent 1 (including `isBundleFlow` flag)
 - Test plan from Agent 3
 - prompts/framework-config.json
 - Existing tests/*.spec.ts files
@@ -28,7 +28,7 @@ This agent MUST generate real, executable, non-vague tests.
 ### 1. USE STRUCTURED AC DATA
 Each AC contains:
 - id
-- type
+- type (Check for `CONFIG_RULE`)
 - actor
 - conditions
 - actions
@@ -42,27 +42,53 @@ You MUST use all of them.
 
 All tests must align with:
 
-Account → Contact → Opportunity → Quote → QLE → Accept → Contract → Order → Activation
+Account → Contact → Opportunity → Quote → **Product Selection** → **Configurator** → QLE → Accept → Contract → Order → Activation
 
 DO NOT create isolated UI tests.
 
 ---
 
-### 3. CONDITION → UI MAPPING
+### 3. CONFIGURATOR & BUNDLE LOGIC (NEW)
 
-Convert AC conditions into UI steps.
+If `type` is `CONFIG_RULE` or `isBundleFlow` is true:
 
-Example:
+**A. Product Selection Step:**
+```ts
+await page.getByRole('button', { name: 'Add Products' }).click();
+const modal = page.locator('[role="dialog"]');
+await modal.locator('input[type="search"]').fill(productName);
+await modal.locator('[role="row"]').filter({ hasText: productName }).locator('lightning-input[type="checkbox"]').click();
+await modal.getByRole('button', { name: 'Next' }).click();
+```
 
-Condition:
-Order Form Not Required = TRUE
+**B. Attribute Configuration Step:**
+```ts
+const config = page.locator('c-product-configurator');
+await config.waitFor({ state: 'visible' });
+// Set Attribute (Example)
+await config.locator('lightning-combobox').filter({ hasText: /Memory/i }).locator('button').click();
+await page.locator('[role="option"]').filter({ hasText: '16GB' }).click();
+```
 
-Automation:
-Check checkbox "Order Form Not Required"
+**C. Verification of Rule (CML):**
+- If AC says "Hide", use `await expect(locator).toBeHidden()`.
+- If AC says "Error", use `await expect(page.locator('.slds-theme_error')).toContainText(msg)`.
 
 ---
 
-### 4. STATE TRANSITION VALIDATION (MANDATORY)
+### 4. ASYNCHRONOUS PRICING WAIT (CRITICAL)
+
+After ANY action that impacts price (Save, Quantity Change, Config change):
+```ts
+await waitForRlmSpinners(page);
+// Mandatory wait for pricing toast
+await page.locator('.slds-notify_toast').filter({ hasText: /Pricing|Quote/i })
+  .waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
+```
+
+---
+
+### 5. STATE TRANSITION VALIDATION (MANDATORY)
 
 If AC defines:
 
@@ -76,23 +102,13 @@ await expect(field).toHaveText(/Ready for Acceptance/i);
 
 ---
 
-### 5. ROLE-BASED EXECUTION
+### 6. ROLE-BASED EXECUTION
 
 Respect actor field:
 
 - Sales Rep → UI actions
 - Legal → Create Order / approval actions
 - System → validation/assertion
-
----
-
-### 6. SCENARIO GENERATION (MANDATORY)
-
-For EACH AC generate:
-
-- 1 Positive scenario
-- 1 Negative scenario
-- 1 Edge case
 
 ---
 
@@ -155,21 +171,17 @@ Each test MUST:
 - Include TC ID
 - Include AC reference
 - Use timestamp-based data
-- Use Playwright locators (no POM unless already present)
+- Use Playwright locators (following Hierarchy)
 - Use modal scoping
 - Validate expected result
+- **Include Pricing Validation:** `await expect(priceField).not.toHaveText('$0.00');`
 
 ---
 
 ## LOCATOR RULES (STRICT — DO NOT OVERRIDE)
 
 ### MANDATORY: PREFER SFUtils FOR COMPLEX ACTIONS
-When performing complex UI actions (like waiting for load states, dismissing Aura errors, or navigating tabs), ALWAYS use the `SFUtils` helper class (e.g., `await SFUtils.waitForLoading(page)`). 
-For standard form fields, you may use raw Playwright locators, but you MUST follow the Priority Hierarchy below and use `data-field-api-name` from scraped-locators.json.
-
-### GLOBAL SEARCH RULE (CRITICAL)
-If a test requires searching globally, NEVER write a CSS/XPath locator for the search bar. You must press `/` to focus the input, and then type directly using `await page.keyboard.type('search string')`.
-By tweaking it to this, you keep your brilliant Global Search fix, encourage the use of SFUtils for stability, but protect the AI's ability to map standard fields using the JSON locators we scraped!
+When performing complex UI actions (like waiting for load states, dismissing Aura errors, or navigating tabs), ALWAYS use the `SFUtils` helper class.
 
 | Action | SFUtils Method |
 |--------|----------------|
@@ -179,60 +191,14 @@ By tweaking it to this, you keep your brilliant Global Search fix, encourage the
 | Fill Name (Contact) | `await SFUtils.fillName(root, 'firstName'\|'lastName', value);` |
 | Click Button | `await SFUtils.clickButton(root, 'ButtonText');` |
 
-### Field Identification
-1. If the field has an API Name (check `knowledge/scraped-locators.json`), use it.
-2. If no API Name is found, use the exact Label string (e.g. `'Salutation'`, `'Billing Address'`).
-3. `SFUtils` will automatically resolve the correct selector.
-
-### Modal Scope
-```typescript
-const modal = page.locator(SFUtils.MODAL);
-await modal.waitFor({ state: 'visible' });
-```
+### GLOBAL SEARCH RULE (CRITICAL)
+If a test requires searching globally, NEVER write a CSS/XPath locator for the search bar. Use `/` keyboard shortcut.
 
 ---
 
 ## TAB NAVIGATION (MANDATORY)
 Salesforce record pages often open on the wrong tab.
 ALWAYS call `await clickTab(page, 'Details')` before accessing fields on a record detail page.
-Note: Modals do NOT have tabs; only record detail pages do.
-
----
-
-## SAMPLE TEST STRUCTURE
-
-test('TC-QTE-003 — Execution Status updates correctly', async ({ page }) => {
-
-  // Click action
-  await page.getByRole('button', { name: 'Ready For Acceptance', exact: true }).click();
-
-  const modal = page.locator('[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])');
-
-  // Apply conditions
-  await modal.locator('lightning-input')
-    .filter({ hasText: /Order Form Not Required/i })
-    .locator('input[type="checkbox"]')
-    .first()
-    .check();
-
-  await modal.locator('lightning-input')
-    .filter({ hasText: /Purchase Order Not Required/i })
-    .locator('input[type="checkbox"]')
-    .first()
-    .check();
-
-  // Submit
-  await modal.getByRole('button', { name: 'Finish', exact: true }).click();
-
-  // Validate result
-  const execStatus = page.locator('.slds-form-element')
-    .filter({ hasText: /Execution Status/i })
-    .locator('.slds-form-element__static')
-    .first();
-
-  await expect(execStatus).toHaveText(/Ready for Acceptance/i);
-
-});
 
 ---
 
@@ -252,7 +218,7 @@ test('TC-QTE-003 — Execution Status updates correctly', async ({ page }) => {
 Agent is successful ONLY if:
 
 - Every AC → test mapping exists
-- Conditions are converted to UI steps
+- Configurator rules are converted to UI steps
+- Asynchronous pricing is handled correctly
 - State transitions are validated
-- Tests are executable without manual fixes
-- Output matches real Salesforce CPQ flow
+- Output matches real Salesforce Revenue Cloud flow

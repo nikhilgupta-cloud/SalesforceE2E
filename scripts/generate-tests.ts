@@ -240,8 +240,19 @@ function saveHashStore(store: HashStore): void {
   fs.writeFileSync(HASH_STORE_PATH, JSON.stringify(store, null, 2));
 }
 
+/**
+ * Normalize story content to ensure minor formatting/whitespace/line-ending 
+ * differences do not trigger a hash mismatch and costly regeneration.
+ */
+function normalizeStoryContent(str: string): string {
+  return str
+    .replace(/\r\n/g, '\n')     // Normalize line endings
+    .replace(/[ \t]+$/gm, '')   // Remove trailing whitespace per line
+    .trim();                    // Remove leading/trailing newlines
+}
+
 function md5(str: string): string {
-  return crypto.createHash('md5').update(str).digest('hex');
+  return crypto.createHash('md5').update(normalizeStoryContent(str)).digest('hex');
 }
 
 // ── Section marker helpers ────────────────────────────────────────────────────
@@ -250,6 +261,24 @@ const SPEC_START = (usId: string) =>
   `  // ── ${usId} START ─────────────────────────────────────────────────────`;
 const SPEC_END = (usId: string) =>
   `  // ── ${usId} END ───────────────────────────────────────────────────────`;
+
+/**
+ * Checks if a spec file already contains the generated markers for a specific US-ID.
+ */
+function specHasUsId(specPath: string, usId: string): boolean {
+  if (!fs.existsSync(specPath)) return false;
+  const content = fs.readFileSync(specPath, 'utf8');
+  return content.includes(SPEC_START(usId)) && content.includes(SPEC_END(usId));
+}
+
+/**
+ * Checks if a scenario file already contains the heading for a specific US-ID.
+ */
+function scenarioHasUsId(scenarioPath: string, usId: string): boolean {
+  if (!fs.existsSync(scenarioPath)) return false;
+  const content = fs.readFileSync(scenarioPath, 'utf8');
+  return new RegExp(`^## ${usId}:`, 'm').test(content);
+}
 
 /**
  * Remove the generated scenario section for a US from a scenario file.
@@ -677,22 +706,23 @@ async function processStory(
     return 'skipped';
   }
 
-  // Use "${usId}:${objKey}" as the hash key so the same story can generate
-  // independently for each object (E2E stories span Account+Contact+Opp+Quote).
-  const hashKey     = `${usId}:${objKey}`;
+  // Normalize and hash
   const currentHash = md5(storyContent);
+  const hashKey     = `${usId}:${objKey}`;
   const stored      = hashStore[hashKey];
-
-  if (stored && stored.hash === currentHash) {
-    console.log(`[generate] ${usId} (${objKey}) unchanged — skipping`);
-    return 'skipped';
-  }
 
   const obj          = OBJECT_MAP[objKey];
   const scenarioPath = path.join('generated', 'test-scenarios', obj.scenarioFile);
   const specPath     = path.join('tests', obj.specFile);
-  const isNew        = !stored;
 
+  // ── Smart Audit ──
+  // If hash matches AND the files physically contain the US-ID, skip.
+  if (stored && stored.hash === currentHash && specHasUsId(specPath, usId) && scenarioHasUsId(scenarioPath, usId)) {
+    console.log(`[generate] ${usId} (${objKey}) unchanged and present — skipping`);
+    return 'skipped';
+  }
+
+  const isNew = !stored;
   console.log(`[generate] ${isNew ? 'NEW' : 'CHANGED'} ${usId} → ${obj.displayName}`);
 
   // 1. Purge the current object files (always)

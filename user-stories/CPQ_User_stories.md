@@ -1,6 +1,6 @@
 Salesforce CPQ — User Stories & Acceptance Criteria
 Application: Salesforce CPQ
-Source: Jira SCRUM — fetched 2026-04-23
+Source: Jira SCRUM — fetched 2026-04-24
 Flow: Account → Contact → Opportunity → Quote (CPQ) → Contract → Order → Amendment → Renewal
 ________________________________________
 OBJECT 1: ACCOUNT

@@ -19,7 +19,7 @@ This agent:
 ## Inputs
 - `prompts/user-stories/*.md`
 - `user-stories/*.md`
-- Domain context from Agent 1
+- Domain context from Agent 1 (including `isBundleFlow` flag)
 
 ---
 
@@ -83,7 +83,7 @@ AUTO-AC-<index>
 
 ---
 
-# 🧠 STEP 3: AC CLASSIFICATION
+# 🧠 STEP 3: AC CLASSIFICATION (CPQ ENHANCED)
 
 Use keyword-based detection:
 
@@ -94,6 +94,7 @@ Use keyword-based detection:
 | field / checkbox / attachment | FIELD_CHECK |
 | will update / should mark / becomes | STATE_TRANSITION |
 | system creates / triggers / auto | SYSTEM_ACTION |
+| **hide / show / disable / require / attribute** | **CONFIG_RULE** |
 
 ---
 
@@ -193,6 +194,7 @@ Infer object dynamically:
 | Quote, Execution Status | Quote |
 | Opportunity, ACV | Opportunity |
 | Account fields | Account |
+| **Processor, Memory, Warranty** | **Product (Configurator)** |
 
 ---
 
@@ -225,7 +227,7 @@ Output MUST be:
   "<ObjectName>": [
     {
       "id": "AC-XXX-XX",
-      "type": "STATE_TRANSITION",
+      "type": "STATE_TRANSITION" | "CONFIG_RULE",
       "actor": "System",
       "preconditions": [],
       "actions": [],
@@ -281,7 +283,7 @@ Agent is correct ONLY if:
 ✔ Works with ANY user story format  
 ✔ Handles messy Jira exports  
 ✔ Extracts boolean logic correctly  
-✔ Detects state transitions  
+✔ Detects state transitions & Config Rules  
 ✔ Produces structured JSON usable by test generator  
 
 ---

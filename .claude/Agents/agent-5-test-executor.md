@@ -80,11 +80,6 @@ Run spec files in the order defined by `prompts/framework-config.json` (`objects
 2. Keep only files that physically exist under `tests/`.
 3. Pass that resolved list to Playwright — nothing more, nothing less.
 
-This means adding `contract.spec.ts`, `order.spec.ts`, or any future object to `framework-config.json`
-automatically includes it in execution without touching this agent or the pipeline script.
-
-Support targeted execution if the user provides a `--target` argument (pass the matching spec file only).
-
 ---
 
 ## EXECUTION RULES
@@ -130,16 +125,22 @@ Every failure MUST be classified into one of the following categories.
 
 3. `tab_navigation_failure`
 - Field locator times out on a record detail page
-- Field exists but test never called `clickTab('Details')` or `clickTab('Related')` before the lookup
-- Error occurs immediately after navigation, targeting a tab-locked field (Stage, Amount, Industry, Phone, etc.)
-- **Priority check**: if a failing line targets a record-page field and no `clickTab` precedes it, classify as `tab_navigation_failure` — NOT `selector_failure`
+- Field exists but test never called `clickTab('Details')` or `clickTab('Related')`
 
-4. `data_failure`
+4. `configurator_failure` (NEW)
+- Failure inside `c-product-configurator` or specific attribute LWC.
+- Selector failure targeting an attribute label or value during configuration.
+
+5. `pricing_failure` (NEW)
+- Test passed UI steps but price validation failed (e.g., Net Amount is $0.00).
+- Pricing toast never appeared after Save.
+
+6. `data_failure`
 - Missing prerequisite record (Account/Contact/Opportunity not found)
 - Lookup returns no results
 - Validation error from missing required field value
 
-5. `environment_failure`
+7. `environment_failure`
 - Login / session expired
 - Network failure
 - Salesforce org unavailable or Aura system error blocking execution
@@ -164,37 +165,11 @@ Format:
       "tcId": "TC-QTE-003",
       "acId": "AC-005-26",
       "status": "FAILED",
-      "failureType": "tab_navigation_failure",
-      "error": "Execution Status did not update — clickTab('Details') missing before field lookup"
+      "failureType": "pricing_failure",
+      "error": "Expected Net Amount to be greater than $0.00, but found $0.00"
     }
   ]
 }
-
----
-
-### 2. reports/dashboard.html
-
-- Auto updated
-- No manual action required
-
----
-
-### 3. Console Output
-
-Print:
-
-==================================
-TEST EXECUTION SUMMARY
-==================================
-Total: X
-Passed: X
-Failed: X
-Skipped: X
-
-Failures:
-TC-QTE-003 → tab_navigation_failure
-TC-QTE-004 → selector_failure
-==================================
 
 ---
 
@@ -202,17 +177,8 @@ TC-QTE-004 → selector_failure
 
 Pass:
 - Failed TC IDs
-- Failure types
+- Failure types (including `configurator_failure` and `pricing_failure`)
 - Error messages
-
----
-
-## CONSTRAINTS
-
-- Do NOT retry tests here
-- Do NOT skip failures
-- Do NOT run in parallel
-- Do NOT continue if test files are invalid
 
 ---
 
@@ -221,6 +187,6 @@ Pass:
 Agent is successful ONLY if:
 
 - All tests executed
-- Failures clearly classified
+- Failures clearly classified (including business-level pricing failures)
 - Results mapped to TC + AC
 - Output is clean and actionable

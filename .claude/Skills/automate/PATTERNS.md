@@ -23,11 +23,6 @@ await field.fill('Acme Corp');
 const field = page.locator('[data-field-api-name="Name"] input');
 await field.waitFor({ state: 'visible' });
 await field.fill('Acme Corp');
-
-// Fallback: LWC text filter
-const field = page.locator('lightning-input').filter({ hasText: /Account Name/i }).locator('input');
-await field.waitFor({ state: 'visible' });
-await field.fill('Acme Corp');
 ```
 
 ---
@@ -50,11 +45,6 @@ await option.waitFor({ state: 'visible' });
 await option.click();
 ```
 
-**Rules:**
-- Always use `.first()` on the trigger — multiple comboboxes may match
-- Use `.last()` on options — duplicate label text can appear in the DOM
-- Use `{ force: true }` on trigger click — overlay may intercept
-
 ---
 
 ## Pattern C: Lookup (Record Search)
@@ -73,10 +63,6 @@ const option = page.locator('[role="option"]')
 await option.waitFor({ state: 'visible' });
 await option.click();
 ```
-
-**Rules:**
-- Type at least 3 characters before waiting for options
-- Always wait for option visibility — async search has latency
 
 ---
 
@@ -129,37 +115,24 @@ When `knowledge/scraped-locators.json` contains a `data-field-api-name` for a fi
 const field = page.locator('[data-field-api-name="AccountId"] input');
 await field.waitFor({ state: 'visible' });
 await field.fill('Acme Corp');
-
-// Combobox via API name
-const trigger = page.locator('[data-field-api-name="StageName"] button');
-await trigger.click({ force: true });
 ```
 
 ---
 
 ## Pattern G: Modal-Scoped Interactions
 
-ALWAYS scope all interactions inside a modal to the modal container. Never interact globally when a dialog is open.
+ALWAYS scope all interactions inside a modal to the modal container.
 
 ```ts
 const modal = page.locator('[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])');
 await modal.waitFor({ state: 'visible', timeout: 30000 });
 
 // Scoped field fill
-await modal
-  .locator('lightning-input')
-  .filter({ hasText: /Name/i })
-  .locator('input')
-  .fill('Test Value');
+await modal.locator('lightning-input').filter({ hasText: /Name/i }).locator('input').fill('Test Value');
 
 // Scoped Save button
 await modal.getByRole('button', { name: 'Save', exact: true }).click();
 ```
-
-**Rules:**
-- NEVER call `page.locator(...)` for fields when a modal is open
-- Always use `modal.locator(...)` to scope every interaction
-- The `:not([id="auraError"])` guard prevents matching Salesforce system error dialogs
 
 ---
 
@@ -173,7 +146,7 @@ const toast = page.locator('.slds-notify_toast');
 await toast.waitFor({ state: 'visible', timeout: 10000 });
 await expect(toast).toContainText('was created');
 
-// Wait for toast to dismiss (for chaining actions)
+// Wait for toast to dismiss
 await toast.waitFor({ state: 'hidden', timeout: 15000 });
 ```
 
@@ -181,23 +154,14 @@ await toast.waitFor({ state: 'hidden', timeout: 15000 });
 
 ## Pattern I: iFrame Handling
 
-Some Salesforce flows embed content in an iframe (e.g. DocuSign, custom Visualforce).
-
 ```ts
 const frame = page.frameLocator('iframe[title="Your Frame Title"]');
 await frame.locator('button:has-text("Save")').click();
-
-// For nested iframes
-const outerFrame = page.frameLocator('iframe.outer');
-const innerFrame = outerFrame.frameLocator('iframe.inner');
-await innerFrame.getByRole('button', { name: 'Submit' }).click();
 ```
 
 ---
 
 ## Pattern J: Safe Click (Retry Wrapper)
-
-For elements that occasionally fail due to overlay timing or animation.
 
 ```ts
 async function safeClick(locator: Locator): Promise<void> {
@@ -209,22 +173,15 @@ async function safeClick(locator: Locator): Promise<void> {
       await locator.page().waitForTimeout(500);
     }
   }
-  throw new Error(`safeClick failed after 3 attempts: ${locator}`);
 }
 ```
-
-**Use sparingly** — prefer fixing the root cause (missing `waitFor`) over wrapping in retry.
 
 ---
 
 ## Pattern K: Tab Navigation
 
-Switch between tabs on a Salesforce record page (Details, Related, etc.).
-
 ```ts
 await page.getByRole('tab', { name: 'Related', exact: true }).click();
-
-// Verify tab is active
 await expect(page.getByRole('tab', { name: 'Related' })).toHaveAttribute('aria-selected', 'true');
 ```
 
@@ -232,86 +189,156 @@ await expect(page.getByRole('tab', { name: 'Related' })).toHaveAttribute('aria-s
 
 ## Pattern L: Field Error Validation
 
-Validate that a required field shows or hides its inline error message.
-
 ```ts
-// Assert error is shown after bad submit
 const error = page.locator('.slds-form-element__help');
 await error.waitFor({ state: 'visible', timeout: 5000 });
 await expect(error).toContainText('Complete this field');
-
-// Assert error clears after valid input
-await error.waitFor({ state: 'hidden', timeout: 5000 });
 ```
 
 ---
 
 ## Pattern M: Lightning Date Pickers
 
-NEVER click the calendar icon or interact with the calendar popup. Always bypass it and fill the underlying input directly.
-
 ```ts
-// Preferred: label-based
 const dateField = page.getByLabel('Close Date');
-await dateField.waitFor({ state: 'visible', timeout: 30000 });
-await dateField.fill('2026-12-31');
-await dateField.press('Tab'); // trigger Salesforce validation
-
-// API name approach
-const dateField = page.locator('[data-field-api-name="CloseDate"] input');
-await dateField.fill('2026-12-31');
-await dateField.press('Tab');
-
-// Fallback: LWC text filter
-const dateField = page.locator('lightning-input')
-  .filter({ hasText: /Close Date/i })
-  .locator('input');
 await dateField.fill('2026-12-31');
 await dateField.press('Tab');
 ```
-
-**Rules:**
-- ALWAYS use ISO format: `YYYY-MM-DD`
-- ALWAYS call `.press('Tab')` after fill to trigger SF validation
-- If value does not persist: also call `.blur()` after Tab
-
-**Applies to:** Opportunity Close Date, Contract Start/End Dates, Quote Expiration Date, any Salesforce date field.
 
 ---
 
 ## Pattern N: List View / Related List Row Actions
 
-Target the row container first, then open its action menu — never click the record link text for actions.
-
 ```ts
-// Step 1: Locate row by unique text and assert
 const row = page.locator('[role="row"]').filter({ hasText: 'Acme Corp' }).first();
-await row.waitFor({ state: 'visible', timeout: 30000 });
-await expect(row).toContainText('Acme Corp');
-
-// Step 2: Open the row's action dropdown
 const actionButton = row.locator('button[aria-haspopup="true"]').first();
 await actionButton.click({ force: true });
-await page.waitForTimeout(300); // allow menu to render
 
-// Step 3: Scope click to the menu
 const menu = page.locator('[role="menu"]');
-await menu.waitFor({ state: 'visible' });
 await menu.locator('[role="menuitem"]').filter({ hasText: 'Edit' }).click();
 ```
 
-**Rules:**
-- NEVER click the record name link (e.g. "Acme Corp") to trigger an action
-- ALWAYS open the `aria-haspopup` button first
-- ALWAYS scope to `[role="menu"] [role="menuitem"]`
+---
 
-**Applies to:** Related Lists (Quotes under Opportunity), List Views, RLM Line Item grids, any row-level action.
+## Pattern O: Product Selection Modal (Revenue Cloud)
+
+Interaction with the specialized "Add Products" selection screen.
+
+```ts
+// 1. Open Modal
+await page.getByRole('button', { name: 'Add Products', exact: true }).click();
+const modal = page.locator('[role="dialog"]').first();
+await modal.waitFor({ state: 'visible' });
+
+// 2. Search for Product
+const searchInput = modal.locator('input[type="search"]').first();
+await searchInput.fill('Laptop');
+await searchInput.press('Enter');
+await waitForRlmSpinners(page);
+
+// 3. Select Product Row
+const row = modal.locator('[role="row"]').filter({ hasText: 'Laptop' }).first();
+await row.locator('lightning-input[type="checkbox"] input').click({ force: true });
+
+// 4. Proceed
+await modal.getByRole('button', { name: 'Next', exact: true }).click();
+```
+
+---
+
+## Pattern P: Configurator Attributes (CML Testing)
+
+Interacting with the configurator and verifying CML rule consequences.
+
+```ts
+// Scope to the configurator container
+const configContainer = page.locator('.configurator-container, c-product-configurator');
+await configContainer.waitFor({ state: 'visible' });
+
+// Verify dynamic visibility (CML "Hide" Rule)
+const attribute = configContainer.locator('lightning-input').filter({ hasText: /Processor/i });
+await expect(attribute).toBeHidden();
+
+// Select attribute value
+const trigger = configContainer.locator('lightning-combobox').filter({ hasText: /Memory/i }).locator('button');
+await trigger.click();
+await page.locator('[role="option"]').filter({ hasText: '16GB' }).click();
+
+// Verify Constraint Message
+const message = configContainer.locator('.slds-theme_error');
+await expect(message).toContainText('Incompatible with selected Processor');
+```
+
+---
+
+## Pattern Q: Global Quote Actions
+
+Triggering high-level processes on the Quote record.
+
+```ts
+// Reprice All
+await page.getByRole('button', { name: 'Reprice All', exact: true }).click();
+await waitForRlmSpinners(page);
+await expect(page.locator('.slds-notify_toast')).toContainText('Pricing updated');
+
+// Submit for Approval
+await page.getByRole('button', { name: 'Submit for Approval', exact: true }).click();
+const modal = page.locator('[role="dialog"]');
+await modal.locator('textarea').fill('Applying standard discount');
+await modal.getByRole('button', { name: 'Submit', exact: true }).click();
+```
+
+---
+
+## Pattern R: Lifecycle Transition (Ordered/Contracted)
+
+Triggering and verifying the Quote → Order → Contract flow.
+
+```ts
+// 1. Trigger Ordering
+const orderedCheckbox = page.locator('[data-field-api-name="Ordered"] input');
+await orderedCheckbox.check();
+await page.getByRole('button', { name: 'Save', exact: true }).click();
+await waitForRlmSpinners(page);
+
+// 2. Verify Order Creation
+await page.getByRole('tab', { name: 'Related' }).click();
+const orderLink = page.getByRole('link', { name: /^ORD-/ }).first();
+await expect(orderLink).toBeVisible();
+
+// 3. Navigate to Order and Contract
+await orderLink.click();
+const contractedCheckbox = page.locator('[data-field-api-name="Contracted"] input');
+await contractedCheckbox.check();
+await page.getByRole('button', { name: 'Save', exact: true }).click();
+```
+
+---
+
+## Pattern S: Document Generation
+
+Creating and verifying the output PDF.
+
+```ts
+await page.getByRole('button', { name: 'Generate Document', exact: true }).click();
+const modal = page.locator('[role="dialog"]');
+
+// Select Template
+await modal.locator('lightning-lookup').locator('input').fill('Standard Quote Template');
+await page.locator('[role="option"]').first().click();
+
+// Generate
+await modal.getByRole('button', { name: 'Create PDF', exact: true }).click();
+await waitForRlmSpinners(page);
+
+// Verify ContentDocument in Related List
+await page.getByRole('tab', { name: 'Related' }).click();
+await expect(page.locator('.slds-card').filter({ hasText: 'Notes & Attachments' })).toContainText('.pdf');
+```
 
 ---
 
 ## Spinner Helper
-
-Call after every Save, Pricing recalculation, or AG-Grid edit:
 
 ```ts
 async function waitForRlmSpinners(page: Page): Promise<void> {
@@ -319,14 +346,14 @@ async function waitForRlmSpinners(page: Page): Promise<void> {
     page.locator('.slds-spinner').waitFor({ state: 'hidden' }).catch(() => {}),
     page.locator('.blockUI').waitFor({ state: 'hidden' }).catch(() => {})
   ]);
+  // Small buffer for LWC to settle
+  await page.waitForTimeout(500);
 }
 ```
 
 ---
 
 ## Navigation Helpers
-
-Include in every spec file:
 
 ```ts
 async function goTo(page: Page, path: string): Promise<void> {
@@ -340,9 +367,5 @@ async function dismissAuraError(page: Page): Promise<void> {
   if (await auraError.isVisible().catch(() => false)) {
     await auraError.click();
   }
-}
-
-async function waitForDetail(page: Page): Promise<void> {
-  await page.locator('.slds-page-header').first().waitFor({ state: 'visible' });
 }
 ```
