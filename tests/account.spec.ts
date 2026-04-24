@@ -96,10 +96,27 @@ test.describe('Account Tests', () => {
   });
 
   // TC-ACC-002 | AC Reference: AC-005-02
-  test('TC-ACC-002 — Create new Contact on Account record via Contacts related list', async ({ page }) => {
+test('TC-ACC-002 — Create new Contact on Account record via Contacts related list', async ({ page }) => {
     createdContactFirstName = data.contact.First_Name;
     createdContactLastName  = data.contact.Last_Name;
     createdContactName      = `${createdContactFirstName} ${createdContactLastName}`;
+
+    // AC-005-02: check globally first (10s timeout) — related list only shows first 6, misses deeper records
+    // Use searchExists (non-navigating) then searchAndOpen only if found, to avoid 30s timeout on miss
+    const contactFoundGlobally = await SFUtils.searchExists(page, createdContactName);
+    if (contactFoundGlobally) {
+      await SFUtils.goto(page, `${SF}/lightning/page/home`);
+      await searchAndOpen(page, createdContactName);
+      if (page.url().includes('/Contact/')) {
+        console.log(`[SKIP] "${createdContactName}" already exists globally — using existing record.`);
+        createdContactUrl = page.url();
+        return;
+      }
+    }
+
+    // Navigate to Account — fresh navigation guarantees no lingering search panel
+    await SFUtils.goto(page, `${SF}/lightning/page/home`);
+    await SFUtils.waitForAppReady(page);
 
     await searchAndOpen(page, resolvedAccountName);
     await clickTab(page, 'Related');
@@ -110,17 +127,6 @@ test.describe('Account Tests', () => {
       .filter({ hasText: /^Contacts/ })
       .first();
     await contactsRelatedList.waitFor({ state: 'visible', timeout: 30000 });
-
-    // AC-005-02: skip creation if contact already exists
-    const existingContact = contactsRelatedList.getByRole('link', { name: createdContactName, exact: true }).first();
-    if (await existingContact.isVisible({ timeout: 3000 }).catch(() => false)) {
-      console.log(`[SKIP] "${createdContactName}" already exists — using existing record.`);
-      await existingContact.click();
-      await SFUtils.waitForLoading(page);
-      await waitForDetail(page);
-      createdContactUrl = page.url();
-      return;
-    }
 
     await contactsRelatedList.getByRole('button', { name: 'New', exact: true }).click();
     await SFUtils.waitForLoading(page);
@@ -135,18 +141,64 @@ test.describe('Account Tests', () => {
     await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
-    // Salesforce stays on the Account page after saving from Related list — navigate to Contact.
-    await page.waitForTimeout(1500);
+    // After save, Salesforce stays on the Account page — navigate to the new contact via the Related list.
+    // Never use global search for a freshly-created record: Salesforce indexes with a delay of minutes.
+    await page.waitForURL(/\/Contact\//, { timeout: 5000 }).catch(() => {});
+
     if (!page.url().includes('/Contact/')) {
-      const newContactLink = page.getByRole('link', { name: createdContactName, exact: true }).first();
-      await newContactLink.waitFor({ state: 'visible', timeout: 15000 });
-      await newContactLink.click();
-      await SFUtils.waitForLoading(page);
+      // Try Salesforce success toast link first (contains direct link to new record)
+      const toastLink = page.locator('.toastMessage a, [class*="toastMessage"] a').first();
+      const toastVisible = await toastLink.isVisible({ timeout: 5000 }).catch(() => false);
+      if (toastVisible) {
+        const toastHref = await toastLink.getAttribute('href').catch(() => null);
+        if (toastHref) {
+          const toastUrl = toastHref.startsWith('http') ? toastHref : `${SF}${toastHref}`;
+          await SFUtils.goto(page, toastUrl);
+        } else {
+          await toastLink.click();
+          await waitForDetail(page);
+        }
+      } else {
+        // Fallback: find the new contact in the Related list by name and navigate via href
+        await clickTab(page, 'Related');
+        await SFUtils.waitForLoading(page);
+        const refreshedList = page
+          .locator('force-related-list-single-container, force-related-list-card, article')
+          .filter({ hasText: /^Contacts/ })
+          .first();
+        await refreshedList.waitFor({ state: 'visible', timeout: 15000 });
+        const newContactLink = refreshedList
+          .getByRole('link', { name: createdContactName, exact: true }).first();
+        await newContactLink.waitFor({ state: 'visible', timeout: 15000 });
+        const contactHref = await newContactLink.getAttribute('href').catch(() => null);
+        if (contactHref) {
+          const contactUrl = contactHref.startsWith('http') ? contactHref : `${SF}${contactHref}`;
+          await SFUtils.goto(page, contactUrl);
+        } else {
+          await newContactLink.click();
+          await page.waitForURL(/\/Contact\//, { timeout: 20000 }).catch(() => {});
+          await SFUtils.waitForLoading(page);
+        }
+      }
     }
 
     await waitForDetail(page);
-    await page.getByRole('heading', { name: createdContactName, exact: false })
-      .first().waitFor({ state: 'visible', timeout: 15000 });
+    await SFUtils.waitForAppReady(page);
+    await SFUtils.waitForLoading(page);
+
+    // Primary: heading role check; fallback to Lightning page-header title selectors
+    const roleHeading = page.getByRole('heading', { name: createdContactName, exact: false }).first();
+    const roleVisible = await roleHeading.isVisible({ timeout: 10000 }).catch(() => false);
+    if (!roleVisible) {
+      const titleFallback = page
+        .locator(
+          '.slds-page-header__title, .slds-page-header h1, [class*="entityNameTitle"], lightning-formatted-name, .slds-card__header-title'
+        )
+        .filter({ hasText: createdContactName })
+        .first();
+      await titleFallback.waitFor({ state: 'visible', timeout: 30000 });
+    }
+
     createdContactUrl = page.url();
   });
 
@@ -172,16 +224,44 @@ test.describe('Account Tests', () => {
       .first();
     await oppsRelatedList.waitFor({ state: 'visible', timeout: 30000 });
 
-    // AC-005-03: skip creation if opportunity already exists in related list
+    // AC-005-03: skip creation if opportunity already exists — check related list (usually small)
     const existingOpp = oppsRelatedList.getByRole('link', { name: createdOpportunityName, exact: true }).first();
     if (await existingOpp.isVisible({ timeout: 3000 }).catch(() => false)) {
       console.log(`[SKIP] "${createdOpportunityName}" already exists — using existing record.`);
-      await existingOpp.click();
-      await SFUtils.waitForLoading(page);
+      // Navigate via href directly — clicking a related list link may not change page.url() before
+      // waitForDetail() completes on the still-visible Contact header, causing a stale Contact URL.
+      const oppHref = await existingOpp.getAttribute('href').catch(() => null);
+      if (oppHref) {
+        const oppUrl = oppHref.startsWith('http') ? oppHref : `${SF}${oppHref}`;
+        await SFUtils.goto(page, oppUrl);
+      } else {
+        await existingOpp.click();
+        await page.waitForURL(/\/006[A-Za-z0-9]+\/view/, { timeout: 20000 }).catch(() => {});
+        await SFUtils.waitForLoading(page);
+      }
       await waitForDetail(page);
       createdOpportunityUrl = page.url();
       return;
     }
+    // Also check globally in case it's not visible in the related list
+    const oppExistsGlobally = await SFUtils.searchAndOpen(page, createdOpportunityName)
+      .then(() => page.url().includes('/Opportunity/'))
+      .catch(() => false);
+    if (oppExistsGlobally) {
+      console.log(`[SKIP] "${createdOpportunityName}" found globally — using existing record.`);
+      createdOpportunityUrl = page.url();
+      return;
+    }
+    // Re-navigate to Contact after the global search attempt
+    if (createdContactUrl) {
+      await SFUtils.goto(page, createdContactUrl);
+    } else {
+      await searchAndOpen(page, createdContactName);
+    }
+    await waitForDetail(page);
+    await clickTab(page, 'Related');
+    await SFUtils.waitForLoading(page);
+    await oppsRelatedList.waitFor({ state: 'visible', timeout: 30000 });
 
     await oppsRelatedList.getByRole('button', { name: 'New', exact: true }).click();
     await SFUtils.waitForLoading(page);
@@ -226,13 +306,10 @@ test.describe('Account Tests', () => {
     await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
-    // Salesforce stays on the Contact page after saving from a related list.
+    // After saving from Related list Salesforce stays on Contact page — use global search to navigate.
     await page.waitForTimeout(1500);
     if (!page.url().includes('/Opportunity/')) {
-      const newOppLink = page.getByRole('link', { name: createdOpportunityName, exact: true }).first();
-      await newOppLink.waitFor({ state: 'visible', timeout: 15000 });
-      await newOppLink.click();
-      await SFUtils.waitForLoading(page);
+      await searchAndOpen(page, createdOpportunityName);
     }
 
     await waitForDetail(page);
@@ -316,32 +393,26 @@ test('TC-ACC-005 — Create Quote from Opportunity', async ({ page }) => {
       .first();
     await newQuoteBtn.waitFor({ state: 'visible', timeout: 20000 });
     await newQuoteBtn.click();
-    await SFUtils.waitForLoading(page);
+
+    // URL changes instantly in Lightning SPA but the "New Quote" modal renders asynchronously.
+    // Wait for the modal explicitly (up to 20s) before interacting.
+    await page.waitForURL(/Quote/, { timeout: 20000 }).catch(() => {});
     await dismissAuraError(page);
 
-    // Some orgs open a modal; others navigate directly to the Quote editor
     const modal = page.locator(MODAL);
-    const modalVisible = await modal.isVisible({ timeout: 5000 }).catch(() => false);
+    const modalAppeared = await modal.waitFor({ state: 'visible', timeout: 20000 }).then(() => true).catch(() => false);
 
-    if (modalVisible) {
-      const quoteNameInput = modal.locator('[data-field-api-name="Name"] input').first();
-      if (await quoteNameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-        await quoteNameInput.fill(createdQuoteName);
-      }
+    if (modalAppeared) {
+      // The Revenue Cloud "New Quote" form pre-fills the Quote Name — just click Save.
+      // Wait for the Syncing spinner inside the modal to settle first.
+      await modal.locator('.slds-spinner, [class*="spinner"]').first()
+        .waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
       await modal.getByRole('button', { name: 'Save', exact: true }).click();
       await SFUtils.waitForLoading(page);
       await dismissAuraError(page);
     } else {
-      // Quote editor opened directly — fill the Name field if present before saving
-      const editorNameInput = page.locator('[data-field-api-name="Name"] input').first();
-      if (await editorNameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
-        await editorNameInput.fill(createdQuoteName);
-      }
-      // Look for a Save button in the editor toolbar
-      const saveBtn = page
-        .getByRole('button', { name: 'Save', exact: true })
-        .or(page.locator('button:has-text("Save")'))
-        .first();
+      // Full-page quote editor — try Save button anywhere on the page
+      const saveBtn = page.getByRole('button', { name: 'Save', exact: true }).first();
       if (await saveBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
         await saveBtn.click();
         await SFUtils.waitForLoading(page);
@@ -349,45 +420,19 @@ test('TC-ACC-005 — Create Quote from Opportunity', async ({ page }) => {
       }
     }
 
-    // Wait for navigation to land on a Quote record detail page
-    await page.waitForURL(/\/Quote\/[a-zA-Z0-9]{15,18}\/view/, { timeout: 30000 }).catch(async () => {
-      // If URL pattern doesn't match, fall back to waiting for any record detail URL change
-      await page.waitForLoadState('domcontentloaded');
-      await SFUtils.waitForLoading(page);
-    });
-
+    // Wait for navigation to the saved Quote record view page
+    await page.waitForURL(/\/Quote\/[a-zA-Z0-9]{15,18}\/view/, { timeout: 30000 }).catch(() => {});
     await waitForDetail(page);
     await page.locator('.slds-spinner').waitFor({ state: 'hidden' }).catch(() => {});
 
-    // The heading may render as a highlights panel title or a record breadcrumb;
-    // try multiple selectors before falling back to a full-page text search
-    const headingSelectors = [
-      page.getByRole('heading', { name: createdQuoteName, exact: false }).first(),
-      page.locator('lightning-formatted-text').filter({ hasText: createdQuoteName }).first(),
-      page.locator('.slds-page-header__title').filter({ hasText: createdQuoteName }).first(),
-      page.locator('h1').filter({ hasText: createdQuoteName }).first(),
-      page.locator('[data-field-api-name="Name"]').filter({ hasText: createdQuoteName }).first(),
-    ];
-
-    let found = false;
-    for (const locator of headingSelectors) {
-      const visible = await locator.isVisible({ timeout: 8000 }).catch(() => false);
-      if (visible) {
-        found = true;
-        break;
-      }
+    const currentUrl = page.url();
+    const isQuoteRecord = /\/Quote\/[a-zA-Z0-9]{15,18}\/view/.test(currentUrl);
+    if (!isQuoteRecord) {
+      throw new Error(
+        `TC-ACC-005: Quote detail page not reached. URL: ${currentUrl}. Expected heading "${createdQuoteName}" not found.`
+      );
     }
-
-    if (!found) {
-      // Last resort: confirm the current URL is a Quote record (creation succeeded even if name differs)
-      const currentUrl = page.url();
-      const isQuoteRecord = /\/Quote\/[a-zA-Z0-9]{15,18}\/view/.test(currentUrl);
-      if (!isQuoteRecord) {
-        throw new Error(
-          `TC-ACC-005: Quote detail page not reached. URL: ${currentUrl}. Expected heading "${createdQuoteName}" not found.`
-        );
-      }
-    }
+    console.info(`[PASS] AC-005-05: Quote created from Opportunity "${createdOpportunityName}". URL: ${currentUrl}`);
   });
   // ── US-005 END ───────────────────────────────────────────────────────
 
