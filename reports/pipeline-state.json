@@ -1,5 +1,5 @@
 {
-  "runDate": "2026-04-24T07:39:10.343Z",
+  "runDate": "2026-04-24T07:58:07.517Z",
   "steps": [
     {
       "n": -1,
@@ -14,10 +14,10 @@
       "label": "Scrape Locators",
       "icon": "🔍",
       "status": "skipped",
-      "detail": "Locator map is 84m old (< 24h) — using cache",
-      "timestamp": "13:09:12",
-      "startedAtMs": 1777016352475,
-      "durationMs": 12
+      "detail": "Locator map is 103m old (< 24h) — using cache",
+      "timestamp": "13:28:11",
+      "startedAtMs": 1777017491497,
+      "durationMs": 10
     },
     {
       "n": 1,
@@ -25,9 +25,9 @@
       "icon": "🤖",
       "status": "skipped",
       "detail": "No changes — 1 stories unchanged",
-      "timestamp": "13:09:12",
-      "startedAtMs": 1777016352511,
-      "durationMs": 36
+      "timestamp": "13:28:12",
+      "startedAtMs": 1777017491930,
+      "durationMs": 1025
     },
     {
       "n": 2,
@@ -35,7 +35,7 @@
       "icon": "📋",
       "status": "skipped",
       "detail": "No story changes — skipped",
-      "timestamp": "13:09:12"
+      "timestamp": "13:28:12"
     },
     {
       "n": 3,
@@ -43,7 +43,7 @@
       "icon": "📄",
       "status": "skipped",
       "detail": "No story changes — skipped",
-      "timestamp": "13:09:12"
+      "timestamp": "13:28:12"
     },
     {
       "n": 4,
@@ -51,9 +51,9 @@
       "icon": "🧪",
       "status": "failed",
       "detail": "1/5 tests passed",
-      "timestamp": "13:10:46",
-      "startedAtMs": 1777016360608,
-      "durationMs": 85958
+      "timestamp": "13:29:30",
+      "startedAtMs": 1777017501904,
+      "durationMs": 68489
     },
     {
       "n": 5,
@@ -61,9 +61,9 @@
       "icon": "🔧",
       "status": "failed",
       "detail": "Some failures remain",
-      "timestamp": "13:13:44",
-      "startedAtMs": 1777016447059,
-      "durationMs": 177644
+      "timestamp": "13:32:05",
+      "startedAtMs": 1777017570946,
+      "durationMs": 154490
     },
     {
       "n": 6,
@@ -79,8 +79,8 @@
       "icon": "🚀",
       "status": "running",
       "detail": "Git push...",
-      "timestamp": "13:13:44",
-      "startedAtMs": 1777016624805
+      "timestamp": "13:32:05",
+      "startedAtMs": 1777017725525
     }
   ]
 }

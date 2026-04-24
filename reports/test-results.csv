@@ -1,6 +1,6 @@
 TC ID,Object,User Story,Title,Status,Duration (s),AC Reference,Error Message,File,Line,Run Date
-TC-ACC-001,Account,US-005,TC-ACC-001 — Verify Account Billing Address and Payment Terms under Details tab (soft-fail),passed,21.95,AC-005-01,,account.spec.ts,74,2026-04-24
-TC-ACC-002,Account,US-005,TC-ACC-002 — Create new Contact on Account record via Contacts related list,failed,56.78,AC-005-02,TimeoutError: locator.waitFor: Timeout 30000ms exceeded.,account.spec.ts,99,2026-04-24
-TC-ACC-003,Account,US-005,TC-ACC-003 — Create Opportunity from Contact record via Opportunities related list,skipped,0.00,AC-005-03,,account.spec.ts,206,2026-04-24
-TC-ACC-004,Account,US-005,TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity,skipped,0.00,AC-005-04,,account.spec.ts,322,2026-04-24
-TC-ACC-005,Account,US-005,TC-ACC-005 — Create Quote from Opportunity,skipped,0.00,QO-005-05,,account.spec.ts,376,2026-04-24
+TC-ACC-001,Account,US-005,TC-ACC-001 — Verify Account Billing Address and Payment Terms under Details tab (soft-fail),passed,24.67,AC-005-01,,account.spec.ts,74,2026-04-24
+TC-ACC-002,Account,US-005,TC-ACC-002 — Create new Contact on Account record via Contacts related list,failed,32.61,AC-005-02,Error: page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL,account.spec.ts,99,2026-04-24
+TC-ACC-003,Account,US-005,TC-ACC-003 — Create Opportunity from Contact record via Opportunities related list,skipped,0.00,AC-005-03,,account.spec.ts,198,2026-04-24
+TC-ACC-004,Account,US-005,TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity,skipped,0.00,AC-005-04,,account.spec.ts,314,2026-04-24
+TC-ACC-005,Account,US-005,TC-ACC-005 — Create Quote from Opportunity,skipped,0.00,QO-005-05,,account.spec.ts,368,2026-04-24

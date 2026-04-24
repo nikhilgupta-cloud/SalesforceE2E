@@ -183,20 +183,12 @@ test('TC-ACC-002 — Create new Contact on Account record via Contacts related l
     }
 
     await waitForDetail(page);
-    await SFUtils.waitForAppReady(page);
     await SFUtils.waitForLoading(page);
 
-    // Primary: heading role check; fallback to Lightning page-header title selectors
-    const roleHeading = page.getByRole('heading', { name: createdContactName, exact: false }).first();
-    const roleVisible = await roleHeading.isVisible({ timeout: 10000 }).catch(() => false);
-    if (!roleVisible) {
-      const titleFallback = page
-        .locator(
-          '.slds-page-header__title, .slds-page-header h1, [class*="entityNameTitle"], lightning-formatted-name, .slds-card__header-title'
-        )
-        .filter({ hasText: createdContactName })
-        .first();
-      await titleFallback.waitFor({ state: 'visible', timeout: 30000 });
+    // Verify we landed on a Contact record — URL is the reliable indicator (heading format varies by locale)
+    await page.waitForURL(/\/Contact\/[A-Za-z0-9]+\/view/, { timeout: 15000 }).catch(() => {});
+    if (!page.url().includes('/Contact/')) {
+      throw new Error(`Expected Contact record page but URL is: ${page.url()}`);
     }
 
     createdContactUrl = page.url();

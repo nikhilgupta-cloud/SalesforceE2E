@@ -92,7 +92,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 21949,
+                      "duration": 24670,
                       "errors": [],
                       "stdout": [],
                       "stderr": [
@@ -101,7 +101,7 @@
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-04-24T07:39:24.337Z",
+                      "startTime": "2026-04-24T07:58:25.660Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -130,31 +130,31 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 56784,
+                      "duration": 32610,
                       "error": {
-                        "message": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.slds-page-header__title, .slds-page-header h1, [class*=\"entityNameTitle\"], lightning-formatted-name, .slds-card__header-title').filter({ hasText: 'Sand Jose' }).first() to be visible\u001b[22m\n",
-                        "stack": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.slds-page-header__title, .slds-page-header h1, [class*=\"entityNameTitle\"], lightning-formatted-name, .slds-card__header-title').filter({ hasText: 'Sand Jose' }).first() to be visible\u001b[22m\n\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:199:27",
+                        "message": "Error: page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL\nCall log:\n\u001b[2m  - navigating to \"https://rlmpartner1demojan2226org.my.salesforce.comjavascript:void(0)\", waiting until \"load\"\u001b[22m\n",
+                        "stack": "Error: page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL\nCall log:\n\u001b[2m  - navigating to \"https://rlmpartner1demojan2226org.my.salesforce.comjavascript:void(0)\", waiting until \"load\"\u001b[22m\n\n    at Function.goto (D:\\SalesforceE2E1\\utils\\SFUtils.ts:14:16)\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:156:25",
                         "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 27,
-                          "line": 199
+                          "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                          "column": 16,
+                          "line": 14
                         },
-                        "snippet": "\u001b[0m \u001b[90m 197 |\u001b[39m         \u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m createdContactName })\n \u001b[90m 198 |\u001b[39m         \u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 199 |\u001b[39m       \u001b[36mawait\u001b[39m titleFallback\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 200 |\u001b[39m     }\n \u001b[90m 201 |\u001b[39m\n \u001b[90m 202 |\u001b[39m     createdContactUrl \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39murl()\u001b[33m;\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:14\n\n\u001b[0m \u001b[90m 12 |\u001b[39m \u001b[90m   */\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[36mstatic\u001b[39m \u001b[36masync\u001b[39m goto(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m url\u001b[33m:\u001b[39m string) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(url\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'load'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m60000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 15 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mwaitForAppReady(page)\u001b[33m;\u001b[39m\n \u001b[90m 16 |\u001b[39m   }\n \u001b[90m 17 |\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 27,
-                            "line": 199
+                            "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                            "column": 16,
+                            "line": 14
                           },
-                          "message": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.slds-page-header__title, .slds-page-header h1, [class*=\"entityNameTitle\"], lightning-formatted-name, .slds-card__header-title').filter({ hasText: 'Sand Jose' }).first() to be visible\u001b[22m\n\n\n\u001b[0m \u001b[90m 197 |\u001b[39m         \u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m createdContactName })\n \u001b[90m 198 |\u001b[39m         \u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 199 |\u001b[39m       \u001b[36mawait\u001b[39m titleFallback\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m30000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 200 |\u001b[39m     }\n \u001b[90m 201 |\u001b[39m\n \u001b[90m 202 |\u001b[39m     createdContactUrl \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39murl()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:199:27\u001b[22m"
+                          "message": "Error: page.goto: Protocol error (Page.navigate): Cannot navigate to invalid URL\nCall log:\n\u001b[2m  - navigating to \"https://rlmpartner1demojan2226org.my.salesforce.comjavascript:void(0)\", waiting until \"load\"\u001b[22m\n\n\n\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:14\n\n\u001b[0m \u001b[90m 12 |\u001b[39m \u001b[90m   */\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[36mstatic\u001b[39m \u001b[36masync\u001b[39m goto(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m url\u001b[33m:\u001b[39m string) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(url\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'load'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m60000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 15 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mwaitForAppReady(page)\u001b[33m;\u001b[39m\n \u001b[90m 16 |\u001b[39m   }\n \u001b[90m 17 |\u001b[39m\u001b[0m\n\u001b[2m    at Function.goto (D:\\SalesforceE2E1\\utils\\SFUtils.ts:14:16)\u001b[22m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:156:25\u001b[22m"
                         }
                       ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-24T07:39:48.026Z",
+                      "startTime": "2026-04-24T07:58:52.786Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -169,9 +169,9 @@
                         }
                       ],
                       "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 27,
-                        "line": 199
+                        "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                        "column": 16,
+                        "line": 14
                       }
                     }
                   ],
@@ -204,7 +204,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-24T07:40:46.198Z",
+                      "startTime": "2026-04-24T07:59:29.622Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -214,7 +214,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-b5ddaa06db3b432e1f43",
               "file": "account.spec.ts",
-              "line": 206,
+              "line": 198,
               "column": 7
             },
             {
@@ -238,7 +238,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-24T07:40:46.234Z",
+                      "startTime": "2026-04-24T07:59:29.688Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -248,7 +248,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-531ed4647b1461da75de",
               "file": "account.spec.ts",
-              "line": 322,
+              "line": 314,
               "column": 5
             },
             {
@@ -272,7 +272,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-24T07:40:46.282Z",
+                      "startTime": "2026-04-24T07:59:29.754Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -282,7 +282,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-e0587f41f4c21bdd1d0e",
               "file": "account.spec.ts",
-              "line": 376,
+              "line": 368,
               "column": 5
             }
           ]
@@ -292,8 +292,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-24T07:39:20.401Z",
-    "duration": 86134.71500000001,
+    "startTime": "2026-04-24T07:58:21.478Z",
+    "duration": 68771.60699999999,
     "expected": 1,
     "skipped": 3,
     "unexpected": 1,
