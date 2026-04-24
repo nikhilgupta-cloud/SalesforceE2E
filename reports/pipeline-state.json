@@ -1,5 +1,5 @@
 {
-  "runDate": "2026-04-24T07:58:07.517Z",
+  "runDate": "2026-04-24T08:16:02.012Z",
   "steps": [
     {
       "n": -1,
@@ -14,10 +14,10 @@
       "label": "Scrape Locators",
       "icon": "🔍",
       "status": "skipped",
-      "detail": "Locator map is 103m old (< 24h) — using cache",
-      "timestamp": "13:28:11",
-      "startedAtMs": 1777017491497,
-      "durationMs": 10
+      "detail": "Locator map is 121m old (< 24h) — using cache",
+      "timestamp": "13:46:04",
+      "startedAtMs": 1777018564636,
+      "durationMs": 12
     },
     {
       "n": 1,
@@ -25,9 +25,9 @@
       "icon": "🤖",
       "status": "skipped",
       "detail": "No changes — 1 stories unchanged",
-      "timestamp": "13:28:12",
-      "startedAtMs": 1777017491930,
-      "durationMs": 1025
+      "timestamp": "13:46:04",
+      "startedAtMs": 1777018564668,
+      "durationMs": 35
     },
     {
       "n": 2,
@@ -35,7 +35,7 @@
       "icon": "📋",
       "status": "skipped",
       "detail": "No story changes — skipped",
-      "timestamp": "13:28:12"
+      "timestamp": "13:46:04"
     },
     {
       "n": 3,
@@ -43,7 +43,7 @@
       "icon": "📄",
       "status": "skipped",
       "detail": "No story changes — skipped",
-      "timestamp": "13:28:12"
+      "timestamp": "13:46:04"
     },
     {
       "n": 4,
@@ -51,9 +51,9 @@
       "icon": "🧪",
       "status": "failed",
       "detail": "1/5 tests passed",
-      "timestamp": "13:29:30",
-      "startedAtMs": 1777017501904,
-      "durationMs": 68489
+      "timestamp": "13:47:41",
+      "startedAtMs": 1777018574019,
+      "durationMs": 87500
     },
     {
       "n": 5,
@@ -61,9 +61,9 @@
       "icon": "🔧",
       "status": "failed",
       "detail": "Some failures remain",
-      "timestamp": "13:32:05",
-      "startedAtMs": 1777017570946,
-      "durationMs": 154490
+      "timestamp": "13:51:29",
+      "startedAtMs": 1777018662064,
+      "durationMs": 227930
     },
     {
       "n": 6,
@@ -79,8 +79,8 @@
       "icon": "🚀",
       "status": "running",
       "detail": "Git push...",
-      "timestamp": "13:32:05",
-      "startedAtMs": 1777017725525
+      "timestamp": "13:51:30",
+      "startedAtMs": 1777018890148
     }
   ]
 }

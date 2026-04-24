@@ -34,6 +34,18 @@ async function dismissAuraError(page: Page) {
 async function clickTab(page: Page, tabName: string) {
   // Salesforce record pages render Details / Related / Activity as role="tab".
   const tab = page.getByRole('tab', { name: tabName, exact: true }).first();
+  
+  // If tab not immediately visible, try clicking 'More' dropdown first (some layouts hide tabs)
+  const moreTab = page.getByRole('tab', { name: /More/i }).first();
+  if (!(await tab.isVisible({ timeout: 2000 }).catch(() => false)) && (await moreTab.isVisible().catch(() => false))) {
+    await moreTab.click();
+    const menu = page.locator('.slds-dropdown');
+    await menu.waitFor({ state: 'visible' });
+    await menu.getByRole('menuitem', { name: tabName, exact: true }).click();
+    await SFUtils.waitForLoading(page);
+    return;
+  }
+
   await tab.waitFor({ state: 'visible', timeout: 15000 });
   const isActive = await tab.getAttribute('aria-selected').catch(() => null);
   if (isActive !== 'true') {
