@@ -243,12 +243,18 @@ function saveHashStore(store: HashStore): void {
 /**
  * Normalize story content to ensure minor formatting/whitespace/line-ending 
  * differences do not trigger a hash mismatch and costly regeneration.
+ * 
+ * Specifically ignores:
+ *   - "Source: Jira ... fetched 2026-04-27" lines (volatile date)
+ *   - "<!-- Jira: SCRUM-5 -->" comments (traceability is good, but doesn't change the test logic)
  */
 function normalizeStoryContent(str: string): string {
   return str
-    .replace(/\r\n/g, '\n')     // Normalize line endings
-    .replace(/[ \t]+$/gm, '')   // Remove trailing whitespace per line
-    .trim();                    // Remove leading/trailing newlines
+    .replace(/\r\n/g, '\n')                             // Normalize line endings
+    .replace(/^Source: Jira.*fetched.*$/gim, '')         // Ignore Jira fetch date line
+    .replace(/<!-- Jira:.*-->/gim, '')                  // Ignore Jira traceability comments
+    .replace(/[ \t]+$/gm, '')                           // Remove trailing whitespace per line
+    .trim();                                            // Remove leading/trailing newlines
 }
 
 function md5(str: string): string {
@@ -486,6 +492,7 @@ async function callClaude(
 
   const system = `You are a Salesforce Revenue Cloud QA engineer writing Playwright TypeScript tests.
 Rules (apply to every line of code):
+- Adhere STRICTLY to the SHARED GROUND RULES in MasterPrompt.md.
 - ALWAYS import { SFUtils } from '../utils/SFUtils';
 - Use SFUtils.goto(page, url) instead of page.goto().
 - Use SFUtils.waitForLoading(page) instead of manual spinner waits.
@@ -493,10 +500,12 @@ Rules (apply to every line of code):
 - Use SFUtils.fillName(root, 'firstName'|'lastName', value) for Name fields.
 - Use SFUtils.selectCombobox(page, root, 'ApiNameOrLabel', label) for all dropdowns.
 - Use SFUtils.fillLookup(page, root, 'ApiNameOrLabel', value) for all lookups.
-- Field Identification: Prefer ApiName if known, otherwise use the exact Label string.
+- VERIFIED LOCATORS: Use the exact selectors provided in the "VERIFIED LOCATORS" section below.
+- Do NOT guess or invent field names. If a field is not in VERIFIED LOCATORS, use the exact Label string from the story.
 - Call dismissAuraError(page) after every SFUtils.goto().
 - Use exact button matching: getByRole('button', { name: 'Save', exact: true }).
 - TAB NAVIGATION: Always call clickTab(page, 'Details') before accessing fields on a record page.
+- TEST DATA: Use data from tests/fixtures/test-data.json via the 'data' constant.
 ${scrapedLocators}${knowledgeContext}`;
 
   const updateContext = isUpdate ? `
@@ -508,10 +517,11 @@ ${existingScenarios}
 --- EXISTING STABLE TEST CODE ---
 ${existingTestCode}
 
-Your job:
-1. **Reuse Stable Code:** If an AC's criteria is UNCHANGED, you MUST copy its existing test() block from the stable code above exactly. Do not rewrite it.
-2. **Add New Tests:** Add new TC-IDs for the ADDED criteria you found in the updated story.
-3. **Consistency:** Ensure the TC-IDs in the scenarios table match the TC-IDs in the test code.
+Your goal is to maintain stability.
+1. **Reuse Stable Code:** If an AC's criteria is UNCHANGED in the new story, you MUST copy its existing test() block from the "EXISTING STABLE TEST CODE" section exactly. Do NOT change its field names, locators, or logic.
+2. **Handle Changed ACs:** Only rewrite the test() block for the specific AC that has changed in the story.
+3. **Add New Tests:** Add new TC-IDs only for the NEW acceptance criteria.
+4. **Logic Preservation:** If you must update a test, keep any logic that is already working (like specific SFUtils calls).
 ` : '';
 
   const user = `${isUpdate ? 'UPDATE' : 'NEW'} user story:

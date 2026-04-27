@@ -31,6 +31,7 @@ export interface TestPlanResult {
 
 function callClaudeCode(systemPrompt: string, userPrompt: string): ClaudeResult | null {
   const sysFile = path.join(os.tmpdir(), `sf-plan-sys-${Date.now()}.txt`);
+  // @ts-ignore
   const isWin   = process.platform === 'win32';
   const claudeArgs: string[] = isWin
     ? [path.join(os.homedir(), 'AppData', 'Roaming', 'npm',
@@ -41,6 +42,7 @@ function callClaudeCode(systemPrompt: string, userPrompt: string): ClaudeResult 
   try {
     fs.writeFileSync(sysFile, systemPrompt, 'utf8');
 
+    // @ts-ignore
     const childEnv = { ...process.env };
     for (const key of Object.keys(childEnv)) {
       if (key.startsWith('CLAUDE') || key.startsWith('VSCODE_') || key === 'ELECTRON_RUN_AS_NODE') {
@@ -83,8 +85,7 @@ function callClaudeCode(systemPrompt: string, userPrompt: string): ClaudeResult 
 
 export function gatherContext(): string {
   const cfg = loadConfig();
-  const today = new Date().toISOString().split('T')[0];
-  const lines: string[] = [`App: ${cfg.appName}`, `Date: ${today}`, ''];
+  const lines: string[] = [`App: ${cfg.appName}`, ''];
 
   for (const obj of cfg.objects) {
     const scenarioPath = path.join('generated', 'test-scenarios', obj.scenarioFile);
@@ -327,9 +328,11 @@ TC ID format: TC-{PREFIX}-{NUMBER} (e.g., TC-ACC-001). Every TC referenced must 
 }
 
 // ── Standalone entry-point ────────────────────────────────────────────────────
+// @ts-ignore
 if (require.main === module) {
   generateTestPlan().then(r => {
     console.log('[test-plan] Done:', r.status);
+    // @ts-ignore
     process.exit(r.status === 'failed' ? 1 : 0);
   });
 }

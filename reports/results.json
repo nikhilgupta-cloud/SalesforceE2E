@@ -77,45 +77,7 @@
           "column": 6,
           "specs": [
             {
-              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms under Details tab (soft-fail)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 23444,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "[SOFT-FAIL][AC-005-01] Payment Terms is empty or not populated on Account.\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-04-24T08:16:18.340Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-0b6878451cfcf08904e9",
-              "file": "account.spec.ts",
-              "line": 86,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-002 — Create new Contact on Account record via Contacts related list",
+              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms (soft-fail)",
               "ok": false,
               "tags": [],
               "tests": [
@@ -129,96 +91,53 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 55519,
+                      "status": "passed",
+                      "duration": 15378,
                       "error": {
-                        "message": "Error: Expected Contact record page but URL is: https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view",
-                        "stack": "Error: Expected Contact record page but URL is: https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:203:13",
+                        "message": "ReferenceError: expect is not defined",
+                        "stack": "ReferenceError: expect is not defined\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:87:5",
                         "location": {
                           "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 13,
-                          "line": 203
+                          "column": 5,
+                          "line": 87
                         },
-                        "snippet": "\u001b[0m \u001b[90m 201 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[35m/\\/Contact\\/[A-Za-z0-9]+\\/view/\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m.\u001b[39m\u001b[36mcatch\u001b[39m(() \u001b[33m=>\u001b[39m {})\u001b[33m;\u001b[39m\n \u001b[90m 202 |\u001b[39m     \u001b[36mif\u001b[39m (\u001b[33m!\u001b[39mpage\u001b[33m.\u001b[39murl()\u001b[33m.\u001b[39mincludes(\u001b[32m'/Contact/'\u001b[39m)) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 203 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Expected Contact record page but URL is: ${page.url()}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 204 |\u001b[39m     }\n \u001b[90m 205 |\u001b[39m\n \u001b[90m 206 |\u001b[39m     createdContactUrl \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39murl()\u001b[33m;\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[0m \u001b[90m 85 |\u001b[39m     \u001b[36mconst\u001b[39m billingStreetField \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-field-api-name=\"BillingStreet\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n \u001b[90m 86 |\u001b[39m     \u001b[36mconst\u001b[39m hasBillingStreet \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m billingStreetField\u001b[33m.\u001b[39misVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m.\u001b[39m\u001b[36mcatch\u001b[39m(() \u001b[33m=>\u001b[39m \u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 87 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(hasBillingStreet\u001b[33m,\u001b[39m \u001b[32m'AC-005-01 SOFT: Billing Address (BillingStreet) should be visible under Details tab'\u001b[39m)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 88 |\u001b[39m\n \u001b[90m 89 |\u001b[39m     \u001b[90m// Soft-fail: Payment Terms (custom field; look by label text as API name may vary)\u001b[39m\n \u001b[90m 90 |\u001b[39m     \u001b[36mconst\u001b[39m paymentTermsField \u001b[33m=\u001b[39m page\u001b[0m"
                       },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 13,
-                            "line": 203
-                          },
-                          "message": "Error: Expected Contact record page but URL is: https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\n\n\u001b[0m \u001b[90m 201 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL(\u001b[35m/\\/Contact\\/[A-Za-z0-9]+\\/view/\u001b[39m\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m.\u001b[39m\u001b[36mcatch\u001b[39m(() \u001b[33m=>\u001b[39m {})\u001b[33m;\u001b[39m\n \u001b[90m 202 |\u001b[39m     \u001b[36mif\u001b[39m (\u001b[33m!\u001b[39mpage\u001b[33m.\u001b[39murl()\u001b[33m.\u001b[39mincludes(\u001b[32m'/Contact/'\u001b[39m)) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 203 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Expected Contact record page but URL is: ${page.url()}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 204 |\u001b[39m     }\n \u001b[90m 205 |\u001b[39m\n \u001b[90m 206 |\u001b[39m     createdContactUrl \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39murl()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:203:13\u001b[22m"
-                        }
-                      ],
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-24T08:16:43.672Z",
+                      "startTime": "2026-04-27T04:03:29.866Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-d6b35-d-via-Contacts-related-list-chromium\\test-failed-1.png"
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-9a26f-nd-Payment-Terms-soft-fail--chromium\\test-failed-1.png"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-d6b35-d-via-Contacts-related-list-chromium\\error-context.md"
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-9a26f-nd-Payment-Terms-soft-fail--chromium\\error-context.md"
                         }
                       ],
                       "errorLocation": {
                         "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 13,
-                        "line": 203
+                        "column": 5,
+                        "line": 87
                       }
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "passed"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-4096589a576a95f8377c",
+              "id": "ad4620ead4e6d9cc2627-0c9c6fa3250d1da7068c",
               "file": "account.spec.ts",
-              "line": 111,
-              "column": 5
-            },
-            {
-              "title": "TC-ACC-003 — Create Opportunity from Contact record via Opportunities related list",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-24T08:17:40.963Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-b5ddaa06db3b432e1f43",
-              "file": "account.spec.ts",
-              "line": 210,
+              "line": 80,
               "column": 7
             },
             {
-              "title": "TC-ACC-004 — Verify Contact is assigned as Primary Contact Role on Opportunity",
+              "title": "TC-ACC-002 — Create new Contact on Account record",
               "ok": true,
               "tags": [],
               "tests": [
@@ -238,7 +157,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-24T08:17:41.013Z",
+                      "startTime": "2026-04-27T04:03:48.887Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -246,13 +165,13 @@
                   "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-531ed4647b1461da75de",
+              "id": "ad4620ead4e6d9cc2627-b8483f2ef4da395b9103",
               "file": "account.spec.ts",
-              "line": 326,
-              "column": 5
+              "line": 98,
+              "column": 7
             },
             {
-              "title": "TC-ACC-005 — Create Quote from Opportunity",
+              "title": "TC-ACC-003 — Create Opportunity from Contact related list",
               "ok": true,
               "tags": [],
               "tests": [
@@ -272,7 +191,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-24T08:17:41.104Z",
+                      "startTime": "2026-04-27T04:03:48.906Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -280,10 +199,78 @@
                   "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-e0587f41f4c21bdd1d0e",
+              "id": "ad4620ead4e6d9cc2627-573a2e0254bcd596bdb1",
               "file": "account.spec.ts",
-              "line": 380,
-              "column": 5
+              "line": 131,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-004 — Verify Contact is Primary Contact Role on Opportunity",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-27T04:03:48.931Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-921809320ee82aaaf28b",
+              "file": "account.spec.ts",
+              "line": 160,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-005 — Create Quote from Opportunity via Create Quote button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-27T04:03:48.972Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-d9f96f24d4b9b7eeb790",
+              "file": "account.spec.ts",
+              "line": 181,
+              "column": 7
             }
           ]
         }
@@ -292,11 +279,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-24T08:16:13.739Z",
-    "duration": 87743.787,
+    "startTime": "2026-04-27T04:03:26.062Z",
+    "duration": 23120.467,
     "expected": 1,
-    "skipped": 3,
-    "unexpected": 1,
+    "skipped": 4,
+    "unexpected": 0,
     "flaky": 0
   }
 }
