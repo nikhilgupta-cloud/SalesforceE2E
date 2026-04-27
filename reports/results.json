@@ -10,18 +10,14 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {
-      "actualWorkers": 1
-    },
+    "metadata": {},
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "D:/SalesforceE2E1/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "chromium",
         "name": "chromium",
         "testDir": "D:/SalesforceE2E1/tests",
@@ -62,227 +58,28 @@
     "workers": 1,
     "webServer": null
   },
-  "suites": [
+  "suites": [],
+  "errors": [
     {
-      "title": "account.spec.ts",
-      "file": "account.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Account Tests",
-          "file": "account.spec.ts",
-          "line": 65,
-          "column": 6,
-          "specs": [
-            {
-              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms (soft-fail)",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 15378,
-                      "error": {
-                        "message": "ReferenceError: expect is not defined",
-                        "stack": "ReferenceError: expect is not defined\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:87:5",
-                        "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 5,
-                          "line": 87
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 85 |\u001b[39m     \u001b[36mconst\u001b[39m billingStreetField \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-field-api-name=\"BillingStreet\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n \u001b[90m 86 |\u001b[39m     \u001b[36mconst\u001b[39m hasBillingStreet \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m billingStreetField\u001b[33m.\u001b[39misVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m.\u001b[39m\u001b[36mcatch\u001b[39m(() \u001b[33m=>\u001b[39m \u001b[36mfalse\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 87 |\u001b[39m     expect\u001b[33m.\u001b[39msoft(hasBillingStreet\u001b[33m,\u001b[39m \u001b[32m'AC-005-01 SOFT: Billing Address (BillingStreet) should be visible under Details tab'\u001b[39m)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 88 |\u001b[39m\n \u001b[90m 89 |\u001b[39m     \u001b[90m// Soft-fail: Payment Terms (custom field; look by label text as API name may vary)\u001b[39m\n \u001b[90m 90 |\u001b[39m     \u001b[36mconst\u001b[39m paymentTermsField \u001b[33m=\u001b[39m page\u001b[0m"
-                      },
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-27T04:03:29.866Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-9a26f-nd-Payment-Terms-soft-fail--chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-9a26f-nd-Payment-Terms-soft-fail--chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 5,
-                        "line": 87
-                      }
-                    }
-                  ],
-                  "status": "passed"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-0c9c6fa3250d1da7068c",
-              "file": "account.spec.ts",
-              "line": 80,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-002 — Create new Contact on Account record",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-27T04:03:48.887Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-b8483f2ef4da395b9103",
-              "file": "account.spec.ts",
-              "line": 98,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-003 — Create Opportunity from Contact related list",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-27T04:03:48.906Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-573a2e0254bcd596bdb1",
-              "file": "account.spec.ts",
-              "line": 131,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-004 — Verify Contact is Primary Contact Role on Opportunity",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-27T04:03:48.931Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-921809320ee82aaaf28b",
-              "file": "account.spec.ts",
-              "line": 160,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-005 — Create Quote from Opportunity via Create Quote button",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-27T04:03:48.972Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-d9f96f24d4b9b7eeb790",
-              "file": "account.spec.ts",
-              "line": 181,
-              "column": 7
-            }
-          ]
-        }
-      ]
+      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected reserved word 'await'. (201:4)\n\n\u001b[0m \u001b[90m 199 |\u001b[39m\n \u001b[90m 200 |\u001b[39m     \u001b[90m// Verify the Opportunity detail page loaded\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 201 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.slds-page-header'\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 202 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m`text=${data.opportunity.Name}`\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 203 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 204 |\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected reserved word 'await'. (201:4)\n\n\u001b[0m \u001b[90m 199 |\u001b[39m\n \u001b[90m 200 |\u001b[39m     \u001b[90m// Verify the Opportunity detail page loaded\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 201 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.slds-page-header'\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 202 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m`text=${data.opportunity.Name}`\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 203 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 204 |\u001b[39m\u001b[0m",
+      "location": {
+        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
+        "line": 201,
+        "column": 4
+      },
+      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:201\n\n\u001b[0m \u001b[90m 199 |\u001b[39m\n \u001b[90m 200 |\u001b[39m     \u001b[90m// Verify the Opportunity detail page loaded\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 201 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'.slds-page-header'\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 202 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m`text=${data.opportunity.Name}`\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 203 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 204 |\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
     }
   ],
-  "errors": [],
   "stats": {
-    "startTime": "2026-04-27T04:03:26.062Z",
-    "duration": 23120.467,
-    "expected": 1,
-    "skipped": 4,
+    "startTime": "2026-04-27T04:10:42.547Z",
+    "duration": 376.9609999999998,
+    "expected": 0,
+    "skipped": 0,
     "unexpected": 0,
     "flaky": 0
   }
