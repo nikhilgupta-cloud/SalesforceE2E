@@ -73,7 +73,7 @@
         {
           "title": "Account E2E Lifecycle",
           "file": "account.spec.ts",
-          "line": 34,
+          "line": 70,
           "column": 6,
           "specs": [
             {
@@ -92,19 +92,29 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 20574,
+                      "duration": 117435,
                       "errors": [],
-                      "stdout": [],
-                      "stderr": [
+                      "stdout": [
                         {
-                          "text": "[SOFT FAIL] Billing Address missing — continuing\n"
+                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
                         },
                         {
-                          "text": "[SOFT FAIL] Payment Terms missing — continuing\n"
+                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
+                        },
+                        {
+                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "text": "[SOFT FAIL] BillingAddress not visible — field may be absent from layout\n"
+                        },
+                        {
+                          "text": "[SOFT FAIL] Payment_Terms__c not visible — field may be absent from layout\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:06:10.157Z",
+                      "startTime": "2026-04-28T13:56:04.396Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -114,8 +124,8 @@
               ],
               "id": "ad4620ead4e6d9cc2627-29de5c2b15f28a0862c5",
               "file": "account.spec.ts",
-              "line": 39,
-              "column": 5
+              "line": 78,
+              "column": 7
             },
             {
               "title": "TC-ACC-002 — Create Contact on Account",
@@ -133,37 +143,55 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 14583,
+                      "duration": 91108,
                       "error": {
-                        "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Related' })\u001b[22m\n",
-                        "stack": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Related' })\u001b[22m\n\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:75:54",
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/\\/Contact\\/|\\/003/\u001b[39m\nReceived string:  \u001b[31m\"https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\"\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/\\/Contact\\/|\\/003/\u001b[39m\nReceived string:  \u001b[31m\"https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\"\u001b[39m\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:152:24",
                         "location": {
                           "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 54,
-                          "line": 75
+                          "column": 24,
+                          "line": 152
                         },
-                        "snippet": "\u001b[0m \u001b[90m 73 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m accountUrl)\u001b[33m;\u001b[39m\n \u001b[90m 74 |\u001b[39m     \u001b[36mawait\u001b[39m dismissAuraError(page)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 75 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'tab'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Related'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 76 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mwaitForLoading(page)\u001b[33m;\u001b[39m\n \u001b[90m 77 |\u001b[39m\n \u001b[90m 78 |\u001b[39m     \u001b[36mconst\u001b[39m contactsSection \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'article'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[35m/Contacts/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[90m// Wait for navigation away from the /new URL; capture the Contact record URL\u001b[39m\n \u001b[90m 151 |\u001b[39m     contactUrl \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m waitForRecordUrl(page\u001b[33m,\u001b[39m [\u001b[32m'/Contact/'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'/003'\u001b[39m])\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     expect(contactUrl)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/\\/Contact\\/|\\/003/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`[PASS] Contact created: ${contactUrl}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 154 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 155 |\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
                             "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 54,
-                            "line": 75
+                            "column": 24,
+                            "line": 152
                           },
-                          "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Related' })\u001b[22m\n\n\n\u001b[0m \u001b[90m 73 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m accountUrl)\u001b[33m;\u001b[39m\n \u001b[90m 74 |\u001b[39m     \u001b[36mawait\u001b[39m dismissAuraError(page)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 75 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'tab'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Related'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 76 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mwaitForLoading(page)\u001b[33m;\u001b[39m\n \u001b[90m 77 |\u001b[39m\n \u001b[90m 78 |\u001b[39m     \u001b[36mconst\u001b[39m contactsSection \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'article'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[35m/Contacts/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:75:54\u001b[22m"
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/\\/Contact\\/|\\/003/\u001b[39m\nReceived string:  \u001b[31m\"https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\"\u001b[39m\n\n\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[90m// Wait for navigation away from the /new URL; capture the Contact record URL\u001b[39m\n \u001b[90m 151 |\u001b[39m     contactUrl \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m waitForRecordUrl(page\u001b[33m,\u001b[39m [\u001b[32m'/Contact/'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'/003'\u001b[39m])\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     expect(contactUrl)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/\\/Contact\\/|\\/003/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`[PASS] Contact created: ${contactUrl}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 154 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 155 |\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:152:24\u001b[22m"
                         }
                       ],
-                      "stdout": [],
+                      "stdout": [
+                        {
+                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
+                        },
+                        {
+                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:06:31.704Z",
+                      "startTime": "2026-04-28T13:58:03.283Z",
                       "annotations": [],
-                      "attachments": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-E2E-Lifecy-b58e0-—-Create-Contact-on-Account-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-E2E-Lifecy-b58e0-—-Create-Contact-on-Account-chromium\\error-context.md"
+                        }
+                      ],
                       "errorLocation": {
                         "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 54,
-                        "line": 75
+                        "column": 24,
+                        "line": 152
                       }
                     }
                   ],
@@ -172,7 +200,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-469f6df9d735c1de86bb",
               "file": "account.spec.ts",
-              "line": 72,
+              "line": 119,
               "column": 7
             },
             {
@@ -196,7 +224,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:06:46.667Z",
+                      "startTime": "2026-04-28T13:59:34.887Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -206,7 +234,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-96f6a48fc03772efef69",
               "file": "account.spec.ts",
-              "line": 96,
+              "line": 159,
               "column": 7
             },
             {
@@ -230,7 +258,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:06:46.698Z",
+                      "startTime": "2026-04-28T13:59:34.913Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -240,7 +268,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-9bbca9bf5e02899f3242",
               "file": "account.spec.ts",
-              "line": 135,
+              "line": 222,
               "column": 7
             },
             {
@@ -264,7 +292,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:06:46.744Z",
+                      "startTime": "2026-04-28T13:59:34.943Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -274,7 +302,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-cee4aab340bc9229fcc7",
               "file": "account.spec.ts",
-              "line": 213,
+              "line": 312,
               "column": 7
             }
           ]
@@ -284,8 +312,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-28T13:06:08.109Z",
-    "duration": 38720.698,
+    "startTime": "2026-04-28T13:56:01.575Z",
+    "duration": 213464.839,
     "expected": 1,
     "skipped": 3,
     "unexpected": 1,

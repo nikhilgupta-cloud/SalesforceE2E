@@ -1,29 +1,48 @@
 import { Page, Locator, FrameLocator } from '@playwright/test';
 
 /**
- * Robust Salesforce Utilities
+ * Robust Salesforce Utilities (Agentic Framework Ready)
  */
 export class SFUtils {
   static MODAL = '[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])';
   static SPINNER = '.slds-spinner_container, .slds-spinner, .forceVisualMessageQueue';
 
   static async goto(page: Page, url: string) {
-    await page.goto(url, { waitUntil: 'load', timeout: 60000 });
+    // FIX 1: Change 'load' to 'domcontentloaded' so it doesn't hang on background telemetry
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await this.waitForAppReady(page);
   }
 
   static async waitForAppReady(page: Page) {
+    // FIX 2: Change 'attached' to 'visible'. We want the UI actually rendered.
     await page.locator('lightning-app, .slds-page-header, .desktop').first()
-      .waitFor({ state: 'attached', timeout: 30000 }).catch(() => {});
+      .waitFor({ state: 'visible', timeout: 30000 }).catch(() => {
+        console.log("⚠️ App Ready indicator not visible, continuing anyway...");
+      });
     await this.waitForLoading(page);
   }
 
   static async waitForLoading(page: Page) {
+    // FIX 3: Wait a tiny bit first to allow the initial spinner to trigger
+    await page.waitForTimeout(500); 
     const spinner = page.locator(this.SPINNER).first();
+    
+    // Check if spinner is there, wait for it to leave.
     if (await spinner.isVisible({ timeout: 2000 }).catch(() => false)) {
       await spinner.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {});
     }
+    // A secondary small wait to bypass the "flickering spinner" gap
     await page.waitForTimeout(500);
+  }
+
+  // NEW METHOD: The Agentic "Safe Click"
+  // Forces the agent to wait for stability before clicking things like Tabs or Save buttons
+  static async safeClick(locator: Locator, timeout = 15000) {
+    await locator.waitFor({ state: 'visible', timeout });
+    
+    // Scroll into view - SF often hides elements under sticky headers
+    await locator.scrollIntoViewIfNeeded(); 
+    await locator.click();
   }
 
   static getField(root: Page | Locator | FrameLocator, apiName: string): Locator {
@@ -48,6 +67,9 @@ export class SFUtils {
     const field = this.getField(root, apiName);
     const input = field.locator('input, textarea').first();
     await input.waitFor({ state: 'visible', timeout: 15000 });
+    
+    // FIX 4: Always click a Salesforce field before filling to wake up the event listeners
+    await input.click(); 
     await input.fill(value);
     await input.press('Tab');
   }
@@ -56,8 +78,13 @@ export class SFUtils {
     const field = this.getField(root, apiName);
     const trigger = field.locator('input[role="combobox"], button').first();
     await trigger.click();
+    
+    // Wait for the dropdown to actually render in the DOM
+    await page.waitForTimeout(500); 
+
     const option = page.locator('lightning-base-combobox-item, [role="option"]')
       .filter({ hasText: new RegExp(`^${label}$`, 'i') }).first();
+    await option.scrollIntoViewIfNeeded();
     await option.click();
     await this.waitForLoading(page);
   }
@@ -65,6 +92,7 @@ export class SFUtils {
   static async fillName(root: Page | Locator | FrameLocator, subFieldName: 'firstName' | 'lastName', value: string) {
     const input = root.locator(`input[name="${subFieldName}"]`).first();
     await input.waitFor({ state: 'visible', timeout: 15000 });
+    await input.click(); // Wake up listener
     await input.fill(value);
   }
 
@@ -103,7 +131,9 @@ export class SFUtils {
   static async searchAndOpen(page: Page, name: string): Promise<string> {
     await this._triggerGlobalSearch(page, name);
     const resultLink = page.getByRole('link', { name, exact: true }).first();
-    await resultLink.click();
+    
+    // Use the new safeClick here too!
+    await this.safeClick(resultLink); 
     await this.waitForLoading(page);
     return page.url();
   }
