@@ -19,6 +19,7 @@ This agent:
 ## Inputs
 - `prompts/user-stories/*.md`
 - `user-stories/*.md`
+- `knowledge/FLow/Flow.mp4` (End-to-end journey video)
 - Domain context from Agent 1 (including `isBundleFlow` flag)
 
 ---
@@ -32,6 +33,11 @@ User stories are:
 
 👉 The agent MUST:
 **Understand intent, not formatting**
+
+---
+
+# 🧠 STEP 0: VISUAL CROSS-REFERENCE (NEW)
+If `Flow.mp4` is available, review it to understand the naming and sequence of buttons and navigation steps. Use this to clarify ambiguous UI actions in the user stories (e.g., if a story says "Click Save," but the video shows "Click Submit," flag this as a potential discrepancy).
 
 ---
 

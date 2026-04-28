@@ -1,6 +1,6 @@
 {
   "account": {
-    "scrapedAt": "2026-04-28T03:33:51.290Z",
+    "scrapedAt": "2026-04-28T12:37:13.704Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Account/new",
     "fields": [
       {
@@ -153,7 +153,7 @@
     ]
   },
   "contact": {
-    "scrapedAt": "2026-04-28T03:33:58.152Z",
+    "scrapedAt": "2026-04-28T12:37:21.213Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Contact/new",
     "fields": [
       {
@@ -362,7 +362,7 @@
     ]
   },
   "opportunity": {
-    "scrapedAt": "2026-04-28T03:34:05.771Z",
+    "scrapedAt": "2026-04-28T12:37:27.937Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Opportunity/new",
     "fields": [
       {
@@ -466,37 +466,8 @@
     ]
   },
   "quote": {
-    "scrapedAt": "2026-04-28T03:34:12.779Z",
+    "scrapedAt": "2026-04-28T12:37:35.374Z",
     "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/SBQQ__Quote__c/new",
-    "fields": [
-      {
-        "label": "Meetings",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Meetings\") input",
-        "apiName": null
-      },
-      {
-        "label": "Calls",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Calls\") input",
-        "apiName": null
-      },
-      {
-        "label": "Emails",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Emails\") input",
-        "apiName": null
-      },
-      {
-        "label": "Time Frame",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Time Frame\") button",
-        "apiName": null
-      }
-    ]
+    "fields": []
   }
 }

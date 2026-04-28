@@ -118,9 +118,11 @@ Load and surface the correct domain knowledge for the Salesforce object(s) under
 
 INPUTS
 - knowledge/agentforce-rm/INDEX.md  — object-to-domain file map
+- knowledge/FLow/Flow.mp4           — end-to-end user journey video
 - prompts/framework-config.json     — list of objects being tested (key field)
 
 PROCESS
+0. If knowledge/FLow/Flow.mp4 exists, review it to understand the visual flow, transitions, and landing pages for the end-to-end user journey.
 1. Read INDEX.md to resolve which domain file(s) map to each object key.
    Object → Domain file quick map:
      quote, quotelineitem      → quote-lifecycle.md, pricing.md
@@ -185,19 +187,21 @@ Produce a consolidated, human-readable test plan that defines scope, approach, t
 
 INPUTS
 - AC list from Agent 2
-- Domain context from Agent 1
-- prompts/framework-config.json  — object list, prefixes, and app identity
+- Domain context from Agent 1 (including Field Tiering: Hard/Soft)
+- knowledge/FLow/Flow.mp4           — end-to-end user journey video
+- prompts/framework-config.json     — object list, prefixes, and app identity
 
 PROCESS
-1. Define test scope: which objects are in scope, which ACs are covered.
+1. Define test scope: which objects are in scope, which ACs are covered. Use Flow.mp4 to validate the sequence of objects in the positive path.
 2. Write a summary table: Object | Total ACs | Positive | Negative | Edge Cases | Total TCs.
 3. Document test data strategy:
    - Use timestamps for uniqueness: e.g., AutoAcc-${Date.now()}
    - No hardcoded credentials
    - Supporting records (Account, Opportunity) created within the test where needed
+   - Document the Soft vs. Hard field strategy (soft-fail on optional fields)
 4. List execution order: Account → Contact → Opportunity → Quote (sequential, 1 worker).
-5. Identify risks and mitigations (Salesforce session expiry, spinner timing, AG-Grid lazy load).
-6. Define entry criteria: auth/session.json exists and is valid; SF_SANDBOX_URL is set.
+5. Identify risks and mitigations (Salesforce session expiry, spinner timing, AG-Grid lazy load, and layout changes affecting "Soft" fields).
+6. Define entry criteria: auth/session.json exists and is valid; SF_SANDBOX_URL is set; knowledge/FLow/Flow.mp4 is available.
 7. Define exit criteria: all tests executed; self-healing complete; dashboard updated.
 
 OUTPUT

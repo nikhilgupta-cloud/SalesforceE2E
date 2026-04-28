@@ -153,6 +153,11 @@ Every failure MUST be classified into one of the following categories.
 - Network failure
 - Salesforce org unavailable or Aura system error blocking execution
 
+8. `soft_failure` (NEW)
+- "Soft" field (optional) not found in UI.
+- Test continues but logs a [SOFT FAILURE] warning.
+- Do NOT mark the test status as FAILED in reports/results.json if ONLY soft failures occurred.
+
 ---
 
 ## OUTPUT FILES

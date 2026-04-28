@@ -10,6 +10,7 @@ Load and surface the correct domain knowledge for the Salesforce object(s) under
 
 ## Inputs
 - `knowledge/agentforce-rm/INDEX.md` — object-to-domain file map
+- `knowledge/FLow/Flow.mp4` — end-to-end user journey video
 - `prompts/framework-config.json` — list of objects being tested (key field)
 
 ## Object → Domain File Map
@@ -27,6 +28,7 @@ Load and surface the correct domain knowledge for the Salesforce object(s) under
 | opportunity | `quote-lifecycle.md` |
 
 ## Process
+0. **Review Flow Video:** If `knowledge/FLow/Flow.mp4` exists, review it to understand the visual flow, transitions, and landing pages for the end-to-end user journey.
 1. Read `knowledge/agentforce-rm/INDEX.md` to confirm the object-to-domain mapping.
 2. **Bundle Detection (CRITICAL):** If testing Quote or Product, check for "Bundle" or "Configuration" keywords. If found, ALWAYS load `cml-scripting.md`.
 3. Load each resolved domain file in full from `knowledge/agentforce-rm/`.

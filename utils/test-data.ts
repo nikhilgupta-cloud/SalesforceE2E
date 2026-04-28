@@ -55,7 +55,7 @@ export interface TestData {
 
 const FIXTURE_PATH = path.join(__dirname, '..', 'tests', 'fixtures', 'test-data.json');
 
-function loadFixture(): Partial<TestData> & { Quote?: { Name?: string; Contract_Type?: string } } {
+function loadFixture(): Partial<TestData> {
   try {
     if (fs.existsSync(FIXTURE_PATH)) {
       return JSON.parse(fs.readFileSync(FIXTURE_PATH, 'utf8'));
@@ -75,10 +75,10 @@ export function getTestData(): TestData {
   const lastName      = fixture.contact?.Last_Name  || `Last${timestamp}`;
   const email         = fixture.contact?.Email      || `test${timestamp}@auto.com`;
   const phone         = fixture.contact?.Phone      || `555-${String(timestamp).slice(-4)}`;
-  const oppName       = fixture.opportunity?.Name   || (fixture.opportunity as any)?.Opportunity_Name || `AutoOpp-${timestamp}`;
+  const oppName       = fixture.opportunity?.Name   || `AutoOpp-${timestamp}`;
   const stage         = fixture.opportunity?.Stage  || 'Prospecting';
   const closeDate     = fixture.opportunity?.Close_Date || '12/31/2026';
-  const quoteName     = fixture.Quote?.Name         || `AutoQuote-${timestamp}`;
+  const quoteName     = fixture.quote?.Name         || `AutoQuote-${timestamp}`;
 
   return {
     account: {
@@ -110,7 +110,7 @@ export function getTestData(): TestData {
     },
     quote: {
       Name:          quoteName,
-      Contract_Type: fixture.Quote?.Contract_Type || 'Subscription',
+      Contract_Type: fixture.quote?.Contract_Type || 'Subscription',
       name:          quoteName,              // camelCase alias
       priceBook:     'Standard Price Book',  // not in fixture; hardcoded safe default
       expirationDate:'12/31/2026',           // not in fixture; hardcoded safe default

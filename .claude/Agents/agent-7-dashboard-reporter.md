@@ -36,7 +36,7 @@ Aggregate all pipeline outputs into a live HTML dashboard, a pipeline state trac
    Output: `reports/SalesforceE2E-Framework-Overview.pptx`
 5. Print final pipeline summary to stdout:
    - Steps completed / failed
-   - Test totals: Passed | Failed | Skipped
+   - Test totals: Passed | Failed | Skipped | **Soft Failures (Warnings)**
    - Healed: X of Y failures resolved
 6. If `GITHUB_TOKEN` is set:
    a. Delete any remaining `probe-*.ts` and `probe-*.txt` files.

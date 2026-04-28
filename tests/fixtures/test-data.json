@@ -13,16 +13,14 @@
     "Phone": "555-01229"
   },
   "opportunity": {
-    "Name": "Auto Opportunity 9",
+    "Name": "Auto Opportunity 10",
     "Stage": "Prospecting",
     "Close_Date": "12/31/2026",
     "Amount": "15000",
     "Probability": "10"
   },
-"Quote": {
+  "quote": {
     "Name": "Auto Quote1",
     "Contract_Type": "Subscription"
-   
   }
-
 }

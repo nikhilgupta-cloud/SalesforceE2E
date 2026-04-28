@@ -574,6 +574,7 @@ Rules (apply to every line of code):
 - Use exact button matching: getByRole('button', { name: 'Save', exact: true }).
 - TAB NAVIGATION: Always call clickTab(page, 'Details') before accessing fields on a record page.
 - TEST DATA: Use data from tests/fixtures/test-data.json via the 'data' constant.
+- E2E FLOW VIDEO: If knowledge/FLow/Flow.mp4 exists, review it to understand the visual flow and transitions.
 ${scrapedLocators}${knowledgeContext}`;
 
   const updateContext = isUpdate ? `

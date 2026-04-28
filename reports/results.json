@@ -71,54 +71,13 @@
       "specs": [],
       "suites": [
         {
-          "title": "Account Tests",
+          "title": "Account E2E Lifecycle",
           "file": "account.spec.ts",
-          "line": 73,
+          "line": 35,
           "column": 6,
           "specs": [
             {
-              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 17364,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "⚠️ SOFT-FAIL AC-005-01: Billing Address field not found on Account Details tab\n"
-                        },
-                        {
-                          "text": "⚠️ SOFT-FAIL AC-005-01: Payment Terms field not found on Account Details tab\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-04-28T04:58:43.131Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-b8cc9ab9ecf67dd74a37",
-              "file": "account.spec.ts",
-              "line": 95,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-002 — Create Contact on Account, Opportunity from Contact, verify Primary Contact Role",
+              "title": "TC-ACC-001 — Verify Billing Address (Soft-Fail)",
               "ok": false,
               "tags": [],
               "tests": [
@@ -132,62 +91,48 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 17093,
+                      "status": "passed",
+                      "duration": 6428,
                       "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/Contact/\"\u001b[39m\nReceived string:    \u001b[31m\"https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\"\u001b[39m",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/Contact/\"\u001b[39m\nReceived string:    \u001b[31m\"https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\"\u001b[39m\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:169:24",
+                        "message": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder*=\"Search\"]').first() to be visible\u001b[22m\n",
+                        "stack": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder*=\"Search\"]').first() to be visible\u001b[22m\n\n    at Function._triggerGlobalSearch (D:\\SalesforceE2E1\\utils\\SFUtils.ts:97:23)\n    at Function.searchAndOpen (D:\\SalesforceE2E1\\utils\\SFUtils.ts:104:5)\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:39:18",
                         "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 24,
-                          "line": 169
+                          "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                          "column": 23,
+                          "line": 97
                         },
-                        "snippet": "\u001b[0m \u001b[90m 167 |\u001b[39m\n \u001b[90m 168 |\u001b[39m     contactUrl \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39murl()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 169 |\u001b[39m     expect(contactUrl)\u001b[33m.\u001b[39mtoContain(\u001b[32m'/Contact/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 170 |\u001b[39m\n \u001b[90m 171 |\u001b[39m     \u001b[90m// AC-005-03: Create Opportunity from Contact's Related tab\u001b[39m\n \u001b[90m 172 |\u001b[39m     \u001b[36mawait\u001b[39m clickTab(page\u001b[33m,\u001b[39m \u001b[32m'Related'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:97\n\n\u001b[0m \u001b[90m  95 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  96 |\u001b[39m     \u001b[36mconst\u001b[39m searchInput \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[placeholder*=\"Search\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  97 |\u001b[39m     \u001b[36mawait\u001b[39m searchInput\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  98 |\u001b[39m     \u001b[36mawait\u001b[39m searchInput\u001b[33m.\u001b[39mfill(query)\u001b[33m;\u001b[39m\n \u001b[90m  99 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Enter'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 100 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mwaitForLoading(page)\u001b[33m;\u001b[39m\u001b[0m"
                       },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 24,
-                            "line": 169
-                          },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoContain\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // indexOf\u001b[22m\n\nExpected substring: \u001b[32m\"/Contact/\"\u001b[39m\nReceived string:    \u001b[31m\"https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\"\u001b[39m\n\n\u001b[0m \u001b[90m 167 |\u001b[39m\n \u001b[90m 168 |\u001b[39m     contactUrl \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39murl()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 169 |\u001b[39m     expect(contactUrl)\u001b[33m.\u001b[39mtoContain(\u001b[32m'/Contact/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 170 |\u001b[39m\n \u001b[90m 171 |\u001b[39m     \u001b[90m// AC-005-03: Create Opportunity from Contact's Related tab\u001b[39m\n \u001b[90m 172 |\u001b[39m     \u001b[36mawait\u001b[39m clickTab(page\u001b[33m,\u001b[39m \u001b[32m'Related'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:169:24\u001b[22m"
-                        }
-                      ],
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T04:59:03.278Z",
+                      "startTime": "2026-04-28T12:40:33.941Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-827ce-verify-Primary-Contact-Role-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-Tests-TC-A-827ce-verify-Primary-Contact-Role-chromium\\error-context.md"
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-E2E-Lifecy-ef365--Billing-Address-Soft-Fail--chromium\\test-failed-1.png"
                         }
                       ],
                       "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 24,
-                        "line": 169
+                        "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                        "column": 23,
+                        "line": 97
                       }
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "passed"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-f9ef3f6a89479a6d6738",
+              "id": "ad4620ead4e6d9cc2627-fa46c98484a4f32a348e",
               "file": "account.spec.ts",
-              "line": 139,
+              "line": 38,
               "column": 7
             },
             {
-              "title": "TC-ACC-003 — Create Quote from Opportunity, Browse Catalogs, Add Product, Validate Cart",
+              "title": "TC-ACC-002 — Create Contact",
               "ok": true,
               "tags": [],
               "tests": [
@@ -207,7 +152,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T04:59:21.067Z",
+                      "startTime": "2026-04-28T12:40:42.213Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -215,13 +160,13 @@
                   "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-7094f9802a5e20497719",
+              "id": "ad4620ead4e6d9cc2627-798287315c071ccb69ec",
               "file": "account.spec.ts",
-              "line": 244,
+              "line": 51,
               "column": 7
             },
             {
-              "title": "TC-ACC-004 — Accept Quote, Create Contract, Activate Contract",
+              "title": "TC-ACC-003 — Create Opportunity",
               "ok": true,
               "tags": [],
               "tests": [
@@ -241,7 +186,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T04:59:21.097Z",
+                      "startTime": "2026-04-28T12:40:42.300Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -249,13 +194,13 @@
                   "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-bbc8c67913894dab986a",
+              "id": "ad4620ead4e6d9cc2627-a46618be5ec119450059",
               "file": "account.spec.ts",
-              "line": 397,
+              "line": 69,
               "column": 7
             },
             {
-              "title": "TC-ACC-005 — Create Order from Quote and Activate Order",
+              "title": "TC-ACC-005 — Create Quote",
               "ok": true,
               "tags": [],
               "tests": [
@@ -275,7 +220,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T04:59:21.127Z",
+                      "startTime": "2026-04-28T12:40:42.335Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -283,9 +228,179 @@
                   "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-826fdb9ac966e3cbedc4",
+              "id": "ad4620ead4e6d9cc2627-5b0d167adfea1f487966",
               "file": "account.spec.ts",
-              "line": 532,
+              "line": 85,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-28T12:40:42.363Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-29de5c2b15f28a0862c5",
+              "file": "account.spec.ts",
+              "line": 102,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-002 — Create Contact on Account",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-28T12:40:42.390Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-469f6df9d735c1de86bb",
+              "file": "account.spec.ts",
+              "line": 122,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-003 — Create Opportunity from Contact and Verify Primary Contact Role",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-28T12:40:42.423Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-96f6a48fc03772efef69",
+              "file": "account.spec.ts",
+              "line": 146,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-004 — Create Quote, Browse Catalogs, Add Product and Validate Cart",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-28T12:40:42.449Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-9bbca9bf5e02899f3242",
+              "file": "account.spec.ts",
+              "line": 185,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-005 — Accept Quote, Create and Activate Contract, Create and Activate Order",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-28T12:40:42.475Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-cee4aab340bc9229fcc7",
+              "file": "account.spec.ts",
+              "line": 263,
               "column": 7
             }
           ]
@@ -295,11 +410,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-28T04:58:40.075Z",
-    "duration": 41220.364,
+    "startTime": "2026-04-28T12:40:31.536Z",
+    "duration": 11000.758000000002,
     "expected": 1,
-    "skipped": 3,
-    "unexpected": 1,
+    "skipped": 8,
+    "unexpected": 0,
     "flaky": 0
   }
 }

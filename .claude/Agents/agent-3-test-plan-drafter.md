@@ -18,7 +18,8 @@ This agent bridges:
 
 ## Inputs
 - AC list from Agent 2 (structured JSON)
-- Domain context from Agent 1
+- Domain context from Agent 1 (including Field Tiering: Hard/Soft)
+- `knowledge/FLow/Flow.mp4` (End-to-end journey video)
 - `prompts/framework-config.json`
 
 ---
@@ -28,7 +29,9 @@ This agent bridges:
 This agent MUST:
 - NOT just summarize
 - MUST generate **test scenarios**
-- MUST ensure **coverage completeness**
+- MUST use `Flow.mp4` to define the sequence of UI transitions for the Positive Path.
+- MUST incorporate the **Soft vs. Hard field strategy** into the Risk Mitigation section.
+- MUST ensure **coverage completeness** (Positive, Negative, AND Edge cases).
 
 ---
 
@@ -47,13 +50,13 @@ For EACH AC:
 ## Generate:
 
 ### ✅ 1. Positive Scenario
-Valid flow where condition is satisfied
+Valid flow where condition is satisfied. **Trace this to visual steps in Flow.mp4.**
 
 ### ❌ 2. Negative Scenario
-Invalid/missing condition
+Invalid/missing condition. **Example: Attempting a state transition (e.g., Activate) before prerequisites are met.**
 
 ### ⚠️ 3. Edge Case
-Boundary or alternate path
+Boundary or alternate path. **Example: Maximum discount applied, or empty optional fields.**
 
 ---
 
@@ -146,6 +149,7 @@ Enhance with CPQ-specific risks:
 - Quote Line Editor sync issues
 - Amendment quote data loss
 - Async order creation
+- **"Soft" field visibility:** Optional fields may be hidden by layout changes (Mitigation: use soft-fail warning).
 
 ---
 

@@ -15,11 +15,13 @@ An AI-enhanced, end-to-end Salesforce test automation framework built on **Playw
 ## Knowledge Base
 
 The `knowledge/agentforce-rm/` directory contains the Agentforce Revenue Management domain knowledge base.
+The `knowledge/FLow/Flow.mp4` file contains the end-to-end user journey video.
 
 ### Mandatory Usage Rules
 1. ALWAYS start from `knowledge/agentforce-rm/INDEX.md`
-2. Load relevant domain file(s) based on object under test
-3. Use domain knowledge for:
+2. Review `knowledge/FLow/Flow.mp4` to understand the step-by-step UI interactions and transitions.
+3. Load relevant domain file(s) based on object under test
+4. Use domain knowledge for:
    - Field names
    - UI patterns
    - Salesforce limitations

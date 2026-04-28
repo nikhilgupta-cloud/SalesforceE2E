@@ -58,6 +58,10 @@ Fix: Update `test-data.json` or add record creation steps.
 Symptoms: login/session expired.
 Fix: Exit and request `npm run pipeline`.
 
+### 8. soft_failure (NEW)
+Symptoms: [SOFT FAILURE] warning logged by Agent 5.
+Action: IGNORE. These are intentional skips for optional fields and do not require healing.
+
 ---
 
 ## Healing Workflow
