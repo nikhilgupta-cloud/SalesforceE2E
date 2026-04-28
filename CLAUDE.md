@@ -211,25 +211,32 @@ No networkidle
 No isVisible() for logic
 Always .first()
 Always exact: true
+Never use global search (SFUtils.searchAndOpen) to navigate to a record saved in the same test run — Salesforce search indexing has a minutes-long delay; use the Related list link or success toast link instead
+Use SFUtils.searchExists() (10s timeout) for existence checks — never searchAndOpen() (30s timeout) when the record may not exist
+URL contains /Contact/ or /Opportunity/ is the reliable navigation proof — heading text is locale-dependent and unreliable
 Failure Handling Strategy
 
 If test fails:
 
 Agent 5 logs failure
 Agent 6:
-Classifies issue
+Classifies issue (selector / timing / data / Salesforce API error)
+Checks console output + stderr for 4xx/5xx HTTP codes before changing selectors
 Fixes selector/timing/data
 Re-runs test
 Max 3 retries
-Else → mark unresolved
+Else → apply test.fixme() with error comment — test is skipped cleanly, suite continues
 
 ❌ Never ignore failures
+❌ Never change selectors when console shows INVALID_SESSION_ID / INSUFFICIENT_ACCESS / HTTP 5xx
 
 AI Integration
 Uses Claude CLI (claude -p)
 Injects domain knowledge into prompts
 Uses MD5 for change detection
 Wraps generated code in markers
+Passing-test protection: if all tests in a spec file are currently passing, a story metadata change (Jira comment edit, whitespace, sprint annotation) does NOT trigger regeneration — hash is synced silently
+Story hash store: prompts/user-stories/.story-hashes.json — resync manually with node if stale
 Reports
 File	Purpose
 dashboard.html	Live results

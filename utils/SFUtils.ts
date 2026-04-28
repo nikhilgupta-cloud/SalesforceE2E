@@ -203,20 +203,22 @@ export class SFUtils {
     await page.keyboard.press('/');
     await page.waitForTimeout(1000);
 
-    // If '/' didn't open it, try clicking the search trigger button
-    const searchTrigger = page.locator([
-      '.slds-global-header__item--search button',
-      '.forceSearchAssistantTrigger button',
-      'button[aria-label*="Search"]',
-      'button.search-button'
-    ].join(', ')).first();
+    // Check if the search input is already focused or visible
+    const searchInput = page.locator('input[type="search"][placeholder*="Search"], input.slds-input[placeholder*="Search"]').first();
+    const alreadyFocused = await searchInput.isVisible({ timeout: 1000 }).catch(() => false);
 
-    const dropdownOpen = await page.locator('.forceSearchDesktop, [class*="searchBox"], .slds-combobox__form-element').first()
-      .isVisible({ timeout: 1500 }).catch(() => false);
+    if (!alreadyFocused) {
+      // If '/' didn't open it, try clicking the search trigger button
+      const searchTrigger = page.locator([
+        '.slds-global-header__item--search button',
+        '.forceSearchAssistantTrigger button',
+        'button[aria-label*="Search"]',
+        'button.search-button'
+      ].join(', ')).first();
 
-    if (!dropdownOpen) {
-      if (await searchTrigger.isVisible({ timeout: 3000 }).catch(() => false)) {
-        await searchTrigger.click();
+      if (await searchTrigger.isVisible({ timeout: 2000 }).catch(() => false)) {
+        // Use force: true to avoid "intercepted" errors if the input is partially covering the button
+        await searchTrigger.click({ force: true }).catch(() => {});
         await page.waitForTimeout(800);
       } else {
         // ULTIMATE FALLBACK: Navigate directly to search results page via URL
@@ -225,11 +227,12 @@ export class SFUtils {
         const baseUrl = currentUrl.split('/lightning/')[0];
         await page.goto(`${baseUrl}/lightning/search/All/Home/result?q=${encodeURIComponent(query)}`);
         await this.waitForLoading(page);
-        return; // Skip typing/pressing Enter as we are already at the results page
+        return;
       }
     }
 
-    // Type directly — the input is focused after '/' or the trigger click
+    // Ensure the input is focused before typing
+    await searchInput.focus().catch(() => {});
     await page.keyboard.type(query, { delay: 30 });
     await page.keyboard.press('Enter');
     await this.waitForLoading(page);

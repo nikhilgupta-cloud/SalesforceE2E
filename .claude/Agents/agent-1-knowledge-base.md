@@ -35,9 +35,16 @@ Load and surface the correct domain knowledge for the Salesforce object(s) under
    - Known UI patterns, Shadow DOM quirks, and LWC component names
    - Known platform limitations and gotchas
    - CPQ/Revenue Cloud-specific interaction patterns
-5. Also check `knowledge/scraped-locators.json` if it exists — this contains verified live-DOM selectors scraped from the actual org. Prefer these over text-filter assumptions.
+5. **Tiered Field Requirements (NEW):** Classify fields into:
+   - **Hard:** Required for record save or business logic (e.g. Account Name, Quote Stage).
+   - **Soft:** Optional/Layout-dependent (e.g. Payment Terms, Billing Street). 
+   - Instruct downstream agents (Agent 4 & 6) to use "soft-fail" (log warning vs hard error) for "Soft" fields.
 
-6. Do not attempt to locate the global search input via CSS or XPath. To use global search, press the / hotkey, then use page.keyboard.type(query).
+6. Also check `knowledge/scraped-locators.json` if it exists — this contains verified live-DOM selectors scraped from the actual org. Prefer these over text-filter assumptions.
+
+7. **UI Stability Rules:** Proactively surface the need for `dismissAuraError()` and `SFUtils.waitForLoading()` to all downstream agents.
+
+8. Do not attempt to locate the global search input via CSS or XPath. To use global search, press the / hotkey, then use page.keyboard.type(query).
 
 ## Output
 Structured domain context passed in-memory to Agents 2, 3, 4, and 6. 

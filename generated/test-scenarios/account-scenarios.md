@@ -3,12 +3,12 @@
 
 ---
 
-## US-005: Account-to-Quote E2E Lifecycle — Contact, Opportunity & Quote Creation
+## US-005: Salesforce E2E — Account to Order Activation Lifecycle
 
 | TC ID | Scenario | Expected Result | AC Ref |
 |-------|----------|-----------------|--------|
-| TC-ACC-001 | Verify existing Account has Billing Address and Payment Terms under Details tab (soft-fail if missing) | Billing Address and Payment Terms fields are visible; test logs warning but does not hard-fail if absent | AC-005-01 |
-| TC-ACC-002 | Create a new Contact on the Account's Related tab | Contact is saved successfully and appears in the Account's Contacts related list | AC-005-02 |
-| TC-ACC-003 | Create a new Opportunity from the Contact's Related tab | Opportunity is saved successfully and linked to the Contact | AC-005-03 |
-| TC-ACC-004 | Verify newly created Contact is assigned as Primary Contact Role on the Opportunity | Contact appears in the Opportunity's Contact Roles related list with role marked Primary | AC-005-04 |
-| TC-ACC-005 | Create a Quote from the Opportunity using the Create Quote button | Quote record is created and saved; user lands on the new Quote detail page | QO-005-05 |
+| TC-ACC-001 | Verify existing Account has Billing Address and Payment Terms on the Details tab | Account loads; Billing Address and Payment Terms fields are present (soft-fail if empty/missing) | AC-005-01 |
+| TC-ACC-002 | Create Contact on Account, create Opportunity from Contact, verify Primary Contact Role | Contact created and linked to Account; Opportunity created; Contact appears as Primary Contact Role | AC-005-02, AC-005-03, AC-005-04 |
+| TC-ACC-003 | Create Quote from Opportunity, browse catalogs, select price book and All Products, add product, validate cart | Quote created; product added via catalog; line items visible on quote | QO-005-05, PC-005-06, PC-005-07, PC-005-08, PC-005-09 |
+| TC-ACC-004 | Accept Quote, create Contract via dropdown with no prices, open contract and activate with Contract Term | Quote status set to Accepted; Contract created; Contract status Activated; Contract Term filled | QL-005-10, QL-005-11, CR-005-12 |
+| TC-ACC-005 | Open Quote, create single Order, open Order, activate and mark complete | Order created from Quote; Order navigated to; Order status Activated/Complete | OR-005-13, OR-005-14, OR-005-15, OR-005-16 |

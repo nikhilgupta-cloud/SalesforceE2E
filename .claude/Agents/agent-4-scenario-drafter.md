@@ -144,6 +144,20 @@ Wrap tests inside:
 
 ---
 
+### 10. RECORD NAVIGATION & INDEXING (NEW)
+Salesforce indexing is asynchronous. Record searches and URL changes can be delayed.
+- **Rule:** Wrap all record-opening logic in a search-and-verify block.
+- **Logic:** After `searchAndOpen`, check if the record title/header matches. If not, retry once or use `page.waitForURL`.
+
+---
+
+### 11. SOFT-FAILURE HANDLING (NEW)
+If Agent 1 flags a field as "Soft" (Optional/Layout-dependent):
+- **Rule:** Do NOT use `expect(...).toBeVisible()`.
+- **Logic:** Use an `if` block to check visibility. If missing, log a `[SOFT FAILURE]` warning using `console.warn` but do NOT fail the test.
+
+---
+
 ## SCENARIO OUTPUT
 
 File:

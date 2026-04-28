@@ -1,1 +1,6 @@
 TC ID,Object,User Story,Title,Status,Duration (s),AC Reference,Error Message,File,Line,Run Date
+TC-ACC-001,Account,US-005,TC-ACC-001 — Verify Account Billing Address and Payment Terms,passed,14.61,AC-005-01,,account.spec.ts,101,2026-04-28
+TC-ACC-002,Account,US-005,"TC-ACC-002 — Create Contact on Account, Opportunity from Contact, verify Primary Contact Role",failed,22.76,"AC-005-02, AC-005-03, AC-005-04",Error: expect(received).toContain(expected) // indexOf,account.spec.ts,145,2026-04-28
+TC-ACC-003,Account,US-005,"TC-ACC-003 — Create Quote from Opportunity, Browse Catalogs, Add Product, Validate Cart",skipped,0.00,"QO-005-05, PC-005-06, PC-005-07, PC-005-08, PC-005-09",,account.spec.ts,226,2026-04-28
+TC-ACC-004,Account,US-005,"TC-ACC-004 — Accept Quote, Create Contract, Activate Contract",skipped,0.00,"QL-005-10, QL-005-11, CR-005-12",,account.spec.ts,379,2026-04-28
+TC-ACC-005,Account,US-005,TC-ACC-005 — Create Order from Quote and Activate Order,skipped,0.00,"OR-005-13, OR-005-14, OR-005-15, OR-005-16",,account.spec.ts,514,2026-04-28

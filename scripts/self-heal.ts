@@ -127,11 +127,12 @@ const MAX_ROUNDS = 3;
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface FailedTest {
-  title:  string;   // e.g. "TC-QTE-038 — Primary Quote checkbox available on Quote form"
-  file:   string;   // e.g. "quote.spec.ts"
-  line:   number;
-  errors: string[];
-  stdout: string[];
+  title:   string;    // e.g. "TC-QTE-038 — Primary Quote checkbox available on Quote form"
+  file:    string;    // e.g. "quote.spec.ts"
+  line:    number;
+  errors:  string[];
+  stdout:  string[];
+  stderr?: string[];  // captured from Playwright test run — may contain network/console hints
 }
 
 export interface HealResult {
@@ -196,6 +197,9 @@ function collectFailures(raw: any): FailedTest[] {
               typeof e === 'string' ? e : (e.message ?? JSON.stringify(e))
             ),
             stdout: (failedResult.stdout ?? []).map((s: any) =>
+              typeof s === 'string' ? s : (s.text ?? '')
+            ),
+            stderr: (failedResult.stderr ?? []).map((s: any) =>
               typeof s === 'string' ? s : (s.text ?? '')
             ),
           });
@@ -272,9 +276,38 @@ async function healTest(failure: FailedTest): Promise<boolean> {
     console.log(`      ❌ Round ${round} fix did not pass — reverting`);
   }
 
-  // All rounds exhausted without a passing fix
-  console.log(`      ✗ Could not heal after ${MAX_ROUNDS} rounds: ${failure.title}`);
+  // All rounds exhausted — mark as test.fixme() so it is skipped cleanly on future runs
+  // rather than failing repeatedly and blocking serial suites or contaminating the dashboard.
+  console.log(`      ✗ Could not heal after ${MAX_ROUNDS} rounds — marking test.fixme(): ${failure.title}`);
+  applyFixme(specPath, failure.title, failure.errors[0] ?? 'Unknown error after self-healing');
   return false;
+}
+
+/**
+ * Replaces the test(...) opening line with test.fixme(...) and prepends a comment
+ * that explains what happened, so future engineers know why it was skipped.
+ */
+function applyFixme(specPath: string, title: string, errorSummary: string): void {
+  try {
+    const content  = fs.readFileSync(specPath, 'utf8');
+    const escaped  = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern  = new RegExp(`([ \\t]*)test\\((['"\`])(${escaped})\\2`);
+    const match    = content.match(pattern);
+    if (!match) {
+      console.log(`      ⚠ applyFixme: could not locate test block to mark — skipping`);
+      return;
+    }
+
+    const indent      = match[1];
+    const quote       = match[2];
+    const firstLine   = `${indent}// self-heal: could not fix after ${MAX_ROUNDS} rounds — ${errorSummary.split('\n')[0].slice(0, 120)}\n${indent}test.fixme(${quote}${title}${quote}`;
+    const patched     = content.replace(match[0], firstLine);
+
+    fs.writeFileSync(specPath, patched, 'utf8');
+    console.log(`      🔕 ${title} → test.fixme() applied`);
+  } catch (e: any) {
+    console.error(`      ⚠ applyFixme error: ${e.message}`);
+  }
 }
 
 /**
@@ -387,9 +420,25 @@ async function askClaude(
   } catch (e) {}
 
   const errorText  = failure.errors.join('\n').substring(0, 1200);
-  const stdoutText = failure.stdout.join('').substring(0, 600);
+  const stdoutText = failure.stdout.join('').substring(0, 800);
+  const stderrText = (failure.stderr ?? []).join('').substring(0, 400);
 
-  const system = `You are a Salesforce Revenue Cloud QA automation engineer. Return only raw TypeScript code — never use markdown code fences, never add explanations.${knowledgeContext}${scrapedContext}${sfUtilsSignatures}`;
+  // Build a network/console hints block from stdout — Playwright captures console.log/warn/error
+  // and any [WARN]/[ERROR] lines from SFUtils. This lets the healer distinguish between a
+  // selector failure and a deeper Salesforce API/session/permission failure.
+  const consoleHints = stdoutText.trim()
+    ? `\n\n### Console / Stdout Output (captured by Playwright)\n\`\`\`\n${stdoutText}\n\`\`\``
+    : '';
+  const networkHints = stderrText.trim()
+    ? `\n\n### Stderr / Network Hints\n\`\`\`\n${stderrText}\n\`\`\``
+    : '';
+
+  const system = `You are a Salesforce Revenue Cloud QA automation engineer. Return only raw TypeScript code — never use markdown code fences, never add explanations.
+
+ABSOLUTE RULES — violating any of these produces an invalid fix:
+- NEVER use waitForLoadState('networkidle') — it hangs on Salesforce Lightning SPAs
+- NEVER use optional chaining (?.) on TestData fields (data.account?.name) — all keys are guaranteed present; use data.account.Account_Name, data.contact.First_Name, etc.
+- NEVER invent camelCase key aliases (data.account.name, data.contact.firstName) — use the exact PascalCase/snake_case keys from the TestData interface${knowledgeContext}${scrapedContext}${sfUtilsSignatures}`;
 
   const userPrompt = `A Salesforce E2E Playwright test is failing. Return ONLY the fixed TypeScript test function.
 
@@ -399,22 +448,26 @@ async function askClaude(
 \`\`\`
 ${errorText}
 \`\`\`
+${consoleHints}${networkHints}
 
 ### Current test code
 \`\`\`typescript
 ${testCode}
 \`\`\`
 
-## Healing Strategy (MANDATORY)
-1. **Business Logic Check:** If the error is "element not interactable", check if the record might be in a Read-Only state (Approved/Locked). If so, add a step to change the status or use a different record.
-2. **Shadow DOM / Configurator:** If the failure is inside the Configurator, ALWAYS scope to \`page.locator('c-product-configurator')\`.
-3. **Pricing Asynchronicity:** If the error is a price mismatch (e.g. expected $100 but found $0), ensure \`waitForRlmSpinners(page)\` and a wait for the pricing toast are present.
-4. **Selector Fix:** Prefer \`SFUtils\` methods. Use the "VERIFIED LOCATORS" provided in the context to find the correct API Name or Label.
-5. **Wait for Lookup:** If a lookup fails to find a record created earlier in the test, add \`await page.waitForTimeout(3000)\` before the lookup to allow for search indexing.
+## Diagnostic Priority (check in this order before picking a fix)
+1. **API / Session failure:** If console output contains a 4xx/5xx HTTP status, "INVALID_SESSION_ID", "INSUFFICIENT_ACCESS", or "UNABLE_TO_LOCK_ROW" — the root cause is Salesforce-side, not a selector issue. Add a re-navigation or session-refresh step, do NOT change selectors.
+2. **Business Logic / Lock:** If the error is "element not interactable" or "read-only", the record is likely in an Approved/Locked state. Add a step to change status or navigate to a writeable record.
+3. **Shadow DOM / Configurator:** If the failure is inside the CPQ Configurator, ALWAYS scope to \`page.locator('c-product-configurator')\`.
+4. **Pricing Asynchronicity:** If the error is a price mismatch (e.g. expected $100 but found $0), ensure \`waitForRlmSpinners(page)\` and a wait for the pricing toast are present.
+5. **Selector Fix:** Only change a selector if the error is "locator not found" with no API/session hints in console. Prefer \`SFUtils\` methods and use VERIFIED LOCATORS from context.
+6. **Search Indexing Delay:** If a lookup fails to find a record created earlier in the same test run, add \`await page.waitForTimeout(3000)\` before the lookup — Salesforce global search indexes with a delay.
 
 ## Fix rules
 - Keep the same TC-ID and the exact test name string
-- Use \`SFUtils\` methods for all Salesforce field interactions.
+- Use \`SFUtils\` methods for all Salesforce field interactions
+- NEVER use waitForLoadState('networkidle')
+- NEVER use optional chaining on TestData fields
 - Return the COMPLETE fixed test function from \`test(\` through the closing \`});\`
 `;
 

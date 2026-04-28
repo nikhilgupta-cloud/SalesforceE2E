@@ -74,6 +74,10 @@ Convert raw locators to:
 - `await SFUtils.fillField(modal, 'LabelOrApiName', value);`
 - `await SFUtils.selectCombobox(page, modal, 'LabelOrApiName', 'Option');`
 
+**Responsive UI Logic (NEW):**
+If a failure occurs on a Tab or Button click:
+- Insert `await clickTab(page, 'More')` or similar dropdown logic before the failing step.
+
 #### B. Configurator Fix (NEW)
 If `configurator_failure`:
 ```typescript
@@ -86,6 +90,11 @@ await config.locator('lightning-combobox').filter({ hasText: /AttributeLabel/i }
 If `pricing_failure`:
 1. Search for `Reprice All` button.
 2. If found, insert `await page.getByRole('button', { name: 'Reprice All' }).click(); await waitForRlmSpinners(page);` before the assertion.
+
+#### D. Post-Save Interruption (NEW)
+If `timing_failure` occurs immediately after a Save:
+1. Insert `await dismissAuraError(page);`
+2. If the error mentions "Duplicate", insert logic to click the "Save" button in the confirmation footer.
 
 ---
 

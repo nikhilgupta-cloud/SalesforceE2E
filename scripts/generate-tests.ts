@@ -241,6 +241,38 @@ function saveHashStore(store: HashStore): void {
 }
 
 /**
+ * Returns true if every test belonging to the given spec file is currently passing
+ * in the last reports/results.json. Used to guard against regenerating working tests
+ * when only story metadata changed.
+ */
+function allTestsPassingInSpec(specFileName: string): boolean {
+  const resultsPath = path.join('reports', 'results.json');
+  if (!fs.existsSync(resultsPath)) return false;
+
+  try {
+    const raw = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+    let hasTests  = false;
+    let hasFailed = false;
+
+    function walk(suite: any) {
+      for (const spec of suite.specs ?? []) {
+        if (!spec.file?.endsWith(specFileName)) continue;
+        for (const t of spec.tests ?? []) {
+          hasTests = true;
+          if (t.status === 'unexpected' || t.status === 'failed') hasFailed = true;
+        }
+      }
+      for (const child of suite.suites ?? []) walk(child);
+    }
+    (raw.suites ?? []).forEach(walk);
+
+    return hasTests && !hasFailed;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Normalize story content to ensure minor formatting/whitespace/line-ending 
  * differences do not trigger a hash mismatch and costly regeneration.
  * 
@@ -750,6 +782,18 @@ async function processStory(
 
   const isNew = !stored;
   console.log(`[generate] ${isNew ? 'NEW' : 'CHANGED'} ${usId} → ${obj.displayName}`);
+
+  // ── Passing-tests guard ──────────────────────────────────────────────────────
+  // If this is an update (not a brand-new story) AND all tests in the spec file are
+  // currently passing, treat the story change as metadata-only (e.g. a Jira comment
+  // edit, whitespace, sprint annotation). Just sync the hash and skip regeneration
+  // to protect working test code from being overwritten.
+  if (!isNew && specHasUsId(specPath, usId) && scenarioHasUsId(scenarioPath, usId) && allTestsPassingInSpec(obj.specFile)) {
+    console.log(`[generate] ${usId} (${objKey}) story metadata changed but all tests passing — syncing hash only, not regenerating`);
+    hashStore[hashKey] = { hash: currentHash, objKey };
+    saveHashStore(hashStore);
+    return 'skipped';
+  }
 
   // 1. Purge the current object files (always)
   removeScenarioSection(scenarioPath, usId);

@@ -90,6 +90,14 @@ Run spec files in the order defined by `prompts/framework-config.json` (`objects
 - Capture screenshots on failure
 - Capture error logs
 
+### Salesforce Survival Protocol (NEW)
+1. **Post-Action Validation Loop:** After every `click` or `save`, proactively check for:
+   - Aura System Errors (Call `dismissAuraError`).
+   - Duplicate Record Modals (If detected, click "Save/Confirm" again).
+2. **Responsive UI Fallback:** If a Tab or Button is not found:
+   - Check if it's hidden inside a "More" dropdown.
+   - If yes, click "More" first, then retry the interaction.
+
 ---
 
 ## PER TEST RESULT EXTRACTION
