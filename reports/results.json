@@ -73,49 +73,11 @@
         {
           "title": "Account E2E Lifecycle",
           "file": "account.spec.ts",
-          "line": 35,
+          "line": 34,
           "column": 6,
           "specs": [
             {
-              "title": "TC-ACC-001 — Verify Billing Address (Soft-Fail)",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 14673,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [
-                        {
-                          "text": "[SOFT FAILURE] Billing Address missing\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-04-28T12:43:22.160Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-fa46c98484a4f32a348e",
-              "file": "account.spec.ts",
-              "line": 38,
-              "column": 5
-            },
-            {
-              "title": "TC-ACC-002 — Create Contact",
+              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms",
               "ok": false,
               "tags": [],
               "tests": [
@@ -129,160 +91,44 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 32861,
+                      "status": "passed",
+                      "duration": 6450,
                       "error": {
-                        "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Related' })\u001b[22m\n",
-                        "stack": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Related' })\u001b[22m\n\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:60:54",
+                        "message": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder*=\"Search\"]').first() to be visible\u001b[22m\n",
+                        "stack": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder*=\"Search\"]').first() to be visible\u001b[22m\n\n    at Function._triggerGlobalSearch (D:\\SalesforceE2E1\\utils\\SFUtils.ts:97:23)\n    at Function.searchAndOpen (D:\\SalesforceE2E1\\utils\\SFUtils.ts:104:5)\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:40:18",
                         "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 54,
-                          "line": 60
+                          "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                          "column": 23,
+                          "line": 97
                         },
-                        "snippet": "\u001b[0m \u001b[90m 58 |\u001b[39m   test(\u001b[32m'TC-ACC-002 — Create Contact'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 59 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m accountUrl)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 60 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'tab'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Related'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 61 |\u001b[39m     \n \u001b[90m 62 |\u001b[39m     \u001b[36mconst\u001b[39m section \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'article'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[35m/Contacts/i\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 63 |\u001b[39m     \u001b[36mawait\u001b[39m section\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'New'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:97\n\n\u001b[0m \u001b[90m  95 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  96 |\u001b[39m     \u001b[36mconst\u001b[39m searchInput \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[placeholder*=\"Search\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  97 |\u001b[39m     \u001b[36mawait\u001b[39m searchInput\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  98 |\u001b[39m     \u001b[36mawait\u001b[39m searchInput\u001b[33m.\u001b[39mfill(query)\u001b[33m;\u001b[39m\n \u001b[90m  99 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Enter'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 100 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mwaitForLoading(page)\u001b[33m;\u001b[39m\u001b[0m"
                       },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 54,
-                            "line": 60
-                          },
-                          "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('tab', { name: 'Related' })\u001b[22m\n\n\n\u001b[0m \u001b[90m 58 |\u001b[39m   test(\u001b[32m'TC-ACC-002 — Create Contact'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 59 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m accountUrl)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 60 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'tab'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Related'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 61 |\u001b[39m     \n \u001b[90m 62 |\u001b[39m     \u001b[36mconst\u001b[39m section \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'article'\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[35m/Contacts/i\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 63 |\u001b[39m     \u001b[36mawait\u001b[39m section\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'New'\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:60:54\u001b[22m"
-                        }
-                      ],
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T12:43:37.606Z",
+                      "startTime": "2026-04-28T13:04:16.469Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-E2E-Lifecycle-TC-ACC-002-—-Create-Contact-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-E2E-Lifecycle-TC-ACC-002-—-Create-Contact-chromium\\error-context.md"
+                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-E2E-Lifecy-25549-g-Address-and-Payment-Terms-chromium\\test-failed-1.png"
                         }
                       ],
                       "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 54,
-                        "line": 60
+                        "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                        "column": 23,
+                        "line": 97
                       }
                     }
                   ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-798287315c071ccb69ec",
-              "file": "account.spec.ts",
-              "line": 58,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-003 — Create Opportunity",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-28T12:44:10.789Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-a46618be5ec119450059",
-              "file": "account.spec.ts",
-              "line": 76,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-005 — Create Quote",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-28T12:44:10.811Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-5b0d167adfea1f487966",
-              "file": "account.spec.ts",
-              "line": 92,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-28T12:44:10.835Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
+                  "status": "passed"
                 }
               ],
               "id": "ad4620ead4e6d9cc2627-29de5c2b15f28a0862c5",
               "file": "account.spec.ts",
-              "line": 109,
+              "line": 39,
               "column": 7
             },
             {
@@ -306,7 +152,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T12:44:10.858Z",
+                      "startTime": "2026-04-28T13:04:24.157Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -316,7 +162,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-469f6df9d735c1de86bb",
               "file": "account.spec.ts",
-              "line": 129,
+              "line": 59,
               "column": 7
             },
             {
@@ -340,7 +186,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T12:44:10.885Z",
+                      "startTime": "2026-04-28T13:04:24.181Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -350,7 +196,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-96f6a48fc03772efef69",
               "file": "account.spec.ts",
-              "line": 153,
+              "line": 83,
               "column": 7
             },
             {
@@ -374,7 +220,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T12:44:10.913Z",
+                      "startTime": "2026-04-28T13:04:24.220Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -384,7 +230,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-9bbca9bf5e02899f3242",
               "file": "account.spec.ts",
-              "line": 192,
+              "line": 122,
               "column": 7
             },
             {
@@ -408,7 +254,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T12:44:10.937Z",
+                      "startTime": "2026-04-28T13:04:24.252Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -418,7 +264,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-cee4aab340bc9229fcc7",
               "file": "account.spec.ts",
-              "line": 270,
+              "line": 200,
               "column": 7
             }
           ]
@@ -428,11 +274,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-28T12:43:20.069Z",
-    "duration": 50947.726,
+    "startTime": "2026-04-28T13:04:14.175Z",
+    "duration": 10158.636999999999,
     "expected": 1,
-    "skipped": 7,
-    "unexpected": 1,
+    "skipped": 4,
+    "unexpected": 0,
     "flaky": 0
   }
 }

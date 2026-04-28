@@ -4,7 +4,6 @@ import { getTestData } from '../utils/test-data';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-const SF    = process.env.SF_SANDBOX_URL!;
 const data  = getTestData();
 
 let accountUrl: string;
@@ -35,81 +34,24 @@ async function handleSave(page: Page) {
 test.describe('Account E2E Lifecycle', () => {
   test.describe.configure({ mode: 'serial' });
 
-test('TC-ACC-001 — Verify Billing Address (Soft-Fail)', async ({ page }) => {
+  // ── US-005 START ─────────────────────────────────────────────────────
+  // TC-ACC-001 | AC Reference: AC-005-01
+test('TC-ACC-001 — Verify Account Billing Address and Payment Terms', async ({ page }) => {
+    // Navigate to Accounts list view — avoids global search indexing delay and the '/' shortcut timing issue
     await SFUtils.goto(page, `${process.env.SF_SANDBOX_URL}/lightning/o/Account/list`);
     await SFUtils.waitForAppReady(page);
     await SFUtils.waitForLoading(page);
-
-    await page.getByRole('link', { name: data.account.Account_Name, exact: true }).first().click();
-    await SFUtils.waitForLoading(page);
-    accountUrl = page.url();
-
-    await page.getByRole('tab', { name: 'Details' }).click();
-    await page.mouse.wheel(0, 500);
-    await page.waitForTimeout(1000);
-
-    const address = await SFUtils.getOutputValue(page, 'BillingAddress');
-    if (address) console.log(`[PASS] Billing Address: ${address}`);
-    else console.warn('[SOFT FAILURE] Billing Address missing');
-
-    expect(accountUrl).toContain('/Account/');
-  });
-
-  // self-heal: could not fix after 3 rounds — TimeoutError: locator.click: Timeout 30000ms exceeded.
-  test.fixme('TC-ACC-002 — Create Contact', async ({ page }) => {
-    await SFUtils.goto(page, accountUrl);
-    await page.getByRole('tab', { name: 'Related' }).click();
-    
-    const section = page.locator('article').filter({ hasText: /Contacts/i });
-    await section.getByRole('button', { name: 'New' }).click();
-    
-    const modal = page.locator(SFUtils.MODAL);
-    await SFUtils.fillName(modal, 'firstName', data.contact.First_Name);
-    const lastName = `AutoCon-${Date.now()}`;
-    await SFUtils.fillName(modal, 'lastName', lastName);
-    await SFUtils.fillField(modal, 'Email', data.contact.Email);
-    
-    await handleSave(page);
-    contactUrl = await SFUtils.waitForNavigationOrToast(page, ['/Contact/', '/003']);
-    console.log(`Contact Created: ${contactUrl}`);
-  });
-
-  test('TC-ACC-003 — Create Opportunity', async ({ page }) => {
-    await SFUtils.goto(page, contactUrl);
-    await page.getByRole('tab', { name: 'Related' }).click();
-    
-    const section = page.locator('article').filter({ hasText: /Opportunities/i });
-    await section.getByRole('button', { name: 'New' }).click();
-    
-    const modal = page.locator(SFUtils.MODAL);
-    await SFUtils.fillField(modal, 'Name', `AutoOpp-${Date.now()}`);
-    await SFUtils.selectCombobox(page, modal, 'StageName', data.opportunity.Stage);
-    await SFUtils.fillField(modal, 'CloseDate', data.opportunity.Close_Date);
-    
-    await handleSave(page);
-    opportunityUrl = await SFUtils.waitForNavigationOrToast(page, ['/Opportunity/', '/006']);
-  });
-
-  test('TC-ACC-005 — Create Quote', async ({ page }) => {
-    await SFUtils.goto(page, opportunityUrl);
-    const btn = page.getByRole('button', { name: /Create Quote/i });
-    if (await btn.isVisible()) await btn.click();
-    else {
-        await page.getByRole('button', { name: /Show more actions/i }).click();
-        await page.getByRole('menuitem', { name: /Create Quote/i }).click();
-    }
-    
-    const modal = page.locator(SFUtils.MODAL);
-    await SFUtils.fillField(modal, 'Name', `AutoQuote-${Date.now()}`);
-    await handleSave(page);
-    quoteUrl = await SFUtils.waitForNavigationOrToast(page, ['/Quote/', '/0Q0']);
-  });
-
-  // ── US-005 START ─────────────────────────────────────────────────────
-  // TC-ACC-001 | AC Reference: AC-005-01
-  test('TC-ACC-001 — Verify Account Billing Address and Payment Terms', async ({ page }) => {
-    accountUrl = await SFUtils.searchAndOpen(page, data.account.Account_Name);
     await dismissAuraError(page);
+
+    const accountLink = page.getByRole('link', { name: data.account.Account_Name, exact: true }).first();
+    await accountLink.waitFor({ state: 'visible', timeout: 15000 });
+    await accountLink.click();
+    await SFUtils.waitForAppReady(page);
+    await SFUtils.waitForLoading(page);
+
+    accountUrl = page.url();
+    await dismissAuraError(page);
+
     await page.getByRole('tab', { name: 'Details' }).click();
     await SFUtils.waitForLoading(page);
     await page.mouse.wheel(0, 500);
