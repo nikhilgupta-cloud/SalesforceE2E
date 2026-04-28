@@ -116,7 +116,7 @@ test.describe('Account E2E Lifecycle', () => {
 
   // TC-ACC-002 | AC Reference: AC-005-02
   // Positive: Create a new Contact from the Contacts related list on the Account.
-  // self-heal: could not fix after 3 rounds — Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoMatch[2m([22m[32mexpected[39m[2m)[22m
+  // self-heal: could not fix after 3 rounds — Error: Navigation failed to /Contact/,/003
   test.fixme('TC-ACC-002 — Create Contact on Account', async ({ page }) => {
     await SFUtils.goto(page, accountUrl);
     await SFUtils.waitForAppReady(page);
@@ -148,8 +148,8 @@ test.describe('Account E2E Lifecycle', () => {
 
     await handleSave(page);
 
-    // Wait for navigation away from the /new URL; capture the Contact record URL
-    contactUrl = await waitForRecordUrl(page, ['/Contact/', '/003']);
+    // Salesforce stays on Account page after related-list modal save — use toast link to navigate
+    contactUrl = await SFUtils.waitForNavigationOrToast(page, ['/Contact/', '/003']);
     expect(contactUrl).toMatch(/\/Contact\/|\/003/);
     console.log(`[PASS] Contact created: ${contactUrl}`);
   });
@@ -186,7 +186,8 @@ test.describe('Account E2E Lifecycle', () => {
 
     await handleSave(page);
 
-    opportunityUrl = await waitForRecordUrl(page, ['/Opportunity/', '/006']);
+    // Salesforce stays on Contact page after related-list modal save — use toast link to navigate
+    opportunityUrl = await SFUtils.waitForNavigationOrToast(page, ['/Opportunity/', '/006']);
     expect(opportunityUrl).toMatch(/\/Opportunity\/|\/006/);
     console.log(`[PASS] Opportunity created: ${opportunityUrl}`);
 

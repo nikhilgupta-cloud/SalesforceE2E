@@ -92,7 +92,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 117435,
+                      "duration": 116811,
                       "errors": [],
                       "stdout": [
                         {
@@ -114,7 +114,7 @@
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:56:04.396Z",
+                      "startTime": "2026-04-28T14:29:28.186Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -143,25 +143,25 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 91108,
+                      "duration": 82143,
                       "error": {
-                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/\\/Contact\\/|\\/003/\u001b[39m\nReceived string:  \u001b[31m\"https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\"\u001b[39m",
-                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/\\/Contact\\/|\\/003/\u001b[39m\nReceived string:  \u001b[31m\"https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\"\u001b[39m\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:152:24",
+                        "message": "Error: Navigation failed to /Contact/,/003",
+                        "stack": "Error: Navigation failed to /Contact/,/003\n    at Function.waitForNavigationOrToast (D:\\SalesforceE2E1\\utils\\SFUtils.ts:119:11)\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:151:18",
                         "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 24,
-                          "line": 152
+                          "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                          "column": 11,
+                          "line": 119
                         },
-                        "snippet": "\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[90m// Wait for navigation away from the /new URL; capture the Contact record URL\u001b[39m\n \u001b[90m 151 |\u001b[39m     contactUrl \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m waitForRecordUrl(page\u001b[33m,\u001b[39m [\u001b[32m'/Contact/'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'/003'\u001b[39m])\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     expect(contactUrl)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/\\/Contact\\/|\\/003/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`[PASS] Contact created: ${contactUrl}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 154 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 155 |\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:119\n\n\u001b[0m \u001b[90m 117 |\u001b[39m\n \u001b[90m 118 |\u001b[39m     \u001b[36mif\u001b[39m (checkMatch(page\u001b[33m.\u001b[39murl())) \u001b[36mreturn\u001b[39m page\u001b[33m.\u001b[39murl()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 119 |\u001b[39m     \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Navigation failed to ${subs.join(',')}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 120 |\u001b[39m   }\n \u001b[90m 121 |\u001b[39m\n \u001b[90m 122 |\u001b[39m   \u001b[36mprivate\u001b[39m \u001b[36mstatic\u001b[39m \u001b[36masync\u001b[39m _triggerGlobalSearch(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m query\u001b[33m:\u001b[39m string) {\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 24,
-                            "line": 152
+                            "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                            "column": 11,
+                            "line": 119
                           },
-                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatch\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected pattern: \u001b[32m/\\/Contact\\/|\\/003/\u001b[39m\nReceived string:  \u001b[31m\"https://rlmpartner1demojan2226org.lightning.force.com/lightning/r/Account/001Ws00005WQ1hpIAD/view\"\u001b[39m\n\n\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[90m// Wait for navigation away from the /new URL; capture the Contact record URL\u001b[39m\n \u001b[90m 151 |\u001b[39m     contactUrl \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m waitForRecordUrl(page\u001b[33m,\u001b[39m [\u001b[32m'/Contact/'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'/003'\u001b[39m])\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     expect(contactUrl)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/\\/Contact\\/|\\/003/\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m     console\u001b[33m.\u001b[39mlog(\u001b[32m`[PASS] Contact created: ${contactUrl}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 154 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 155 |\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:152:24\u001b[22m"
+                          "message": "Error: Navigation failed to /Contact/,/003\n\n\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:119\n\n\u001b[0m \u001b[90m 117 |\u001b[39m\n \u001b[90m 118 |\u001b[39m     \u001b[36mif\u001b[39m (checkMatch(page\u001b[33m.\u001b[39murl())) \u001b[36mreturn\u001b[39m page\u001b[33m.\u001b[39murl()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 119 |\u001b[39m     \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Navigation failed to ${subs.join(',')}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 120 |\u001b[39m   }\n \u001b[90m 121 |\u001b[39m\n \u001b[90m 122 |\u001b[39m   \u001b[36mprivate\u001b[39m \u001b[36mstatic\u001b[39m \u001b[36masync\u001b[39m _triggerGlobalSearch(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m query\u001b[33m:\u001b[39m string) {\u001b[0m\n\u001b[2m    at Function.waitForNavigationOrToast (D:\\SalesforceE2E1\\utils\\SFUtils.ts:119:11)\u001b[22m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:151:18\u001b[22m"
                         }
                       ],
                       "stdout": [
@@ -174,7 +174,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:58:03.283Z",
+                      "startTime": "2026-04-28T14:31:26.672Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -189,9 +189,9 @@
                         }
                       ],
                       "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 24,
-                        "line": 152
+                        "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                        "column": 11,
+                        "line": 119
                       }
                     }
                   ],
@@ -224,7 +224,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:59:34.887Z",
+                      "startTime": "2026-04-28T14:32:49.258Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -258,7 +258,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:59:34.913Z",
+                      "startTime": "2026-04-28T14:32:49.283Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -268,7 +268,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-9bbca9bf5e02899f3242",
               "file": "account.spec.ts",
-              "line": 222,
+              "line": 223,
               "column": 7
             },
             {
@@ -292,7 +292,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-28T13:59:34.943Z",
+                      "startTime": "2026-04-28T14:32:49.307Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -302,7 +302,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-cee4aab340bc9229fcc7",
               "file": "account.spec.ts",
-              "line": 312,
+              "line": 313,
               "column": 7
             }
           ]
@@ -312,8 +312,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-28T13:56:01.575Z",
-    "duration": 213464.839,
+    "startTime": "2026-04-28T14:29:25.503Z",
+    "duration": 203914.979,
     "expected": 1,
     "skipped": 3,
     "unexpected": 1,
