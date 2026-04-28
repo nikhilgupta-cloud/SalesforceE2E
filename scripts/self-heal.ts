@@ -223,11 +223,17 @@ async function healTest(failure: FailedTest): Promise<boolean> {
   }
 
   const originalContent = fs.readFileSync(specPath, 'utf8');
-  const testBlock = extractTestBlock(originalContent, failure.title);
-  if (!testBlock) {
+  const extracted = extractTestBlock(originalContent, failure.title);
+  if (!extracted) {
     console.log(`      ⚠ Could not locate test block in ${failure.file} for: ${failure.title}`);
     return false;
   }
+
+  const { block: testBlock, actualTitle } = extracted;
+  // Derive TC-ID from the actual title found in the spec (not the possibly-stale results.json title)
+  const tcId = actualTitle.match(/^(TC-[A-Z]+-\d+)/)?.[1]
+    ?? failure.title.match(/^(TC-[A-Z]+-\d+)/)?.[1]
+    ?? failure.title;
 
   for (let round = 1; round <= MAX_ROUNDS; round++) {
     console.log(`      → Round ${round}/${MAX_ROUNDS}`);
@@ -246,31 +252,40 @@ async function healTest(failure: FailedTest): Promise<boolean> {
     }
 
     fs.writeFileSync(specPath, newContent, 'utf8');
-    console.log(`      ✏ Fix applied — re-running test…`);
+    console.log(`      ✏ Fix applied — re-running full spec (serial suite: shared state requires full run)…`);
 
-    // Re-run only this test using its TC-ID as the grep pattern
-    // We output to a temp file to avoid overwriting the main results.json
-    const tcId = failure.title.match(/^(TC-[A-Z]+-\d+)/)?.[1] ?? failure.title;
+    // Re-run the FULL spec file — never use --grep for serial suites.
+    // Serial suites share module-level state (accountUrl, contactUrl, opportunityUrl…).
+    // Running a single test in isolation leaves those variables as '' so the test
+    // always fails regardless of fix quality, exhausting rounds and applying fixme() wrongly.
     const tempResults = path.join(os.tmpdir(), `heal-res-${Date.now()}.json`);
-    const runResult = spawnSync(
+    spawnSync(
       'npx',
-      ['playwright', 'test', `tests/${failure.file}`, '--grep', tcId, '--reporter=json'],
-      { 
-        stdio: 'pipe', 
+      ['playwright', 'test', `tests/${failure.file}`, '--reporter=json'],
+      {
+        stdio: 'pipe',
         shell: true,
-        env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: tempResults }
+        timeout: 600000, // 10 min — full E2E suite can take several minutes
+        env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: tempResults },
       },
     );
 
-    const healedSuccessfully = runResult.status === 0;
+    // Check whether the specific failing test now passes in the temp results.
+    // We don't rely on exit code alone because other tests may still fail;
+    // what matters is that THIS test no longer fails.
+    const healedSuccessfully = checkTestPassedInResults(tempResults, actualTitle, tcId);
 
     if (healedSuccessfully) {
-      console.log(`      ✅ Healed in round ${round}: ${failure.title}`);
-      // Patch the main results.json to reflect the pass
+      console.log(`      ✅ Healed in round ${round}: ${actualTitle}`);
+      // Update main results.json for this test, then propagate any newly-passing
+      // serial siblings (they were previously skipped due to the cascade failure).
       updateMainResults(failure.title, 'passed');
+      propagateHealedResults(tempResults);
+      try { fs.unlinkSync(tempResults); } catch {}
       return true;
     }
 
+    try { fs.unlinkSync(tempResults); } catch {}
     // Fix did not make the test pass — revert before trying the next round
     fs.writeFileSync(specPath, originalContent, 'utf8');
     console.log(`      ❌ Round ${round} fix did not pass — reverting`);
@@ -278,33 +293,36 @@ async function healTest(failure: FailedTest): Promise<boolean> {
 
   // All rounds exhausted — mark as test.fixme() so it is skipped cleanly on future runs
   // rather than failing repeatedly and blocking serial suites or contaminating the dashboard.
-  console.log(`      ✗ Could not heal after ${MAX_ROUNDS} rounds — marking test.fixme(): ${failure.title}`);
-  applyFixme(specPath, failure.title, failure.errors[0] ?? 'Unknown error after self-healing');
+  console.log(`      ✗ Could not heal after ${MAX_ROUNDS} rounds — marking test.fixme(): ${actualTitle}`);
+  applyFixme(specPath, failure.title, actualTitle, failure.errors[0] ?? 'Unknown error after self-healing');
   return false;
 }
 
 /**
  * Replaces the test(...) opening line with test.fixme(...) and prepends a comment
  * that explains what happened, so future engineers know why it was skipped.
+ * Uses actualTitleInSpec (from fuzzy match) so the replacement always targets the
+ * correct line even when results.json carried a stale title from a prior generation.
  */
-function applyFixme(specPath: string, title: string, errorSummary: string): void {
+function applyFixme(specPath: string, title: string, actualTitleInSpec: string, errorSummary: string): void {
   try {
-    const content  = fs.readFileSync(specPath, 'utf8');
-    const escaped  = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pattern  = new RegExp(`([ \\t]*)test\\((['"\`])(${escaped})\\2`);
-    const match    = content.match(pattern);
+    const content    = fs.readFileSync(specPath, 'utf8');
+    const titleToUse = actualTitleInSpec || title;
+    const escaped    = titleToUse.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern    = new RegExp(`([ \\t]*)test\\((['"\`])(${escaped})\\2`);
+    const match      = content.match(pattern);
     if (!match) {
       console.log(`      ⚠ applyFixme: could not locate test block to mark — skipping`);
       return;
     }
 
-    const indent      = match[1];
-    const quote       = match[2];
-    const firstLine   = `${indent}// self-heal: could not fix after ${MAX_ROUNDS} rounds — ${errorSummary.split('\n')[0].slice(0, 120)}\n${indent}test.fixme(${quote}${title}${quote}`;
-    const patched     = content.replace(match[0], firstLine);
+    const indent    = match[1];
+    const quote     = match[2];
+    const firstLine = `${indent}// self-heal: could not fix after ${MAX_ROUNDS} rounds — ${errorSummary.split('\n')[0].slice(0, 120)}\n${indent}test.fixme(${quote}${titleToUse}${quote}`;
+    const patched   = content.replace(match[0], firstLine);
 
     fs.writeFileSync(specPath, patched, 'utf8');
-    console.log(`      🔕 ${title} → test.fixme() applied`);
+    console.log(`      🔕 ${titleToUse} → test.fixme() applied`);
   } catch (e: any) {
     console.error(`      ⚠ applyFixme error: ${e.message}`);
   }
@@ -372,25 +390,141 @@ function updateMainResults(testTitle: string, newStatus: 'passed' | 'failed') {
 
 // ── Extract the test(...) block from spec file content ────────────────────────
 //
-// Finds `<indent>test('<title>', ...)` then returns everything up to and
-// including the first `\n<indent>});` after it.
-// Works because the closing `});` at the same indent level is unique per test.
+// Returns { block, actualTitle } where actualTitle is the title as it appears
+// in the SPEC FILE (may differ from results.json after a regeneration run).
+// Falls back to fuzzy TC-ID prefix match so title drift never causes a miss.
 
-function extractTestBlock(content: string, title: string): string | null {
-  const escaped  = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const pattern  = new RegExp(`([ \\t]*)test\\((['"\`])${escaped}\\2`);
-  const match    = content.match(pattern);
-  if (!match) return null;
+function extractTestBlock(content: string, title: string): { block: string; actualTitle: string } | null {
+  const buildResult = (match: RegExpMatchArray, capturedTitle: string): { block: string; actualTitle: string } | null => {
+    const indent        = match[1];
+    const startIdx      = content.indexOf(match[0]);
+    const closingMarker = `\n${indent}});`;
+    const closeIdx      = content.indexOf(closingMarker, startIdx);
+    if (closeIdx === -1) return null;
+    return { block: content.substring(startIdx, closeIdx + closingMarker.length), actualTitle: capturedTitle };
+  };
 
-  const indent   = match[1];                      // e.g. "  " (2 spaces)
-  const startIdx = content.indexOf(match[0]);
+  // 1. Exact match — also handles test.fixme() variants left by a prior healing cycle
+  const escaped      = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const exactPattern = new RegExp(`([ \\t]*)test(?:\\.fixme)?\\((['"\`])(${escaped})\\2`);
+  const exactMatch   = content.match(exactPattern);
+  if (exactMatch) return buildResult(exactMatch, exactMatch[3]);
 
-  // The test block closes at the first `\n<indent>});` after the opening line
-  const closingMarker = `\n${indent}});`;
-  const closeIdx = content.indexOf(closingMarker, startIdx);
-  if (closeIdx === -1) return null;
+  // 2. Fuzzy fallback: match by TC-ID prefix only (e.g. TC-ACC-002).
+  //    Tolerates title drift that occurs when a story is regenerated between
+  //    the last test run (which wrote results.json) and now.
+  const tcIdMatch = title.match(/^(TC-[A-Z]+-\d+)/);
+  if (tcIdMatch) {
+    const tcId         = tcIdMatch[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const fuzzyPattern = new RegExp(`([ \\t]*)test(?:\\.fixme)?\\((['"\`])(${tcId}[^'"\`]*)\\2`);
+    const fuzzyMatch   = content.match(fuzzyPattern);
+    if (fuzzyMatch) {
+      console.log(`      ℹ Fuzzy-matched "${fuzzyMatch[3]}" by TC-ID prefix (results.json had: "${title}")`);
+      return buildResult(fuzzyMatch, fuzzyMatch[3]);
+    }
+  }
 
-  return content.substring(startIdx, closeIdx + closingMarker.length);
+  return null;
+}
+
+// ── Check whether a specific test passed in a Playwright JSON results file ────
+//
+// Used after a healing re-run to decide if the fix worked for the target test,
+// regardless of whether other tests in the suite may still be failing.
+
+function checkTestPassedInResults(resultsFile: string, actualTitle: string, tcId: string): boolean {
+  if (!fs.existsSync(resultsFile)) return false;
+  try {
+    const data = JSON.parse(fs.readFileSync(resultsFile, 'utf8'));
+    let passed = false;
+
+    function walk(suite: any) {
+      for (const spec of suite.specs ?? []) {
+        const t: string = spec.title ?? '';
+        const matches   = t === actualTitle
+          || t.startsWith(`${tcId} `)
+          || t.startsWith(`${tcId} —`)
+          || t === tcId;
+        if (matches) {
+          for (const test of spec.tests ?? []) {
+            if (test.status === 'expected' || test.status === 'passed') passed = true;
+          }
+        }
+      }
+      for (const child of suite.suites ?? []) walk(child);
+    }
+
+    (data.suites ?? []).forEach(walk);
+    return passed;
+  } catch {
+    return false;
+  }
+}
+
+// ── Propagate newly-passing results from a heal re-run to main results.json ───
+//
+// After healing TC-ACC-002, a full re-run may also pass TC-ACC-003/004/005 that
+// were previously skipped due to the serial cascade. This copies those results
+// into the main file so the dashboard reflects the true post-healing state.
+
+function propagateHealedResults(tempResultsFile: string): void {
+  if (!fs.existsSync(tempResultsFile)) return;
+  const mainResultsPath = path.join('reports', 'results.json');
+  if (!fs.existsSync(mainResultsPath)) return;
+
+  try {
+    const tempData = JSON.parse(fs.readFileSync(tempResultsFile, 'utf8'));
+    const mainData = JSON.parse(fs.readFileSync(mainResultsPath, 'utf8'));
+
+    // Build title → status map from temp run
+    const tempStatuses = new Map<string, string>();
+    function walkTemp(suite: any) {
+      for (const spec of suite.specs ?? []) {
+        for (const test of spec.tests ?? []) tempStatuses.set(spec.title, test.status);
+      }
+      for (const child of suite.suites ?? []) walkTemp(child);
+    }
+    (tempData.suites ?? []).forEach(walkTemp);
+
+    // Update main results for tests that now pass
+    let updated = 0;
+    function walkMain(suite: any) {
+      for (const spec of suite.specs ?? []) {
+        const ts = tempStatuses.get(spec.title);
+        if (ts === 'expected' || ts === 'passed') {
+          for (const test of spec.tests ?? []) {
+            if (test.status !== 'expected' && test.status !== 'passed') {
+              test.status    = 'expected';
+              spec.ok        = true;
+              if (test.results?.[0]) { test.results[0].status = 'passed'; test.results[0].errors = []; }
+              updated++;
+            }
+          }
+        }
+      }
+      for (const child of suite.suites ?? []) walkMain(child);
+    }
+    (mainData.suites ?? []).forEach(walkMain);
+
+    if (updated > 0) {
+      let passed = 0, failed = 0;
+      function recount(suite: any) {
+        for (const spec of suite.specs ?? []) {
+          for (const t of spec.tests ?? []) {
+            if (t.status === 'expected' || t.status === 'passed') passed++;
+            else if (t.status === 'unexpected' || t.status === 'failed') failed++;
+          }
+        }
+        for (const child of suite.suites ?? []) recount(child);
+      }
+      (mainData.suites ?? []).forEach(recount);
+      if (mainData.stats) { mainData.stats.expected = passed; mainData.stats.unexpected = failed; }
+      fs.writeFileSync(mainResultsPath, JSON.stringify(mainData, null, 2));
+      console.log(`      ℹ Propagated ${updated} healed sibling result(s) to main results.json`);
+    }
+  } catch (e: any) {
+    console.error(`      ⚠ propagateHealedResults error: ${e.message}`);
+  }
 }
 
 // ── Ask Claude Code CLI for a fix ─────────────────────────────────────────────
@@ -472,7 +606,7 @@ ${testCode}
 `;
 
   try {
-    const result = await callClaudeCode(system, userPrompt);
+    const result = callClaudeCode(system, userPrompt);
     if (!result) return null;
     _totalTokensIn  += result.tokensIn;
     _totalTokensOut += result.tokensOut;

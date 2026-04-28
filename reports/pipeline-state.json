@@ -1,5 +1,5 @@
 {
-  "runDate": "2026-04-28T03:33:38.100Z",
+  "runDate": "2026-04-28T04:58:26.906Z",
   "steps": [
     {
       "n": -1,
@@ -13,41 +13,37 @@
       "n": 0,
       "label": "Scrape Locators",
       "icon": "🔍",
-      "status": "completed",
-      "detail": "Locators ready",
-      "timestamp": "09:04:13",
-      "startedAtMs": 1777347219583,
-      "durationMs": 33603
+      "status": "skipped",
+      "detail": "Locator map is 84m old (< 24h) — using cache",
+      "timestamp": "10:28:28",
+      "startedAtMs": 1777352308834,
+      "durationMs": 26
     },
     {
       "n": 1,
       "label": "AI Test Generation",
       "icon": "🤖",
-      "status": "completed",
-      "detail": "Tests generated — 0 new, 1 updated, 0 unchanged",
-      "timestamp": "09:07:29",
-      "startedAtMs": 1777347253205,
-      "durationMs": 196255
+      "status": "skipped",
+      "detail": "No changes — 1 stories unchanged",
+      "timestamp": "10:28:28",
+      "startedAtMs": 1777352308875,
+      "durationMs": 23
     },
     {
       "n": 2,
       "label": "Verify Scenarios",
       "icon": "📋",
-      "status": "completed",
-      "detail": "Scenarios validated",
-      "timestamp": "09:07:29",
-      "startedAtMs": 1777347449478,
-      "durationMs": 11
+      "status": "skipped",
+      "detail": "No story changes — skipped",
+      "timestamp": "10:28:28"
     },
     {
       "n": 3,
       "label": "Draft Test Plan",
       "icon": "📄",
-      "status": "completed",
-      "detail": "Test plan ready",
-      "timestamp": "09:08:22",
-      "startedAtMs": 1777347449510,
-      "durationMs": 53328
+      "status": "skipped",
+      "detail": "No story changes — skipped",
+      "timestamp": "10:28:28"
     },
     {
       "n": 4,
@@ -55,9 +51,9 @@
       "icon": "🧪",
       "status": "failed",
       "detail": "1/5 tests passed",
-      "timestamp": "09:09:15",
-      "startedAtMs": 1777347514215,
-      "durationMs": 41139
+      "timestamp": "10:29:21",
+      "startedAtMs": 1777352320400,
+      "durationMs": 40927
     },
     {
       "n": 5,
@@ -65,9 +61,9 @@
       "icon": "🔧",
       "status": "failed",
       "detail": "Some failures remain",
-      "timestamp": "09:12:28",
-      "startedAtMs": 1777347555487,
-      "durationMs": 192586
+      "timestamp": "10:29:47",
+      "startedAtMs": 1777352361654,
+      "durationMs": 25598
     },
     {
       "n": 6,
@@ -83,8 +79,8 @@
       "icon": "🚀",
       "status": "running",
       "detail": "Git push...",
-      "timestamp": "09:12:28",
-      "startedAtMs": 1777347748125
+      "timestamp": "10:29:47",
+      "startedAtMs": 1777352387338
     }
   ]
 }

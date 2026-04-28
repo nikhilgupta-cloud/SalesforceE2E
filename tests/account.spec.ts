@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Account Tests — Salesforce CPQ (RCA)
  * Auth: auth/session.json
  *
@@ -51,12 +51,6 @@ async function clickTab(page: Page, tabName: string) {
     await tab.click();
     await SFUtils.waitForLoading(page);
   }
-}
-
-async function searchAndOpen(page: Page, name: string) {
-  await SFUtils.searchAndOpen(page, name);
-  await waitForDetail(page);
-  await dismissAuraError(page);
 }
 
 async function handleSave(page: Page, modal: any) {
@@ -197,11 +191,35 @@ test.describe('Account Tests', () => {
     await SFUtils.fillField(oppModal, 'Close Date', data.opportunity.Close_Date);
 
     await handleSave(page, oppModal);
+
+    // After saving from a Contact's Related list, SF stays on the Contact page.
+    // Check the toast link first (most direct), then fall back to the Related list
+    // on the Contact — both avoid the global-search indexing delay.
+    const oToast = page.locator('.slds-notify--toast a[href*="/Opportunity/"], .toastMessage a[href*="/Opportunity/"]').first();
+    if (await oToast.isVisible({ timeout: 8000 }).catch(() => false)) {
+      const href = await oToast.getAttribute('href') ?? '';
+      opportunityUrl = href.startsWith('http') ? href : `${SF}${href}`;
+    }
+
+    if (!opportunityUrl?.includes('/Opportunity/')) {
+      // Toast was missed — navigate to Contact's Related tab and pick the first Opportunity link
+      await clickTab(page, 'Related');
+      const oppsRelated = page.locator('article, .slds-card').filter({
+        has: page.locator('h2, .slds-card__header-title').filter({ hasText: /Opportunities/i }),
+      });
+      const firstOppLink = oppsRelated.locator('a[href*="/Opportunity/"]').first();
+      if (await firstOppLink.isVisible({ timeout: 10000 }).catch(() => false)) {
+        const href = await firstOppLink.getAttribute('href') ?? '';
+        opportunityUrl = href.startsWith('http') ? href : `${SF}${href}`;
+      }
+    }
+
+    expect(opportunityUrl).toContain('/Opportunity/');
+
+    // Navigate to the Opportunity before checking Contact Roles (roles are on the Opp, not Contact)
+    await SFUtils.goto(page, opportunityUrl);
     await waitForDetail(page);
     await dismissAuraError(page);
-
-    opportunityUrl = page.url();
-    expect(opportunityUrl).toContain('/Opportunity/');
 
     // AC-005-04: Verify Contact is Primary Contact Role on Opportunity
     await clickTab(page, 'Related');

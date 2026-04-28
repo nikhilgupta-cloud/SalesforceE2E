@@ -244,6 +244,11 @@ function saveHashStore(store: HashStore): void {
  * Returns true if every test belonging to the given spec file is currently passing
  * in the last reports/results.json. Used to guard against regenerating working tests
  * when only story metadata changed.
+ *
+ * Treats cascade-skipped tests (expectedStatus='passed' but status='skipped', caused by
+ * a prior serial failure) as failures so the guard does not incorrectly block regeneration
+ * when downstream tests never ran. Intentional skips (test.fixme/test.skip) have
+ * expectedStatus='skipped' and are excluded from the failure check.
  */
 function allTestsPassingInSpec(specFileName: string): boolean {
   const resultsPath = path.join('reports', 'results.json');
@@ -259,7 +264,8 @@ function allTestsPassingInSpec(specFileName: string): boolean {
         if (!spec.file?.endsWith(specFileName)) continue;
         for (const t of spec.tests ?? []) {
           hasTests = true;
-          if (t.status === 'unexpected' || t.status === 'failed') hasFailed = true;
+          const isCascadeSkip = t.status === 'skipped' && t.expectedStatus !== 'skipped';
+          if (t.status === 'unexpected' || t.status === 'failed' || isCascadeSkip) hasFailed = true;
         }
       }
       for (const child of suite.suites ?? []) walk(child);
@@ -270,6 +276,34 @@ function allTestsPassingInSpec(specFileName: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Returns TC-IDs of tests that are currently failing or cascade-skipped in results.json.
+ * Used by callClaude() UPDATE mode to prevent Claude from copying buggy test code as
+ * "stable" — only passing tests are safe to copy verbatim.
+ */
+function getFailingOrSkippedTcIds(specFileName: string): Set<string> {
+  const resultsPath = path.join('reports', 'results.json');
+  const failing     = new Set<string>();
+  if (!fs.existsSync(resultsPath)) return failing;
+  try {
+    const raw = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+    function walk(suite: any) {
+      for (const spec of suite.specs ?? []) {
+        if (!spec.file?.endsWith(specFileName)) continue;
+        const tcId = (spec.title ?? '').match(/^(TC-[A-Z]+-\d+)/)?.[1];
+        if (!tcId) continue;
+        for (const t of spec.tests ?? []) {
+          const isCascadeSkip = t.status === 'skipped' && t.expectedStatus !== 'skipped';
+          if (t.status === 'unexpected' || t.status === 'failed' || isCascadeSkip) failing.add(tcId);
+        }
+      }
+      for (const child of suite.suites ?? []) walk(child);
+    }
+    (raw.suites ?? []).forEach(walk);
+  } catch {}
+  return failing;
 }
 
 /**
@@ -516,8 +550,10 @@ async function callClaude(
     ? fs.readFileSync(scenarioPath, 'utf8').slice(0, 1500)
     : '';
 
-  const idStr    = `TC-${obj.prefix}-${String(startId).padStart(3, '0')}`;
-  const isUpdate = existingScenarios.length > 0;
+  const idStr        = `TC-${obj.prefix}-${String(startId).padStart(3, '0')}`;
+  const isUpdate     = existingScenarios.length > 0;
+  // TC-IDs that failed or were cascade-skipped in the last run — must be regenerated, not copied.
+  const failingTcIds = isUpdate ? getFailingOrSkippedTcIds(obj.specFile) : new Set<string>();
 
   const knowledgeContext  = loadKnowledgeContext(objKey);
   const scrapedLocators   = loadScrapedLocators(objKey);
@@ -541,19 +577,24 @@ Rules (apply to every line of code):
 ${scrapedLocators}${knowledgeContext}`;
 
   const updateContext = isUpdate ? `
-IMPORTANT — this is an UPDATE. The story was previously processed and these are the STABLE results:
+IMPORTANT — this is an UPDATE. The story was previously processed.
 
 --- EXISTING SCENARIO ROWS ---
 ${existingScenarios}
 
---- EXISTING STABLE TEST CODE ---
+--- EXISTING TEST CODE ---
 ${existingTestCode}
 
-Your goal is to maintain stability.
-1. **Reuse Stable Code:** If an AC's criteria is UNCHANGED in the new story, you MUST copy its existing test() block from the "EXISTING STABLE TEST CODE" section exactly. Do NOT change its field names, locators, or logic.
-2. **Handle Changed ACs:** Only rewrite the test() block for the specific AC that has changed in the story.
-3. **Add New Tests:** Add new TC-IDs only for the NEW acceptance criteria.
-4. **Logic Preservation:** If you must update a test, keep any logic that is already working (like specific SFUtils calls).
+Test status from the last pipeline run:
+- FAILING / SKIPPED TC-IDs (must be fully regenerated — do NOT copy): ${failingTcIds.size > 0 ? [...failingTcIds].join(', ') : 'none'}
+- All other TC-IDs are currently PASSING and must be preserved exactly.
+
+Rules:
+1. **Regenerate Failing Tests:** For every TC-ID in the FAILING/SKIPPED list, write completely new, correct test code from scratch. Do NOT copy existing logic — it is broken.
+2. **Preserve Passing Tests:** For TC-IDs NOT in the failing list, copy the existing test() block verbatim to maintain stability.
+3. **Handle Changed ACs:** Rewrite the test() block for any AC whose criteria changed in the story, regardless of current pass/fail status.
+4. **Add New Tests:** Add new TC-IDs only for genuinely new acceptance criteria absent from the existing scenarios.
+5. **Logic Consistency:** Keep SFUtils helper calls, URL capture patterns, and shared variable names (accountUrl, contactUrl, opportunityUrl, quoteUrl, contractUrl, orderUrl) consistent with the passing tests.
 ` : '';
 
   const user = `${isUpdate ? 'UPDATE' : 'NEW'} user story:
