@@ -1,10 +1,10 @@
 {
   "config": {
-    "configFile": "D:\\SalesforceE2E1_Xpath\\playwright.config.ts",
-    "rootDir": "D:/SalesforceE2E1_Xpath/tests",
+    "configFile": "d:\\SalesforceE2E1_Xpath\\playwright.config.ts",
+    "rootDir": "d:/SalesforceE2E1_Xpath/tests",
     "forbidOnly": false,
     "fullyParallel": false,
-    "globalSetup": "D:\\SalesforceE2E1_Xpath\\scripts\\global-setup.ts",
+    "globalSetup": "d:\\SalesforceE2E1_Xpath\\scripts\\global-setup.ts",
     "globalTeardown": null,
     "globalTimeout": 0,
     "grep": {},
@@ -16,7 +16,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "D:/SalesforceE2E1_Xpath/test-results",
+        "outputDir": "d:/SalesforceE2E1_Xpath/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -24,7 +24,7 @@
         },
         "id": "chromium",
         "name": "chromium",
-        "testDir": "D:/SalesforceE2E1_Xpath/tests",
+        "testDir": "d:/SalesforceE2E1_Xpath/tests",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -45,7 +45,7 @@
         null
       ],
       [
-        "D:\\SalesforceE2E1_Xpath\\utils\\DashboardReporter.ts",
+        "d:\\SalesforceE2E1_Xpath\\utils\\DashboardReporter.ts",
         null
       ]
     ],
@@ -73,12 +73,12 @@
         {
           "title": "Account E2E Lifecycle",
           "file": "account.spec.ts",
-          "line": 82,
+          "line": 107,
           "column": 6,
           "specs": [
             {
               "title": "TC-ACC-001 — Verify Account has Billing Address and Payment Terms on Details tab",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -92,48 +92,41 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8112,
-                      "error": {
-                        "message": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder*=\"Search\"]').first() to be visible\u001b[22m\n",
-                        "stack": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder*=\"Search\"]').first() to be visible\u001b[22m\n\n    at Function._triggerGlobalSearch (D:\\SalesforceE2E1_Xpath\\utils\\SFUtils.ts:262:23)\n    at Function.searchAndOpen (D:\\SalesforceE2E1_Xpath\\utils\\SFUtils.ts:269:5)\n    at D:\\SalesforceE2E1_Xpath\\tests\\account.spec.ts:147:18",
-                        "location": {
-                          "file": "D:\\SalesforceE2E1_Xpath\\utils\\SFUtils.ts",
-                          "column": 23,
-                          "line": 262
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:262\n\n\u001b[0m \u001b[90m 260 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 261 |\u001b[39m     \u001b[36mconst\u001b[39m searchInput \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[placeholder*=\"Search\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 262 |\u001b[39m     \u001b[36mawait\u001b[39m searchInput\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 263 |\u001b[39m     \u001b[36mawait\u001b[39m searchInput\u001b[33m.\u001b[39mfill(query)\u001b[33m;\u001b[39m\n \u001b[90m 264 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Enter'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 265 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mwaitForLoading(page)\u001b[33m;\u001b[39m\u001b[0m"
-                      },
+                      "duration": 32686,
                       "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-04-29T10:30:18.883Z",
-                      "annotations": [],
-                      "attachments": [
+                      "stdout": [
                         {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1_Xpath\\test-results\\account-Account-E2E-Lifecy-acc20-ayment-Terms-on-Details-tab-chromium\\test-failed-1.png"
+                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
+                        },
+                        {
+                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
                         }
                       ],
-                      "errorLocation": {
-                        "file": "D:\\SalesforceE2E1_Xpath\\utils\\SFUtils.ts",
-                        "column": 23,
-                        "line": 262
-                      }
+                      "stderr": [
+                        {
+                          "text": "[SOFT-FAIL] AC-005-01: Billing Address field not visible on Account Details tab\n"
+                        },
+                        {
+                          "text": "[SOFT-FAIL] AC-005-01: Payment Terms field not visible on Account Details tab\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-04-29T10:51:56.021Z",
+                      "annotations": [],
+                      "attachments": []
                     }
                   ],
-                  "status": "passed"
+                  "status": "expected"
                 }
               ],
               "id": "ad4620ead4e6d9cc2627-9bab93cd4b77ad236784",
               "file": "account.spec.ts",
-              "line": 145,
+              "line": 126,
               "column": 7
             },
             {
               "title": "TC-ACC-002 — Create new Contact on the Account via Contacts related list",
-              "ok": true,
+              "ok": false,
               "tags": [],
               "tests": [
                 {
@@ -144,25 +137,64 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 39230,
+                      "error": {
+                        "message": "TimeoutError: locator.waitFor: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('//span[normalize-space()=\\'Contacts\\']/ancestor::article[1]//a[@title=\\'New Contact\\'] | //span[normalize-space()=\\'Contacts\\']/ancestor::article[1]//button[@title=\\'New\\']').first() to be visible\u001b[22m\n",
+                        "stack": "TimeoutError: locator.waitFor: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('//span[normalize-space()=\\'Contacts\\']/ancestor::article[1]//a[@title=\\'New Contact\\'] | //span[normalize-space()=\\'Contacts\\']/ancestor::article[1]//button[@title=\\'New\\']').first() to be visible\u001b[22m\n\n    at d:\\SalesforceE2E1_Xpath\\tests\\account.spec.ts:179:25",
+                        "location": {
+                          "file": "d:\\SalesforceE2E1_Xpath\\tests\\account.spec.ts",
+                          "column": 25,
+                          "line": 179
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 177 |\u001b[39m\n \u001b[90m 178 |\u001b[39m     \u001b[36mconst\u001b[39m newContactBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(getLocator(locatorUtils\u001b[33m.\u001b[39mpick(\u001b[32m'contactsRelatedNewBtn'\u001b[39m)))\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 179 |\u001b[39m     \u001b[36mawait\u001b[39m newContactBtn\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 180 |\u001b[39m     \u001b[36mawait\u001b[39m newContactBtn\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 181 |\u001b[39m     \u001b[36mawait\u001b[39m dismissAuraError(page)\u001b[33m;\u001b[39m\n \u001b[90m 182 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mwaitForLoading(page)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "d:\\SalesforceE2E1_Xpath\\tests\\account.spec.ts",
+                            "column": 25,
+                            "line": 179
+                          },
+                          "message": "TimeoutError: locator.waitFor: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('//span[normalize-space()=\\'Contacts\\']/ancestor::article[1]//a[@title=\\'New Contact\\'] | //span[normalize-space()=\\'Contacts\\']/ancestor::article[1]//button[@title=\\'New\\']').first() to be visible\u001b[22m\n\n\n  177 |\n  178 |     const newContactBtn = page.locator(getLocator(locatorUtils.pick('contactsRelatedNewBtn'))).first();\n> 179 |     await newContactBtn.waitFor({ state: 'visible', timeout: 20000 });\n      |                         ^\n  180 |     await newContactBtn.click();\n  181 |     await dismissAuraError(page);\n  182 |     await SFUtils.waitForLoading(page);\n    at d:\\SalesforceE2E1_Xpath\\tests\\account.spec.ts:179:25"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-29T10:30:34.675Z",
+                      "startTime": "2026-04-29T10:52:32.724Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "d:\\SalesforceE2E1_Xpath\\test-results\\account-Account-E2E-Lifecy-7ab77-t-via-Contacts-related-list-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "d:\\SalesforceE2E1_Xpath\\test-results\\account-Account-E2E-Lifecy-7ab77-t-via-Contacts-related-list-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "d:\\SalesforceE2E1_Xpath\\tests\\account.spec.ts",
+                        "column": 25,
+                        "line": 179
+                      }
                     }
                   ],
-                  "status": "skipped"
+                  "status": "unexpected"
                 }
               ],
               "id": "ad4620ead4e6d9cc2627-d71f324a171fd2c36073",
               "file": "account.spec.ts",
-              "line": 188,
+              "line": 171,
               "column": 7
             },
             {
@@ -186,7 +218,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-29T10:30:34.705Z",
+                      "startTime": "2026-04-29T10:53:13.189Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -196,7 +228,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-8b0715b9255cb27f820b",
               "file": "account.spec.ts",
-              "line": 233,
+              "line": 207,
               "column": 7
             },
             {
@@ -220,7 +252,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-29T10:30:34.740Z",
+                      "startTime": "2026-04-29T10:53:13.208Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -230,7 +262,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-de8ac81d3039e3fea0f1",
               "file": "account.spec.ts",
-              "line": 283,
+              "line": 256,
               "column": 7
             },
             {
@@ -254,7 +286,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-29T10:30:34.778Z",
+                      "startTime": "2026-04-29T10:53:13.228Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -264,7 +296,7 @@
               ],
               "id": "ad4620ead4e6d9cc2627-94e17f849af2e36a5cb8",
               "file": "account.spec.ts",
-              "line": 450,
+              "line": 416,
               "column": 7
             }
           ]
@@ -274,11 +306,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-29T10:30:10.379Z",
-    "duration": 24547.525999999998,
+    "startTime": "2026-04-29T10:51:48.754Z",
+    "duration": 84752.041,
     "expected": 1,
-    "skipped": 4,
-    "unexpected": 0,
+    "skipped": 3,
+    "unexpected": 1,
     "flaky": 0
   }
 }

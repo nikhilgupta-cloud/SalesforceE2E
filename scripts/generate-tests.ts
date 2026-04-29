@@ -559,22 +559,52 @@ async function callClaude(
   const scrapedLocators   = loadScrapedLocators(objKey);
 
   const system = `You are a Salesforce Revenue Cloud QA engineer writing Playwright TypeScript tests.
-Rules (apply to every line of code):
-- Adhere STRICTLY to the SHARED GROUND RULES in MasterPrompt.md.
-- ALWAYS import { SFUtils } from '../utils/SFUtils';
-- Use SFUtils.goto(page, url) instead of page.goto().
-- Use SFUtils.waitForLoading(page) instead of manual spinner waits.
-- Use SFUtils.fillField(root, 'ApiNameOrLabel', value) for all standard inputs.
-- Use SFUtils.fillName(root, 'firstName'|'lastName', value) for Name fields.
-- Use SFUtils.selectCombobox(page, root, 'ApiNameOrLabel', label) for all dropdowns.
-- Use SFUtils.fillLookup(page, root, 'ApiNameOrLabel', value) for all lookups.
-- VERIFIED LOCATORS: Use the exact selectors provided in the "VERIFIED LOCATORS" section below.
-- Do NOT guess or invent field names. If a field is not in VERIFIED LOCATORS, use the exact Label string from the story.
-- Call dismissAuraError(page) after every SFUtils.goto().
-- Use exact button matching: getByRole('button', { name: 'Save', exact: true }).
-- TAB NAVIGATION: Always call clickTab(page, 'Details') before accessing fields on a record page.
-- TEST DATA: Use data from tests/fixtures/test-data.json via the 'data' constant.
-- E2E FLOW VIDEO: If knowledge/FLow/Flow.mp4 exists, review it to understand the visual flow and transitions.
+
+═══ LOCATOR STRATEGY — XPath FIRST (MANDATORY) ═══
+
+STEP 1 — XPath via locator map (ALWAYS use this first):
+Every spec file MUST follow this exact pattern at module level (before test.describe):
+
+  import { locatorUtils } from '../utils/locator-utils';
+  import { getLocator }   from '../utils/core-actions';
+
+  const locatorMap = {
+    saveButton:      \`//button[normalize-space()='Save']\`,
+    accountNameLink: \`//a[contains(@title,'{ACCOUNT_NAME}')]\`,
+    relatedNewBtn:   \`//span[normalize-space()='Contacts']/ancestor::article[1]//button[@title='New']\`,
+  };
+  locatorUtils.register(locatorMap);
+
+Rules:
+- ALL XPath strings live in \`locatorMap\` — NEVER inline xpath strings in test() bodies
+- Retrieve with: \`page.locator(getLocator(locatorUtils.pick('key')))\`
+- Parameterised: \`page.locator(getLocator(locatorUtils.pick('accountNameLink').replace('{ACCOUNT_NAME}', name)))\`
+- Use \`//\` axes, \`@data-*\` attributes, \`normalize-space()\`, \`contains()\` — never positional indices
+- One key per element; \`{PLACEHOLDER}\` tokens for dynamic segments
+
+STEP 2 — SFUtils form helpers (only for modal field filling, after XPath fails to target an input):
+- SFUtils.goto(page, url) — navigation ONLY
+- SFUtils.waitForLoading(page) — spinner waits
+- SFUtils.fillField(modal, 'ApiName', value) — text/date inputs inside modals
+- SFUtils.fillName(modal, 'firstName'|'lastName', value) — compound Name field
+- SFUtils.selectCombobox(page, modal, 'ApiName', label) — picklists inside modals
+NEVER use SFUtils for element location or click actions — use XPath locatorMap for those.
+
+STEP 3 — Role/label (fallback only, never preferred):
+- page.getByRole('button', { name: 'Save', exact: true })
+- page.getByLabel('Account Name')
+
+═══ OTHER MANDATORY RULES ═══
+- ALWAYS add these imports at the top: locatorUtils, getLocator (see pattern above)
+- ALWAYS call locatorUtils.register(locatorMap) at module level after defining locatorMap
+- ALWAYS call dismissAuraError(page) after every SFUtils.goto()
+- ALWAYS call clickTab(page, 'Details') before accessing fields on a record Details tab
+- NEVER use page.goto() — use SFUtils.goto()
+- NEVER use waitForLoadState('networkidle')
+- NEVER use isVisible() for assertions — use expect(locator).toBeVisible()
+- NEVER use optional chaining on TestData fields (data.account?.name)
+- NEVER inline raw xpath= strings in test() bodies — always go through locatorMap
+- TEST DATA: use \`const data = getTestData()\` — exact keys: data.account.Account_Name, data.contact.First_Name, etc.
 ${scrapedLocators}${knowledgeContext}`;
 
   const updateContext = isUpdate ? `
