@@ -253,6 +253,36 @@ function stepGit() {
 }
 
 // ─────────────────────────────────────────────
+// PRE-STEP — Session Check & Refresh
+// ─────────────────────────────────────────────
+const SESSION_FILE = 'auth/session.json';
+const SESSION_MAX_AGE_MS = 60 * 60 * 1000; // 1 hour
+
+async function stepEnsureSession() {
+  const exists = fs.existsSync(SESSION_FILE);
+  const tooOld = exists
+    ? Date.now() - fs.statSync(SESSION_FILE).mtimeMs > SESSION_MAX_AGE_MS
+    : true;
+
+  if (!exists || tooOld) {
+    const reason = !exists ? 'session.json missing' : 'session older than 1 hour';
+    log(`PRE-STEP — ${reason}. Refreshing Salesforce session...`);
+    const result = spawnSync(
+      'npx',
+      ['ts-node', 'scripts/refresh-session.ts'],
+      { stdio: 'inherit', shell: true }
+    );
+    if (result.status !== 0) {
+      throw new Error('Session refresh failed — check SF credentials in .env and re-run');
+    }
+    log('PRE-STEP — Session refreshed ✅');
+  } else {
+    const ageMin = Math.round((Date.now() - fs.statSync(SESSION_FILE).mtimeMs) / 60000);
+    log(`PRE-STEP — Session is valid (${ageMin}m old) — skipping refresh`);
+  }
+}
+
+// ─────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────
 async function main() {
@@ -262,6 +292,8 @@ async function main() {
   refreshDashboard();
 
   try {
+    await stepEnsureSession();
+
     await stepJira();
 
     await stepScrape();

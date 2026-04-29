@@ -23,7 +23,9 @@ async function dismissAuraError(page: Page) {
 // ── Helper: click Save in the active modal and handle duplicate-detection ──
 async function handleSave(page: Page) {
   const modal = page.locator(SFUtils.MODAL);
-  await modal.getByRole('button', { name: 'Save', exact: true }).click();
+  // Find the footer save button specifically
+  const saveBtn = modal.locator('button').filter({ hasText: /^Save$/ }).first();
+  await saveBtn.click();
   await SFUtils.waitForLoading(page);
 
   // Salesforce may show a duplicate-record confirmation dialog
@@ -32,6 +34,9 @@ async function handleSave(page: Page) {
     await duplicateSave.click();
     await SFUtils.waitForLoading(page);
   }
+  
+  // Wait for modal to disappear to ensure record is saved
+  await modal.waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
   await dismissAuraError(page);
 }
 
@@ -76,23 +81,38 @@ test.describe('Account E2E Lifecycle', () => {
   // Positive: Use global search to open existing account from test data, soft-fail
   // check Billing Address and Payment Terms on the Details tab.
   test('TC-ACC-001 — Verify Account Billing Address and Payment Terms', async ({ page }) => {
-    // Navigate to SF home first so the global search hotkey is available
-    await SFUtils.goto(page, process.env.SF_SANDBOX_URL!);
-    await SFUtils.waitForAppReady(page);
-    await SFUtils.waitForLoading(page);
+    // Navigate directly to the Account list view — more stable than global search
+    const listUrl = `${process.env.SF_SANDBOX_URL}/lightning/o/Account/list`;
+    await SFUtils.goto(page, listUrl);
     await dismissAuraError(page);
 
-    // Use global search to open the pre-existing account from test data
-    accountUrl = await SFUtils.searchAndOpen(page, data.account.Account_Name);
+    // Search in the list view
+    const searchBox = page.getByPlaceholder('Search this list...');
+    await searchBox.waitFor({ state: 'visible', timeout: 15000 });
+    await searchBox.fill(data.account.Account_Name);
+    await searchBox.press('Enter');
+    await SFUtils.waitForLoading(page);
+
+    const accountLink = page.getByRole('link', { name: data.account.Account_Name, exact: true }).first();
+    await accountLink.waitFor({ state: 'visible', timeout: 15000 });
+    await accountLink.click();
+    
     await SFUtils.waitForAppReady(page);
     await SFUtils.waitForLoading(page);
+    accountUrl = page.url();
     await dismissAuraError(page);
 
     // Switch to the Details tab before reading field output values
-    await page.getByRole('tab', { name: 'Details' }).click();
+    await SFUtils.safeClick(page.getByRole('tab', { name: 'Details' }));
     await SFUtils.waitForLoading(page);
-    // Scroll so lazy-rendered fields become visible
+    
+    // Ensure the details section is actually rendered
+    await page.locator('.slds-form').first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+
+    // Scroll more aggressively to trigger lazy loading
     await page.mouse.wheel(0, 500);
+    await page.waitForTimeout(1000);
+    await page.mouse.wheel(0, 1000);
     await page.waitForTimeout(1000);
 
     // AC-005-01: SOFT-FAIL — log warning if fields are absent, do not throw
@@ -116,14 +136,10 @@ test.describe('Account E2E Lifecycle', () => {
 
   // TC-ACC-002 | AC Reference: AC-005-02
   // Positive: Create a new Contact from the Contacts related list on the Account.
-  // self-heal: could not fix after 3 rounds — Error: Navigation failed to /Contact/,/003
-  test.fixme('TC-ACC-002 — Create Contact on Account', async ({ page }) => {
+test('TC-ACC-002 — Create Contact on Account', async ({ page }) => {
     await SFUtils.goto(page, accountUrl);
-    await SFUtils.waitForAppReady(page);
-    await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
-    // Switch to the Related tab to find the Contacts related list
     await page.getByRole('tab', { name: 'Related' }).click();
     await SFUtils.waitForLoading(page);
 
@@ -138,7 +154,6 @@ test.describe('Account E2E Lifecycle', () => {
     const modal = page.locator(SFUtils.MODAL);
     await modal.waitFor({ state: 'visible', timeout: 10000 });
 
-    // Use AutoCon-timestamp as last name so each run creates a unique record
     const lastName = `AutoCon-${Date.now()}`;
 
     await SFUtils.fillName(modal, 'firstName', data.contact.First_Name);
@@ -148,8 +163,18 @@ test.describe('Account E2E Lifecycle', () => {
 
     await handleSave(page);
 
-    // Salesforce stays on Account page after related-list modal save — use toast link to navigate
-    contactUrl = await SFUtils.waitForNavigationOrToast(page, ['/Contact/', '/003']);
+    // After a related-list modal save Salesforce stays on the Account page — the URL never
+    // transitions to /Contact/, so waitForNavigationOrToast times out.
+    // Instead: wait for the success toast, click its record link to navigate to the Contact.
+    const toastLink = page
+      .locator('.toastMessage a, .slds-notify__content a')
+      .first();
+    await toastLink.waitFor({ state: 'visible', timeout: 20000 });
+    await SFUtils.safeClick(toastLink);
+    await SFUtils.waitForLoading(page);
+
+    await page.waitForURL(/\/Contact\/|\/003/, { timeout: 15000 });
+    contactUrl = page.url();
     expect(contactUrl).toMatch(/\/Contact\/|\/003/);
     console.log(`[PASS] Contact created: ${contactUrl}`);
   });
@@ -159,8 +184,6 @@ test.describe('Account E2E Lifecycle', () => {
   // then soft-fail verify Primary Contact Role is assigned on the Opportunity.
   test('TC-ACC-003 — Create Opportunity from Contact and Verify Primary Contact Role', async ({ page }) => {
     await SFUtils.goto(page, contactUrl);
-    await SFUtils.waitForAppReady(page);
-    await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
     // AC-005-03: Open Opportunities related list on Contact
@@ -193,8 +216,6 @@ test.describe('Account E2E Lifecycle', () => {
 
     // AC-005-04: Verify Primary Contact Role on the Opportunity Related tab
     await SFUtils.goto(page, opportunityUrl);
-    await SFUtils.waitForAppReady(page);
-    await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
     await page.getByRole('tab', { name: 'Related' }).click();
@@ -223,8 +244,6 @@ test.describe('Account E2E Lifecycle', () => {
   // select All Products, search for and add a product, save, validate cart row.
   test('TC-ACC-004 — Create Quote, Browse Catalogs, Add Product and Validate Cart', async ({ page }) => {
     await SFUtils.goto(page, opportunityUrl);
-    await SFUtils.waitForAppReady(page);
-    await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
     // QO-005-05: Create Quote — try direct button first, fall back to overflow menu
@@ -314,8 +333,6 @@ test.describe('Account E2E Lifecycle', () => {
   test('TC-ACC-005 — Accept Quote, Create and Activate Contract, Create and Activate Order', async ({ page }) => {
     // ── QL-005-10: Set Quote status to Accepted → Mark as Current Status ──
     await SFUtils.goto(page, quoteUrl);
-    await SFUtils.waitForAppReady(page);
-    await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
     const acceptedBtn = page.getByRole('button', { name: /Accepted/i }).first();
@@ -362,8 +379,6 @@ test.describe('Account E2E Lifecycle', () => {
 
     // ── CR-005-12: Open Contract → Activate (set Status + Contract Term) ──
     await SFUtils.goto(page, contractUrl);
-    await SFUtils.waitForAppReady(page);
-    await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
     // Try inline Activate button first
@@ -396,8 +411,6 @@ test.describe('Account E2E Lifecycle', () => {
 
     // ── OR-005-13 & OR-005-14: Navigate back to Quote → Create single Order ──
     await SFUtils.goto(page, quoteUrl);
-    await SFUtils.waitForAppReady(page);
-    await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
     const createOrderBtn = page.getByRole('button', { name: /Create Order/i }).first();
@@ -430,8 +443,6 @@ test.describe('Account E2E Lifecycle', () => {
     const orderUrl = await waitForRecordUrl(page, ['/Order/', '/801']);
 
     await SFUtils.goto(page, orderUrl);
-    await SFUtils.waitForAppReady(page);
-    await SFUtils.waitForLoading(page);
     await dismissAuraError(page);
 
     // ── OR-005-16: Activate Order and Mark as Complete ──

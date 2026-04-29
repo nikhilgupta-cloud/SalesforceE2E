@@ -14,9 +14,8 @@ export class SFUtils {
   }
 
   static async waitForAppReady(page: Page) {
-    // FIX 2: Change 'attached' to 'visible'. We want the UI actually rendered.
-    await page.locator('lightning-app, .slds-page-header, .desktop').first()
-      .waitFor({ state: 'visible', timeout: 30000 }).catch(() => {
+    await page.locator('lightning-app, .slds-global-header, .slds-page-header, .desktop, force-record-layout-section').first()
+      .waitFor({ state: 'visible', timeout: 10000 }).catch(() => {
         console.log("⚠️ App Ready indicator not visible, continuing anyway...");
       });
     await this.waitForLoading(page);
