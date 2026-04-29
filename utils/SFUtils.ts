@@ -8,8 +8,13 @@ export class SFUtils {
   static SPINNER = '.slds-spinner_container, .slds-spinner, .forceVisualMessageQueue';
 
   static async goto(page: Page, url: string) {
-    // FIX 1: Change 'load' to 'domcontentloaded' so it doesn't hang on background telemetry
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    // Normalize Salesforce domain: lightning.force.com URLs lose session cookies;
+    // always use the my.salesforce.com domain where the session is authenticated.
+    const normalizedUrl = url.replace(
+      /([a-z0-9-]+)\.lightning\.force\.com/i,
+      '$1.my.salesforce.com'
+    );
+    await page.goto(normalizedUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await this.waitForAppReady(page);
   }
 
@@ -63,29 +68,162 @@ export class SFUtils {
   }
 
   static async fillField(root: Page | Locator | FrameLocator, apiName: string, value: string) {
+    const humanLabel = apiName.replace(/__c$/, '').replace(/([A-Z])/g, ' $1').trim();
+    const shortLabel  = humanLabel.replace(/ Name$/, '').replace(/ Id$/, '').trim();
+    const labelCandidates = [...new Set([shortLabel, humanLabel, apiName])].filter(Boolean);
+
+    const doFill = async (input: Locator) => {
+      await input.waitFor({ state: 'visible', timeout: 12000 });
+      await input.click();
+      await input.fill(value);
+      await input.press('Tab');
+    };
+
+    // S1: data-field-api-name → inner input. Uses waitFor (not isVisible) so it waits for the
+    // modal's form content to fully render before giving up.
     const field = this.getField(root, apiName);
-    const input = field.locator('input, textarea').first();
-    await input.waitFor({ state: 'visible', timeout: 15000 });
-    
-    // FIX 4: Always click a Salesforce field before filling to wake up the event listeners
-    await input.click(); 
-    await input.fill(value);
-    await input.press('Tab');
+    const cssInput = field.locator('input, textarea').first();
+    try {
+      await cssInput.waitFor({ state: 'visible', timeout: 15000 });
+      await doFill(cssInput);
+      return;
+    } catch { /* try next */ }
+
+    // S2: input[name] / textarea[name] — direct attribute across shadow DOM
+    const byName = root.locator(`input[name="${apiName}"], textarea[name="${apiName}"]`).first();
+    try {
+      await byName.waitFor({ state: 'visible', timeout: 8000 });
+      await doFill(byName);
+      return;
+    } catch { /* try next */ }
+
+    // S3: getByLabel (aria tree — pierces shadow DOM)
+    for (const lbl of labelCandidates) {
+      const el = (root as Locator | Page).getByLabel(lbl, { exact: false }).first();
+      try {
+        await el.waitFor({ state: 'visible', timeout: 5000 });
+        await doFill(el);
+        return;
+      } catch { /* try next */ }
+    }
+
+    // S4: .slds-form-element filtered by visible label → inner input
+    for (const lbl of labelCandidates) {
+      const formEl = root.locator('.slds-form-element').filter({
+        has: root.locator('label, .slds-form-element__label').filter({
+          hasText: new RegExp(`^[*\\s]*${lbl}[*\\s]*$`, 'i'),
+        }),
+      }).first();
+      try {
+        await formEl.waitFor({ state: 'visible', timeout: 3000 });
+        const inp = formEl.locator('input, textarea').first();
+        await inp.waitFor({ state: 'visible', timeout: 3000 });
+        await doFill(inp);
+        return;
+      } catch { /* try next */ }
+    }
+
+    throw new Error(`fillField: could not locate field "${apiName}" to fill with "${value}"`);
   }
 
   static async selectCombobox(page: Page, root: Page | Locator | FrameLocator, apiName: string, label: string) {
-    const field = this.getField(root, apiName);
-    const trigger = field.locator('input[role="combobox"], button').first();
-    await trigger.click();
-    
-    // Wait for the dropdown to actually render in the DOM
-    await page.waitForTimeout(500); 
+    // Derive human-readable label candidates from the API name
+    // e.g. "StageName" → "Stage Name" → "Stage" | "CloseDate" → "Close Date"
+    const humanLabel = apiName.replace(/__c$/, '').replace(/([A-Z])/g, ' $1').trim();
+    const shortLabel  = humanLabel.replace(/ Name$/, '').replace(/ Id$/, '').trim();
+    const labelCandidates = [...new Set([shortLabel, humanLabel, apiName])].filter(Boolean);
 
-    const option = page.locator('lightning-base-combobox-item, [role="option"]')
-      .filter({ hasText: new RegExp(`^${label}$`, 'i') }).first();
-    await option.scrollIntoViewIfNeeded();
-    await option.click();
-    await this.waitForLoading(page);
+    const pickOption = async () => {
+      const opt = page.locator('lightning-base-combobox-item, [role="option"], .slds-listbox__item')
+        .filter({ hasText: new RegExp(`^\\s*${label}\\s*$`, 'i') }).first();
+      await opt.waitFor({ state: 'visible', timeout: 8000 });
+      await opt.click();
+    };
+
+    // === S1: native <select> via data-field-api-name ===
+    const nativeSelect = root.locator(
+      `[data-field-api-name="${apiName}"] select, [field-name="${apiName}"] select`
+    ).first();
+    try {
+      await nativeSelect.waitFor({ state: 'visible', timeout: 10000 });
+      await nativeSelect.selectOption({ label });
+      await this.waitForLoading(page);
+      return;
+    } catch { /* try next */ }
+
+    // === S2: getByLabel — uses aria tree, pierces Salesforce LWC shadow DOM ===
+    for (const lbl of labelCandidates) {
+      const el = (root as Locator | Page).getByLabel(lbl, { exact: false }).first();
+      try {
+        await el.waitFor({ state: 'visible', timeout: 5000 });
+        const tag = await el.evaluate((n: Element) => n.tagName.toLowerCase()).catch(() => '');
+        if (tag === 'select') {
+          await el.selectOption({ label });
+        } else {
+          await el.click();
+          await page.waitForTimeout(500);
+          await pickOption();
+        }
+        await this.waitForLoading(page);
+        return;
+      } catch { /* try next */ }
+    }
+
+    // === S3: .slds-form-element filtered by visible label text ===
+    for (const lbl of labelCandidates) {
+      const formEl = root.locator('.slds-form-element').filter({
+        has: page.locator('label, .slds-form-element__label').filter({
+          hasText: new RegExp(`^[*\\s]*${lbl}[*\\s]*$`, 'i'),
+        }),
+      }).first();
+      if (await formEl.isVisible({ timeout: 3000 }).catch(() => false)) {
+        const sel = formEl.locator('select').first();
+        if (await sel.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await sel.selectOption({ label });
+          await this.waitForLoading(page);
+          return;
+        }
+        const trigger = formEl.locator('input[role="combobox"], button[aria-haspopup], button').first();
+        await trigger.click();
+        await page.waitForTimeout(500);
+        await pickOption();
+        await this.waitForLoading(page);
+        return;
+      }
+    }
+
+    // === S4: data-field-api-name container → inner trigger ===
+    const fieldContainer = root.locator(
+      `[data-field-api-name="${apiName}"], [field-name="${apiName}"]`
+    ).first();
+    if (await fieldContainer.isVisible({ timeout: 3000 }).catch(() => false)) {
+      const trigger = fieldContainer.locator('select, input[role="combobox"], button').first();
+      const tag = await trigger.evaluate((n: Element) => n.tagName.toLowerCase()).catch(() => '');
+      if (tag === 'select') {
+        await trigger.selectOption({ label });
+      } else {
+        await trigger.click();
+        await page.waitForTimeout(500);
+        await pickOption();
+      }
+      await this.waitForLoading(page);
+      return;
+    }
+
+    // === S5: last resort — any <select> in scope whose options include the target label ===
+    const allSelects = root.locator('select');
+    const count = await allSelects.count();
+    for (let i = 0; i < count; i++) {
+      const sel = allSelects.nth(i);
+      const opts = await sel.locator('option').allInnerTexts().catch(() => [] as string[]);
+      if (opts.some(o => o.trim().toLowerCase() === label.toLowerCase())) {
+        await sel.selectOption({ label });
+        await this.waitForLoading(page);
+        return;
+      }
+    }
+
+    throw new Error(`selectCombobox: could not locate field "${apiName}" to select "${label}"`);
   }
 
   static async fillName(root: Page | Locator | FrameLocator, subFieldName: 'firstName' | 'lastName', value: string) {
@@ -95,7 +233,7 @@ export class SFUtils {
     await input.fill(value);
   }
 
-  static async waitForNavigationOrToast(page: Page, substrings: string | string[], recordName?: string): Promise<string> {
+  static async waitForNavigationOrToast(page: Page, substrings: string | string[], _recordName?: string): Promise<string> {
     const subs = Array.isArray(substrings) ? substrings : [substrings];
     const checkMatch = (url: string) => subs.some(sub => url.includes(sub));
 

@@ -369,25 +369,22 @@ body::after{
       <p>Playwright E2E · Chromium · 5 Tests across Account · Contact · Opportunity · Quote (CPQ) · Contract · Order · Amendment · Renewal</p>
       <div class="status-wrap">
 <!-- BADGE-START -->
-        <div class="badge badge-run">
-          <div class="dot"></div>
-          RUNNING
-        </div>
+        <div class="badge badge-fail">FAILURES DETECTED</div>
 <!-- BADGE-END -->
         <div class="chips">
           <div class="chip">📦 5</div>
           <div class="chip c-pass">✅ 0 Passed</div>
+          <div class="chip c-fail">❌ 1 Failed</div>
           
-          <div class="chip c-run">⟳ 1 Running</div>
-          <div class="chip c-pend">○ 4 Pending</div>
-          <div class="chip c-time">⏱ 00:02</div>
+          
+          <div class="chip c-time">⏱ 00:24</div>
           <div class="chip c-rate">📈 0%</div>
         </div>
       </div>
     </div>
   </div>
   <div class="header-right">
-    <div>Run: <strong>29 Apr 2026, 06:07</strong></div>
+    <div>Run: <strong>29 Apr 2026, 16:00</strong></div>
     <div>Engine: <strong>Playwright v1.58</strong></div>
     <div>Browser: <strong>Chromium</strong></div>
   </div>
@@ -416,67 +413,74 @@ body::after{
           <div class="step-num">0</div>
         </div>
         <div class="step-label">Scrape Locators</div>
-        <div class="step-detail">Locator map is 716m old (&lt; 24h) — using cache</div>
-        <div class="step-time">06:03:52</div>
+        <div class="step-detail">Locator map is 1303m old (&lt; 24h) — using cache</div>
+        <div class="step-time">15:50:18</div>
         
         <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 13ms</span>
+          <span class="step-badge sb-time">⏱ 14ms</span>
           
         </div>
         
       </div>
-      <div class="pipe-step pending">
+      <div class="pipe-step done">
         <div class="step-circle">
-          🤖
+          ✅
           <div class="step-num">1</div>
         </div>
         <div class="step-label">AI Test Generation</div>
-        <div class="step-detail">No changes — 1 stories unchanged</div>
-        <div class="step-time">06:03:52</div>
+        <div class="step-detail">Tests generated — 1 new, 0 updated, 0 unchanged</div>
+        <div class="step-time">15:58:59</div>
         
         <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 22ms</span>
+          <span class="step-badge sb-time">⏱ 8m 40s</span>
           
         </div>
         
       </div>
-      <div class="pipe-step pending">
+      <div class="pipe-step done">
         <div class="step-circle">
-          📋
+          ✅
           <div class="step-num">2</div>
         </div>
         <div class="step-label">Verify Scenarios</div>
-        <div class="step-detail">No story changes — skipped</div>
-        <div class="step-time">06:03:52</div>
-        
-        
-      </div>
-      <div class="pipe-step pending">
-        <div class="step-circle">
-          📄
-          <div class="step-num">3</div>
-        </div>
-        <div class="step-label">Draft Test Plan</div>
-        <div class="step-detail">No story changes — skipped</div>
-        <div class="step-time">06:03:52</div>
-        
-        
-      </div>
-      <div class="pipe-step running">
-        <div class="step-circle">
-          ⟳
-          <div class="step-num">4</div>
-        </div>
-        <div class="step-label">Execute E2E Tests</div>
-        <div class="step-detail">Running 5 tests…</div>
-        <div class="step-time">06:07:56</div>
+        <div class="step-detail">Scenarios validated</div>
+        <div class="step-time">15:58:59</div>
         
         <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 7s</span>
+          <span class="step-badge sb-time">⏱ 20ms</span>
           
         </div>
         
-        <div class="step-progress"><div class="step-progress-bar"></div></div>
+      </div>
+      <div class="pipe-step done">
+        <div class="step-circle">
+          ✅
+          <div class="step-num">3</div>
+        </div>
+        <div class="step-label">Draft Test Plan</div>
+        <div class="step-detail">Test plan ready</div>
+        <div class="step-time">16:00:00</div>
+        
+        <div class="step-meta">
+          <span class="step-badge sb-time">⏱ 1m 0s</span>
+          
+        </div>
+        
+      </div>
+      <div class="pipe-step failed">
+        <div class="step-circle">
+          ❌
+          <div class="step-num">4</div>
+        </div>
+        <div class="step-label">Execute E2E Tests</div>
+        <div class="step-detail">0/5 tests passed</div>
+        <div class="step-time">16:00:34</div>
+        
+        <div class="step-meta">
+          <span class="step-badge sb-time">⏱ 23s</span>
+          
+        </div>
+        
       </div>
       <div class="pipe-step done">
         <div class="step-circle">
@@ -485,10 +489,10 @@ body::after{
         </div>
         <div class="step-label">Self-Heal Failures</div>
         <div class="step-detail">All healed</div>
-        <div class="step-time">06:08:04</div>
+        <div class="step-time">16:02:41</div>
         
         <div class="step-meta">
-          <span class="step-badge sb-time">⏱ 2m 44s</span>
+          <span class="step-badge sb-time">⏱ 2m 5s</span>
           
         </div>
         
@@ -571,20 +575,20 @@ body::after{
   <div>
     <div class="suite-grid">
       
-      <div class="suite-card sc-run">
+      <div class="suite-card sc-fail">
         <div class="ring-wrap">
           <svg viewBox="0 0 36 36" width="72" height="72">
             <circle class="ring-bg" cx="18" cy="18" r="15.9"/>
             <circle class="ring-fg" cx="18" cy="18" r="15.9"
-              stroke="#f59e0b" stroke-dasharray="0, 100" stroke-dashoffset="0"/>
+              stroke="#f43f5e" stroke-dasharray="0, 100" stroke-dashoffset="0"/>
           </svg>
           <div class="ring-icon">🏢</div>
         </div>
         <div class="sc-name">Account</div>
-        <div class="sc-count" style="color:#f59e0b">0<span style="font-size:14px;color:var(--muted)">/5</span></div>
+        <div class="sc-count" style="color:#f43f5e">0<span style="font-size:14px;color:var(--muted)">/5</span></div>
         <div class="sc-sub">
+          <span style="color:var(--fail)">1 failed · </span>
           
-          <span style="color:var(--run)">1 running · </span>
           0% complete
         </div>
       </div>
@@ -593,17 +597,57 @@ body::after{
   <div>
     <div class="feed">
       <div class="feed-title">
-        <div class="live-dot"></div>
+        
         Activity Feed
       </div>
       <div class="feed-list">
         
+          <div class="feed-item fi-fail">
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">⚠ 1 test(s) failed — 0/5 passed</span>
+          </div>
+          <div class="feed-item fi-fail">
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">❌ TC-ACC-005 failed (0.0s)</span>
+          </div>
           <div class="feed-item fi-run">
-            <span class="feed-time">06:07:59</span>
-            <span class="feed-msg">▶ TC-ACC-001 — Verify Account Billing Address and Payment Terms</span>
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">▶ TC-ACC-005 — Create Order from Quote and Activate to Complete</span>
+          </div>
+          <div class="feed-item fi-fail">
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">❌ TC-ACC-004 failed (0.0s)</span>
+          </div>
+          <div class="feed-item fi-run">
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">▶ TC-ACC-004 — Create Quote with Products via Catalog, Accept Quote and Create Activated Contract</span>
+          </div>
+          <div class="feed-item fi-fail">
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">❌ TC-ACC-003 failed (0.0s)</span>
+          </div>
+          <div class="feed-item fi-run">
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">▶ TC-ACC-003 — Create Opportunity from Contact and verify Primary Contact Role</span>
+          </div>
+          <div class="feed-item fi-fail">
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">❌ TC-ACC-002 failed (0.0s)</span>
+          </div>
+          <div class="feed-item fi-run">
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">▶ TC-ACC-002 — Create new Contact on the Account via Contacts related list</span>
+          </div>
+          <div class="feed-item fi-fail">
+            <span class="feed-time">16:00:34</span>
+            <span class="feed-msg">❌ TC-ACC-001 failed (8.1s)</span>
+          </div>
+          <div class="feed-item fi-run">
+            <span class="feed-time">16:00:18</span>
+            <span class="feed-msg">▶ TC-ACC-001 — Verify Account has Billing Address and Payment Terms on Details tab</span>
           </div>
           <div class="feed-item fi-start">
-            <span class="feed-time">06:07:56</span>
+            <span class="feed-time">16:00:11</span>
             <span class="feed-msg">Run started — 5 tests queued</span>
           </div>
         
@@ -663,47 +707,47 @@ body::after{
           <span class="ss-badge">0 / 5</span>
         </div>
         <div class="tile-grid">
-        <div class="tile t-running" data-tc="TC-ACC-001">
-          <span class="t-icon">⟳</span>
+        <div class="tile t-failed" data-tc="TC-ACC-001">
+          <span class="t-icon">❌</span>
           <div class="t-body">
             <div class="t-id">TC-ACC-001</div>
-            <div class="t-title" title="TC-ACC-001 — Verify Account Billing Address and Payment Terms">Verify Account Billing Address and Payment Terms</div>
-            
+            <div class="t-title" title="TC-ACC-001 — Verify Account has Billing Address and Payment Terms on Details tab">Verify Account has Billing Address and Payment Terms on Details tab</div>
+            <div class="t-err">TimeoutError: locator.waitFor: Timeout 5000ms exceeded.</div>
           </div>
-          <div class="t-dur"></div>
+          <div class="t-dur">8.1s</div>
         </div>
-        <div class="tile t-pending" data-tc="TC-ACC-002">
-          <span class="t-icon">○</span>
+        <div class="tile t-skipped" data-tc="TC-ACC-002">
+          <span class="t-icon">⏭</span>
           <div class="t-body">
             <div class="t-id">TC-ACC-002</div>
-            <div class="t-title" title="TC-ACC-002 — Create Contact on Account">Create Contact on Account</div>
+            <div class="t-title" title="TC-ACC-002 — Create new Contact on the Account via Contacts related list">Create new Contact on the Account via Contacts related list</div>
             
           </div>
           <div class="t-dur"></div>
         </div>
-        <div class="tile t-pending" data-tc="TC-ACC-003">
-          <span class="t-icon">○</span>
+        <div class="tile t-skipped" data-tc="TC-ACC-003">
+          <span class="t-icon">⏭</span>
           <div class="t-body">
             <div class="t-id">TC-ACC-003</div>
-            <div class="t-title" title="TC-ACC-003 — Create Opportunity from Contact and Verify Primary Contact Role">Create Opportunity from Contact and Verify Primary Contact Role</div>
+            <div class="t-title" title="TC-ACC-003 — Create Opportunity from Contact and verify Primary Contact Role">Create Opportunity from Contact and verify Primary Contact Role</div>
             
           </div>
           <div class="t-dur"></div>
         </div>
-        <div class="tile t-pending" data-tc="TC-ACC-004">
-          <span class="t-icon">○</span>
+        <div class="tile t-skipped" data-tc="TC-ACC-004">
+          <span class="t-icon">⏭</span>
           <div class="t-body">
             <div class="t-id">TC-ACC-004</div>
-            <div class="t-title" title="TC-ACC-004 — Create Quote, Browse Catalogs, Add Product and Validate Cart">Create Quote, Browse Catalogs, Add Product and Validate Cart</div>
+            <div class="t-title" title="TC-ACC-004 — Create Quote with Products via Catalog, Accept Quote and Create Activated Contract">Create Quote with Products via Catalog, Accept Quote and Create Activated Contract</div>
             
           </div>
           <div class="t-dur"></div>
         </div>
-        <div class="tile t-pending" data-tc="TC-ACC-005">
-          <span class="t-icon">○</span>
+        <div class="tile t-skipped" data-tc="TC-ACC-005">
+          <span class="t-icon">⏭</span>
           <div class="t-body">
             <div class="t-id">TC-ACC-005</div>
-            <div class="t-title" title="TC-ACC-005 — Accept Quote, Create and Activate Contract, Create and Activate Order">Accept Quote, Create and Activate Contract, Create and Activate Order</div>
+            <div class="t-title" title="TC-ACC-005 — Create Order from Quote and Activate to Complete">Create Order from Quote and Activate to Complete</div>
             
           </div>
           <div class="t-dur"></div>
@@ -711,7 +755,7 @@ body::after{
       </div>
 
 <div class="footer">
-  ⟳ Auto-refreshes every 3s ·
+  ✅ Run complete ·
   Generated by DashboardReporter ·
   <a href="https://playwright.dev" target="_blank">Playwright</a>
 </div>

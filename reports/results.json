@@ -1,10 +1,10 @@
 {
   "config": {
-    "configFile": "D:\\SalesforceE2E1\\playwright.config.ts",
-    "rootDir": "D:/SalesforceE2E1/tests",
+    "configFile": "D:\\SalesforceE2E1_Xpath\\playwright.config.ts",
+    "rootDir": "D:/SalesforceE2E1_Xpath/tests",
     "forbidOnly": false,
     "fullyParallel": false,
-    "globalSetup": "D:\\SalesforceE2E1\\scripts\\global-setup.ts",
+    "globalSetup": "D:\\SalesforceE2E1_Xpath\\scripts\\global-setup.ts",
     "globalTeardown": null,
     "globalTimeout": 0,
     "grep": {},
@@ -16,7 +16,7 @@
     "preserveOutput": "always",
     "projects": [
       {
-        "outputDir": "D:/SalesforceE2E1/test-results",
+        "outputDir": "D:/SalesforceE2E1_Xpath/test-results",
         "repeatEach": 1,
         "retries": 0,
         "metadata": {
@@ -24,7 +24,7 @@
         },
         "id": "chromium",
         "name": "chromium",
-        "testDir": "D:/SalesforceE2E1/tests",
+        "testDir": "D:/SalesforceE2E1_Xpath/tests",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -45,7 +45,7 @@
         null
       ],
       [
-        "D:\\SalesforceE2E1\\utils\\DashboardReporter.ts",
+        "D:\\SalesforceE2E1_Xpath\\utils\\DashboardReporter.ts",
         null
       ]
     ],
@@ -73,59 +73,11 @@
         {
           "title": "Account E2E Lifecycle",
           "file": "account.spec.ts",
-          "line": 75,
+          "line": 82,
           "column": 6,
           "specs": [
             {
-              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 42730,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
-                        },
-                        {
-                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
-                        }
-                      ],
-                      "stderr": [
-                        {
-                          "text": "[SOFT FAIL] BillingAddress not visible — field may be absent from layout\n"
-                        },
-                        {
-                          "text": "[SOFT FAIL] Payment_Terms__c not visible — field may be absent from layout\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-04-29T00:34:02.151Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-29de5c2b15f28a0862c5",
-              "file": "account.spec.ts",
-              "line": 83,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-002 — Create Contact on Account",
+              "title": "TC-ACC-001 — Verify Account has Billing Address and Payment Terms on Details tab",
               "ok": false,
               "tags": [],
               "tests": [
@@ -140,56 +92,47 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 32375,
+                      "duration": 8112,
                       "error": {
-                        "message": "Error: Navigation failed to /Contact/,/003",
-                        "stack": "Error: Navigation failed to /Contact/,/003\n    at Function.waitForNavigationOrToast (D:\\SalesforceE2E1\\utils\\SFUtils.ts:118:11)\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:169:18",
+                        "message": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder*=\"Search\"]').first() to be visible\u001b[22m\n",
+                        "stack": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[placeholder*=\"Search\"]').first() to be visible\u001b[22m\n\n    at Function._triggerGlobalSearch (D:\\SalesforceE2E1_Xpath\\utils\\SFUtils.ts:262:23)\n    at Function.searchAndOpen (D:\\SalesforceE2E1_Xpath\\utils\\SFUtils.ts:269:5)\n    at D:\\SalesforceE2E1_Xpath\\tests\\account.spec.ts:147:18",
                         "location": {
-                          "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
-                          "column": 11,
-                          "line": 118
+                          "file": "D:\\SalesforceE2E1_Xpath\\utils\\SFUtils.ts",
+                          "column": 23,
+                          "line": 262
                         },
-                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:118\n\n\u001b[0m \u001b[90m 116 |\u001b[39m\n \u001b[90m 117 |\u001b[39m     \u001b[36mif\u001b[39m (checkMatch(page\u001b[33m.\u001b[39murl())) \u001b[36mreturn\u001b[39m page\u001b[33m.\u001b[39murl()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 118 |\u001b[39m     \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m`Navigation failed to ${subs.join(',')}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 119 |\u001b[39m   }\n \u001b[90m 120 |\u001b[39m\n \u001b[90m 121 |\u001b[39m   \u001b[36mprivate\u001b[39m \u001b[36mstatic\u001b[39m \u001b[36masync\u001b[39m _triggerGlobalSearch(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m query\u001b[33m:\u001b[39m string) {\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:262\n\n\u001b[0m \u001b[90m 260 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 261 |\u001b[39m     \u001b[36mconst\u001b[39m searchInput \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[placeholder*=\"Search\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 262 |\u001b[39m     \u001b[36mawait\u001b[39m searchInput\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 263 |\u001b[39m     \u001b[36mawait\u001b[39m searchInput\u001b[33m.\u001b[39mfill(query)\u001b[33m;\u001b[39m\n \u001b[90m 264 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m'Enter'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 265 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mthis\u001b[39m\u001b[33m.\u001b[39mwaitForLoading(page)\u001b[33m;\u001b[39m\u001b[0m"
                       },
                       "errors": [],
-                      "stdout": [
-                        {
-                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
-                        }
-                      ],
+                      "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-29T00:34:46.331Z",
+                      "startTime": "2026-04-29T10:30:18.883Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-E2E-Lifecy-b58e0-—-Create-Contact-on-Account-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account-Account-E2E-Lifecy-b58e0-—-Create-Contact-on-Account-chromium\\error-context.md"
+                          "path": "D:\\SalesforceE2E1_Xpath\\test-results\\account-Account-E2E-Lifecy-acc20-ayment-Terms-on-Details-tab-chromium\\test-failed-1.png"
                         }
                       ],
                       "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
-                        "column": 11,
-                        "line": 118
+                        "file": "D:\\SalesforceE2E1_Xpath\\utils\\SFUtils.ts",
+                        "column": 23,
+                        "line": 262
                       }
                     }
                   ],
                   "status": "passed"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-469f6df9d735c1de86bb",
+              "id": "ad4620ead4e6d9cc2627-9bab93cd4b77ad236784",
               "file": "account.spec.ts",
-              "line": 139,
+              "line": 145,
               "column": 7
             },
             {
-              "title": "TC-ACC-003 — Create Opportunity from Contact and Verify Primary Contact Role",
+              "title": "TC-ACC-002 — Create new Contact on the Account via Contacts related list",
               "ok": true,
               "tags": [],
               "tests": [
@@ -209,7 +152,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-29T00:35:19.228Z",
+                      "startTime": "2026-04-29T10:30:34.675Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -217,13 +160,13 @@
                   "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-96f6a48fc03772efef69",
+              "id": "ad4620ead4e6d9cc2627-d71f324a171fd2c36073",
               "file": "account.spec.ts",
-              "line": 177,
+              "line": 188,
               "column": 7
             },
             {
-              "title": "TC-ACC-004 — Create Quote, Browse Catalogs, Add Product and Validate Cart",
+              "title": "TC-ACC-003 — Create Opportunity from Contact and verify Primary Contact Role",
               "ok": true,
               "tags": [],
               "tests": [
@@ -243,7 +186,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-29T00:35:19.261Z",
+                      "startTime": "2026-04-29T10:30:34.705Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -251,13 +194,13 @@
                   "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-9bbca9bf5e02899f3242",
+              "id": "ad4620ead4e6d9cc2627-8b0715b9255cb27f820b",
               "file": "account.spec.ts",
-              "line": 237,
+              "line": 233,
               "column": 7
             },
             {
-              "title": "TC-ACC-005 — Accept Quote, Create and Activate Contract, Create and Activate Order",
+              "title": "TC-ACC-004 — Create Quote with Products via Catalog, Accept Quote and Create Activated Contract",
               "ok": true,
               "tags": [],
               "tests": [
@@ -277,7 +220,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-29T00:35:19.292Z",
+                      "startTime": "2026-04-29T10:30:34.740Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -285,9 +228,43 @@
                   "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-cee4aab340bc9229fcc7",
+              "id": "ad4620ead4e6d9cc2627-de8ac81d3039e3fea0f1",
               "file": "account.spec.ts",
-              "line": 325,
+              "line": 283,
+              "column": 7
+            },
+            {
+              "title": "TC-ACC-005 — Create Order from Quote and Activate to Complete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 120000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-29T10:30:34.778Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ad4620ead4e6d9cc2627-94e17f849af2e36a5cb8",
+              "file": "account.spec.ts",
+              "line": 450,
               "column": 7
             }
           ]
@@ -297,10 +274,10 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-29T00:33:58.957Z",
-    "duration": 80485.634,
-    "expected": 2,
-    "skipped": 3,
+    "startTime": "2026-04-29T10:30:10.379Z",
+    "duration": 24547.525999999998,
+    "expected": 1,
+    "skipped": 4,
     "unexpected": 0,
     "flaky": 0
   }

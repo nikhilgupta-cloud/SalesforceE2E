@@ -163,17 +163,41 @@ Locator Strategy (STRICT)
 
 Priority order:
 
-API Locator
-[data-field-api-name="Name"] input
-Role-based
-page.getByRole('button', { name: 'Save', exact: true })
-Label-based
-page.getByLabel('Account Name')
-LWC fallback
-lightning-input filter
-XPath (LAST)
+### STEP 1: Use XPath (PRIMARY — always prefer)
+Define XPath strings in a locator map with `{PLACEHOLDER}` tokens, then export typed helper functions:
 
-❌ Never skip hierarchy
+```typescript
+// locators/account.locators.ts
+const locatorMap = {
+  accountName: `//input[@data-field-api-name='Name']`,
+  relatedContact: `//a[contains(@title,'{CONTACT_NAME}')]`,
+  saveButton: `//button[normalize-space()='Save']`,
+};
+
+export const relatedContact = (contactName: string) =>
+  getLocator(locatorMap.relatedContact.replace('{CONTACT_NAME}', contactName));
+```
+
+Rules:
+- Store all XPaths in a `locatorMap` constant — never inline raw XPath strings in test code
+- Use `{PLACEHOLDER}` for dynamic segments; replace via `.replace()` before passing to `getLocator()`
+- Use `//` (descendant) axes; prefer `@data-*` attributes, `normalize-space()`, and `contains()` over positional indices
+- Wrap every XPath in a typed export: `export const locatorName = (param?: string) => getLocator(...)`
+
+### STEP 2: API Attribute Locator (fallback when no XPath anchor exists)
+`[data-field-api-name="Name"] input`
+
+### STEP 3: Role-based (fallback)
+`page.getByRole('button', { name: 'Save', exact: true })`
+
+### STEP 4: Label-based (fallback)
+`page.getByLabel('Account Name')`
+
+### STEP 5: LWC tag fallback
+`lightning-input` filter
+
+❌ Never skip the hierarchy — always attempt STEP 1 first
+❌ Never inline raw XPath strings directly in test files — always route through the locator map + typed export
 
 Modal Handling
 const modal = page.locator('[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])');
@@ -253,7 +277,7 @@ Critical Constraints
 DO NOT edit generated/
 DO NOT commit .env or session.json
 DO NOT increase workers
-USE native locators
+ALWAYS use XPath via locator map + typed export (STEP 1) — never skip to native locators without trying XPath first
 ALWAYS use modal selector
 FINAL DIRECTIVE
 

@@ -12,7 +12,7 @@ Your job: Convert approved Test Scenarios into fully executable, self-contained 
 
 ## PRIMARY DIRECTIVE
 
-- Use ONLY native Playwright locators
+- ALWAYS use XPath via locator map + typed exports as the first locator strategy (STEP 1)
 - DO NOT use `SalesforceFormHandler`
 - DO NOT use `SFUtils` for field interactions (use only for high-level navigation/search)
 - ALWAYS follow locator decision hierarchy
@@ -40,38 +40,67 @@ Before writing ANY test:
 
 For EVERY locator, follow this hierarchy:
 
-### STEP 1: API Locator (HIGHEST PRIORITY)
+### STEP 1: XPath via Locator Map (HIGHEST PRIORITY — always try first)
+
+Define all XPaths in a `locatorMap` constant. Use `{PLACEHOLDER}` tokens for dynamic values. Expose each locator through a typed export function:
+
 ```ts
-page.locator('[data-field-api-name="{API_NAME}"] input')
+// locators/quote.locators.ts
+const locatorMap = {
+  saveButton:      `//button[normalize-space()='Save']`,
+  accountName:     `//input[@data-field-api-name='Name']`,
+  relatedContact:  `//a[contains(@title,'{CONTACT_NAME}')]`,
+  productRow:      `//div[@data-testid='product-list']//span[contains(text(),'{PRODUCT_NAME}')]`,
+};
+
+export const saveButton = () =>
+  page.locator(`xpath=${locatorMap.saveButton}`);
+
+export const relatedContact = (contactName: string) =>
+  page.locator(`xpath=${locatorMap.relatedContact.replace('{CONTACT_NAME}', contactName)}`);
+
+export const productRow = (productName: string) =>
+  page.locator(`xpath=${locatorMap.productRow.replace('{PRODUCT_NAME}', productName)}`);
 ```
+
+Rules:
+- **NEVER** inline raw XPath strings in `.spec.ts` files — always go through the locator map + typed export
+- Use `//` (descendant) axes; prefer `@data-*` attributes, `normalize-space()`, and `contains()` over positional indices
+- Use `{PLACEHOLDER}` for every dynamic segment; replace via `.replace()` before passing to `page.locator()`
+- One export function per locator; parameters typed explicitly
 
 ### STEP 1.1: Revenue Cloud Object Mandate
 - ALWAYS prioritize the native `Quote` and `QuoteLineItem` objects.
 - If `scraped-locators.json` contains `SBQQ__*` objects, **ignore them** unless the user story explicitly mentions "Legacy CPQ".
 
-### STEP 2: Role-Based Locator
+### STEP 2: API Attribute Locator (fallback — only when no XPath anchor exists)
+```ts
+page.locator('[data-field-api-name="{API_NAME}"] input')
+```
+
+### STEP 3: Role-Based Locator (fallback)
 ```ts
 page.getByRole('button', { name: 'Save', exact: true })
 page.getByRole('tab', { name: 'Related' })
 ```
 
-### STEP 3: Label-Based Locator
+### STEP 4: Label-Based Locator (fallback)
 ```ts
 page.getByLabel('Account Name')
 ```
 
-### STEP 4: LWC Text Filter Pattern (Fallback)
+### STEP 5: LWC Text Filter Pattern (fallback)
 ```ts
 page.locator('lightning-input').filter({ hasText: /Account Name/i }).locator('input')
 ```
 
-### STEP 5: Shadow Fallback (Last Resort)
+### STEP 6: Shadow Fallback (Last Resort)
 ```ts
 page.locator('label:has-text("Account Name")').locator('xpath=..').locator('input')
 ```
 
-❌ NEVER skip hierarchy
-❌ NEVER use XPath unless Step 5 fallback
+❌ NEVER skip hierarchy — always attempt STEP 1 (XPath locator map) first
+❌ NEVER inline raw XPath strings directly in test files
 
 ---
 
@@ -232,10 +261,11 @@ Each generated test MUST:
 
 If failure occurs:
 1. Check `scraped-locators.json`.
-2. Update locator if API name changed.
-3. Fallback: API → Label → Role → Text Filter.
+2. Update the XPath in the locator map — never patch raw strings in the spec file.
+3. Fallback order: XPath → API Attribute → Label → Role → Text Filter.
 
 ❌ DO NOT blindly rewrite selectors.
+❌ DO NOT bypass the locator map — all fixes go into the `locatorMap` constant and propagate through the typed export.
 
 ---
 
