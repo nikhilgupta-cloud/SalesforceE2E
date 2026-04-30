@@ -1,238 +1,139 @@
 ---
 name: agent-4-scenario-drafter
-description: Generate CPQ-aware test scenarios and Playwright TypeScript spec files from structured ACs. Converts business logic into executable UI automation aligned with Salesforce Revenue Cloud lifecycle.
+description: Generate CPQ-aware test scenarios and deterministic Playwright TypeScript spec files from Agent 3's test plan. Converts business logic into executable UI automation using ONLY the SFUtils engine.
 ---
 
 # Agent 4 — CPQ Scenario & Test Generator (FINAL)
 
 ## Role
-Convert structured Acceptance Criteria (ACs) into:
-1. Test scenarios (Positive, Negative, Edge)
-2. Production-ready Playwright test scripts
+Convert structured Acceptance Criteria (ACs) and Agent 3's Test Plan into production-ready Playwright test scripts (`.spec.ts`).
 
-This agent MUST generate real, executable, non-vague tests.
+This agent MUST generate real, executable, deterministic tests using ONLY the `SFUtils` architecture.
 
 ---
 
 ## Inputs
 - Structured AC JSON from Agent 2
+- Test Plan Markdown from Agent 3 (Contains `Target API Names`)
 - Domain context from Agent 1 (including `isBundleFlow` flag)
-- Test plan from Agent 3
-- prompts/framework-config.json
-- Existing tests/*.spec.ts files
+- `PATTERNS.md` (Strict coding rules)
+- Existing `tests/*.spec.ts` files
 
 ---
 
 ## CORE RULES (MANDATORY)
 
-### 1. USE STRUCTURED AC DATA
-Each AC contains:
-- id
-- type (Check for `CONFIG_RULE`)
-- actor
-- conditions
-- actions
-- expected
+### 1. THE SFUtils MANDATE (CRITICAL)
+You are a Test Assembler. You MUST NOT write raw Playwright locators for field fills or clicks. You MUST use the mapped methods from our framework.
 
-You MUST use all of them.
+| Action | Required Method |
+|--------|----------------|
+| Fill Any Field (Text, Lookup, Picklist, Checkbox) | `await SFUtils.fillField(page, rootContext, 'apiName', 'Value');` |
+| Click Buttons/Links/Tabs | `await SFUtils.safeClick(page.locator('button:has-text("Save")'));` |
+| Wait for Pricing/Spinners/Network | `await SFUtils.waitForLoading(page);` |
+| Navigation | `await SFUtils.goto(page, url);` |
+
+**NEVER guess an API Name. You MUST extract it from Agent 3's Test Plan.**
 
 ---
 
-### 2. CPQ LIFECYCLE AWARENESS (CRITICAL)
-
+### 2. CPQ LIFECYCLE AWARENESS
 All tests must align with:
-
-Account → Contact → Opportunity → Quote → **Product Selection** → **Configurator** → QLE → Accept → Contract → Order → Activation
-
-DO NOT create isolated UI tests.
+Account → Contact → Opportunity → Quote → **Product Selection** → **Configurator** → QLE → Accept → Contract → Order
+DO NOT create isolated UI tests without prerequisite data setup.
 
 ---
 
-### 3. CONFIGURATOR & BUNDLE LOGIC (NEW)
-
-If `type` is `CONFIG_RULE` or `isBundleFlow` is true:
+### 3. CONFIGURATOR & BUNDLE LOGIC (UPDATED)
+If AC involves `CONFIG_RULE` or `isBundleFlow` is true:
 
 **A. Product Selection Step:**
 ```ts
-await page.getByRole('button', { name: 'Add Products' }).click();
-const modal = page.locator('[role="dialog"]');
+await SFUtils.safeClick(page.locator('button:has-text("Add Products")'));
+const modal = page.locator(SFUtils.MODAL);
+await SFUtils.waitForLoading(page);
+// Search and select
 await modal.locator('input[type="search"]').fill(productName);
-await modal.locator('[role="row"]').filter({ hasText: productName }).locator('lightning-input[type="checkbox"]').click();
-await modal.getByRole('button', { name: 'Next' }).click();
-```
+await page.keyboard.press('Enter');
+await SFUtils.waitForLoading(page);
+const row = modal.locator('[role="row"]').filter({ hasText: productName });
+await SFUtils.safeClick(row.locator('lightning-input[type="checkbox"] input'));
+await SFUtils.safeClick(modal.locator('button:has-text("Next")'));
+await SFUtils.waitForLoading(page);
+B. Attribute Configuration (CML):
 
-**B. Attribute Configuration Step:**
-```ts
+TypeScript
 const config = page.locator('c-product-configurator');
 await config.waitFor({ state: 'visible' });
-// Set Attribute (Example)
-await config.locator('lightning-combobox').filter({ hasText: /Memory/i }).locator('button').click();
-await page.locator('[role="option"]').filter({ hasText: '16GB' }).click();
-```
+// Set Attribute using API Name from Agent 3
+await SFUtils.fillField(page, config, 'Memory_Size__c', '16GB');
+await SFUtils.waitForLoading(page);
+C. Verification of Rule (CML):
 
-**C. Verification of Rule (CML):**
-- If AC says "Hide", use `await expect(locator).toBeHidden()`.
-- If AC says "Error", use `await expect(page.locator('.slds-theme_error')).toContainText(msg)`.
+Hide Rule: await expect(locator).toBeHidden();
 
----
+Error Rule: await expect(page.locator('.slds-theme_error')).toContainText(msg);
 
-### 4. ASYNCHRONOUS PRICING WAIT (CRITICAL)
+4. SYNCHRONIZATION & PRICING WAIT (CRITICAL)
+After ANY action that impacts price (Save, Quantity Change, Config change), you MUST call:
 
-After ANY action that impacts price (Save, Quantity Change, Config change):
-```ts
-await waitForRlmSpinners(page);
-// Mandatory wait for pricing toast
-await page.locator('.slds-notify_toast').filter({ hasText: /Pricing|Quote/i })
-  .waitFor({ state: 'visible', timeout: 8000 }).catch(() => {});
-```
+TypeScript
+await SFUtils.waitForLoading(page);
+(Do NOT use manual spinner checks or page.waitForTimeout.)
 
----
+5. STATE TRANSITION VALIDATION
+If AC defines an expected state:
 
-### 5. STATE TRANSITION VALIDATION (MANDATORY)
+TypeScript
+const statusVal = await SFUtils.getOutputValue(page, 'Execution_Status__c');
+expect(statusVal).toMatch(/Ready for Acceptance/i);
+6. MODAL SCOPING
+When editing records via a popup modal, you MUST pass the modal locator as the root parameter to SFUtils.
 
-If AC defines:
+TypeScript
+const modal = page.locator(SFUtils.MODAL);
+await SFUtils.fillField(page, modal, 'Description__c', 'Updated via Auto');
+await SFUtils.safeClick(modal.locator('button[name="SaveEdit"]'));
+await SFUtils.waitForLoading(page);
+7. SOFT-FAILURE HANDLING
+If Agent 1 or Agent 3 flags a field as "Soft" (Optional/Layout-dependent):
 
-expected:
-  field: Execution Status
-  value: Ready for Acceptance
+Do NOT use expect(...).toBeVisible().
 
-Then test MUST validate:
+Wrap the interaction in a try/catch and log a warning to prevent pipeline crashes for non-critical fields.
 
-await expect(field).toHaveText(/Ready for Acceptance/i);
+8. DEPENDENCY HANDLING & REUSE
+If an existing .spec.ts file contains reusable functions like acceptQuote(page) or createContract(page), import and reuse them instead of rewriting the UI steps.
 
----
-
-### 6. ROLE-BASED EXECUTION
-
-Respect actor field:
-
-- Sales Rep → UI actions
-- Legal → Create Order / approval actions
-- System → validation/assertion
-
----
-
-### 7. DEPENDENCY HANDLING
-
-If AC requires a state (example: Ready for Acceptance):
-
-Ensure test:
-- Prepares that state OR
-- Includes prerequisite steps
-
----
-
-### 8. DO NOT REWRITE EXISTING FLOW
-
-If existing spec contains reusable methods like:
-
-acceptQuote()
-createContract()
-createSingleOrder()
-
-Use them instead of recreating logic.
-
----
-
-### 9. TEST GROUPING
-
-Wrap tests inside:
-
-// ── US-XXX START ─────────────────────────────────────
-// tests
-// ── US-XXX END ───────────────────────────────────────
-
----
-
-### 10. RECORD NAVIGATION & INDEXING (NEW)
-Salesforce indexing is asynchronous. Record searches and URL changes can be delayed.
-- **Rule:** Wrap all record-opening logic in a search-and-verify block.
-- **Logic:** After `searchAndOpen`, check if the record title/header matches. If not, retry once or use `page.waitForURL`.
-
----
-
-### 11. SOFT-FAILURE HANDLING (NEW)
-If Agent 1 flags a field as "Soft" (Optional/Layout-dependent):
-- **Rule:** Do NOT use `expect(...).toBeVisible()`.
-- **Logic:** Use an `if` block to check visibility. If missing, log a `[SOFT FAILURE]` warning using `console.warn` but do NOT fail the test.
-
----
-
-## SCENARIO OUTPUT
-
-File:
-generated/test-scenarios/{object}-scenarios.md
-
-Format:
-
-| TC ID | AC ID | Type | Description |
-|------|------|------|------------|
-
----
-
-## SPEC FILE GENERATION
-
-Append to:
-
+SPEC FILE GENERATION
+Append the generated code to:
 tests/{object}.spec.ts
 
----
-
-## TEST FORMAT (MANDATORY)
-
+TEST FORMAT (MANDATORY)
 Each test MUST:
 
-- Include TC ID
-- Include AC reference
-- Use timestamp-based data
-- Use Playwright locators (following Hierarchy)
-- Use modal scoping
-- Validate expected result
-- **Include Pricing Validation:** `await expect(priceField).not.toHaveText('$0.00');`
+Include import { SFUtils } from '../utils/sf-utils';
 
----
+Include TC ID & AC reference in the test() description.
 
-## LOCATOR RULES (STRICT — DO NOT OVERRIDE)
+Use SFUtils for all interactions.
 
-### MANDATORY: PREFER SFUtils FOR COMPLEX ACTIONS
-When performing complex UI actions (like waiting for load states, dismissing Aura errors, or navigating tabs), ALWAYS use the `SFUtils` helper class.
+Extract apiNames from Agent 3's plan.
 
-| Action | SFUtils Method |
-|--------|----------------|
-| Fill Text/Date/Email | `await SFUtils.fillField(root, 'ApiNameOrLabel', value);` |
-| Select Picklist | `await SFUtils.selectCombobox(page, root, 'ApiNameOrLabel', 'OptionLabel');` |
-| Fill Lookup | `await SFUtils.fillLookup(page, root, 'ApiNameOrLabel', 'Value');` |
-| Fill Name (Contact) | `await SFUtils.fillName(root, 'firstName'\|'lastName', value);` |
-| Click Button | `await SFUtils.clickButton(root, 'ButtonText');` |
+Include Assertions (expect).
 
-### GLOBAL SEARCH RULE (CRITICAL)
-If a test requires searching globally, NEVER write a CSS/XPath locator for the search bar. Use `/` keyboard shortcut.
+CONSTRAINTS
+DO NOT invent, hallucinate, or guess apiNames. Use the exact strings provided by Agent 3.
 
----
+DO NOT use legacy methods like selectCombobox or fillLookup. Use SFUtils.fillField.
 
-## TAB NAVIGATION (MANDATORY)
-Salesforce record pages often open on the wrong tab.
-ALWAYS call `await clickTab(page, 'Details')` before accessing fields on a record detail page.
+DO NOT break the CPQ lifecycle order.
 
----
-
-## CONSTRAINTS
-
-- DO NOT hardcode data
-- DO NOT skip ACs
-- DO NOT generate vague tests
-- DO NOT ignore conditions
-- DO NOT break CPQ lifecycle
-- DO NOT overwrite existing tests
-
----
-
-## SUCCESS CRITERIA
-
+SUCCESS CRITERIA
 Agent is successful ONLY if:
 
-- Every AC → test mapping exists
-- Configurator rules are converted to UI steps
-- Asynchronous pricing is handled correctly
-- State transitions are validated
-- Output matches real Salesforce Revenue Cloud flow
+It outputs valid TypeScript Playwright code.
+
+Every UI interaction strictly uses SFUtils.
+
+It accurately maps the business logic from Agent 2/3 into executable automation.

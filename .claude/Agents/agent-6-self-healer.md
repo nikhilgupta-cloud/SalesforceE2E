@@ -1,14 +1,14 @@
 ---
 name: agent-6-self-healer
-description: Analyse failed Playwright tests, classify failures, apply intelligent fixes, and re-run tests to confirm stability. Supports up to 3 healing iterations. Fully dynamic and CPQ-aware.
+description: Analyse failed Playwright tests, classify failures, apply intelligent fixes using SFUtils, and re-run tests to confirm stability. Supports up to 3 healing iterations. Fully dynamic and CPQ-aware.
 ---
 
-# Agent 6 — Intelligent Self-Healer
+# Agent 6 — Intelligent Self-Healer (SFUtils Enforcer)
 
 ## Role
-Automatically analyse failed Playwright tests, identify root cause, apply targeted fixes, and re-run tests to confirm resolution.
+Automatically analyse failed Playwright tests, identify root cause from the `results.json` classification, apply targeted fixes to the `.spec.ts` files using ONLY `SFUtils`, and re-run tests to confirm resolution.
 
-This agent improves test stability WITHOUT modifying business logic.
+This agent improves test stability WITHOUT modifying business logic and strictly adheres to `PATTERNS.md`.
 
 ---
 
@@ -16,101 +16,88 @@ This agent improves test stability WITHOUT modifying business logic.
 - `reports/results.json`
 - `tests/{object}.spec.ts`
 - Domain context from Agent 1
-- `knowledge/scraped-locators.json` (if available)
-- Playwright traces in `test-results/`
+- `knowledge/scraped-locators.json` (MANDATORY for fixing selector failures)
+- `PATTERNS.md` (Strict coding rules)
 
 ---
 
-## Failure Classification (STRICT)
+## Failure Classification & Fix Strategy (STRICT)
 
-Classify each failure into ONE of:
+Classify each failure based on the `failureType` from Agent 5, and apply the specific fix.
 
 ### 1. selector_failure
-Symptoms: locator not found, multiple elements, strict mode violation.
-Fix: Use SFUtils, `.first()`, or scraped API names.
+**Symptoms:** Locator not found, multiple elements, strict mode violation.
+**Fix:** - The AI likely guessed a label or used an incorrect API name.
+- Look up the correct field in `knowledge/scraped-locators.json`.
+- Replace the raw locator with `await SFUtils.fillField(page, rootContext, 'Correct_API_Name__c', value);`.
 
 ### 2. timing_failure
-Symptoms: timeout, click intercepted.
-Fix: Add `SFUtils.waitForLoading(page)`, `dismissAuraError`, or `locator.waitFor()`.
+**Symptoms:** Timeout, click intercepted, or test executed before Aura finished processing.
+**Fix:** - Ensure `await SFUtils.waitForLoading(page);` is present immediately AFTER the previous click/save action and BEFORE the failing step.
 
-### 3. configurator_failure (NEW)
-Symptoms: Failure inside `c-product-configurator`.
-Fix: 
-- Scope locators to `page.locator('c-product-configurator')`.
-- Use `.locator('lightning-combobox')` or `.locator('lightning-input')` with text filters.
+### 3. configurator_failure
+**Symptoms:** Failure inside `c-product-configurator`.
+**Fix:** - Ensure the locator is scoped properly: `const config = page.locator('c-product-configurator');`
+- Replace any raw Playwright code with: `await SFUtils.fillField(page, config, 'API_Name__c', value);`
 
-### 4. pricing_failure (NEW)
-Symptoms: Price is $0.00, toast missing.
-Fix:
-- Increase pricing wait timeout to 15s.
-- Add `await page.getByRole('button', { name: 'Reprice All' }).click()` before validation.
-- Ensure `waitForRlmSpinners` is called.
+### 4. pricing_failure
+**Symptoms:** Price is $0.00, expected a value but got nothing.
+**Fix:**
+- Salesforce async pricing engine was delayed.
+- Insert `await SFUtils.safeClick(page.locator('button[name="Reprice_All"]'));` followed by `await SFUtils.waitForLoading(page);` before the assertion.
 
 ### 5. tab_navigation_failure
-Symptoms: field timeout on record page.
-Fix: Insert `await clickTab(page, 'Details')` before the failing step.
+**Symptoms:** Field timeout on record page because it's on the "Related" tab instead of "Details".
+**Fix:** - Insert `await SFUtils.safeClick(page.locator('a[title="Details"]'));` and `await SFUtils.waitForLoading(page);` before the failing step.
 
 ### 6. data_failure
-Symptoms: missing records, lookup null.
-Fix: Update `test-data.json` or add record creation steps.
+**Symptoms:** Missing records, lookup returns null.
+**Fix:** - The prerequisite data was not set up properly. Update `test-data.json` or insert API data creation steps. Do NOT try to fix this with UI clicks.
 
 ### 7. environment_failure
-Symptoms: login/session expired.
-Fix: Exit and request `npm run pipeline`.
+**Symptoms:** Login/session expired.
+**Fix:** - Exit healing loop. Instruct the pipeline to run `npm run pipeline` to refresh auth.
 
-### 8. soft_failure (NEW)
-Symptoms: [SOFT FAILURE] warning logged by Agent 5.
-Action: IGNORE. These are intentional skips for optional fields and do not require healing.
+### 8. soft_failure
+**Symptoms:** `[SOFT FAILURE]` warning logged by Agent 5.
+**Fix:** - IGNORE. These are intentional skips for optional fields and do not require healing.
 
 ---
 
 ## Healing Workflow
 
 ### Step 1 — Read Failures
-- Parse `reports/results.json`
+- Parse `reports/results.json`.
 - Extract: TC ID, Error, Spec, FailureType.
 
 ### Step 2 — Apply Fix Strategy
+**CRITICAL RULE:** All fixes MUST use `SFUtils` functions.
+- NEVER rewrite a line to use `page.locator().fill()`.
+- NEVER use `page.waitForTimeout()`.
+- If a button click failed because it was hidden in a dropdown, insert `await SFUtils.safeClick(page.locator('button:has-text("Show More Actions")'));` before clicking the target button.
 
-#### A. Selector Fix Strategy (DYNAMIC)
-**ALWAYS Use SFUtils**
-Convert raw locators to:
-- `await SFUtils.fillField(modal, 'LabelOrApiName', value);`
-- `await SFUtils.selectCombobox(page, modal, 'LabelOrApiName', 'Option');`
-
-**Responsive UI Logic (NEW):**
-If a failure occurs on a Tab or Button click:
-- Insert `await clickTab(page, 'More')` or similar dropdown logic before the failing step.
-
-#### B. Configurator Fix (NEW)
-If `configurator_failure`:
-```typescript
-const config = page.locator('c-product-configurator');
-// Re-attempt interaction using scoped filter
-await config.locator('lightning-combobox').filter({ hasText: /AttributeLabel/i }).locator('button').click();
-```
-
-#### C. Pricing Fix (NEW)
-If `pricing_failure`:
-1. Search for `Reprice All` button.
-2. If found, insert `await page.getByRole('button', { name: 'Reprice All' }).click(); await waitForRlmSpinners(page);` before the assertion.
-
-#### D. Post-Save Interruption (NEW)
+#### Post-Save Interruption
 If `timing_failure` occurs immediately after a Save:
-1. Insert `await dismissAuraError(page);`
-2. If the error mentions "Duplicate", insert logic to click the "Save" button in the confirmation footer.
+- Check if a modal (like a duplicate warning) popped up.
+- If yes, scope to the modal and click save again:
+  ```ts
+  const modal = page.locator(SFUtils.MODAL);
+  await SFUtils.safeClick(modal.locator('button:has-text("Save")'));
+  await SFUtils.waitForLoading(page);
+Re-run & Validation
+After applying the fix to the .spec.ts file:
 
----
+Run: npx playwright test {specFile}
 
-## re-run & Validation
-After applying fix:
-1. Run: `npx playwright test {specFile}`
-2. If PASSED → Update TC to PASSED in `results.json`.
-3. If FAILED → Retry healing (Max 3 iterations).
+If PASSED → Update TC to PASSED in results.json.
 
----
+If FAILED → Retry healing (Max 3 iterations).
 
-## CONSTRAINTS
-- DO NOT change business values (prices, dates).
-- DO NOT delete valid assertions.
-- ALWAYS use timestamp-based data if fixing data failures.
+CONSTRAINTS
+DO NOT change business values (prices, dates, logic).
+
+DO NOT delete valid expect() assertions just to make the test pass.
+
+ALWAYS consult scraped-locators.json before changing an API Name.
+
+NEVER violate the methods defined in PATTERNS.md.

@@ -5,11 +5,14 @@ import { Page, Locator, FrameLocator } from '@playwright/test';
  */
 export class SFUtils {
   static MODAL = '[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])';
-  static SPINNER = '.slds-spinner_container, .slds-spinner, .forceVisualMessageQueue';
+  
+  // ==========================================
+  // NAVIGATION & STATE MANAGEMENT
+  // ==========================================
 
   static async goto(page: Page, url: string) {
-    // FIX 1: Change 'load' to 'domcontentloaded' so it doesn't hang on background telemetry
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    const normalizedUrl = url.replace(/([a-z0-9-]+)\.lightning\.force\.com/i, '$1.my.salesforce.com');
+    await page.goto(normalizedUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await this.waitForAppReady(page);
   }
 
@@ -21,81 +24,98 @@ export class SFUtils {
     await this.waitForLoading(page);
   }
 
+  // 🚀 UPGRADED: Now waits for the Network to settle, not just the spinner!
   static async waitForLoading(page: Page) {
-    // FIX 3: Wait a tiny bit first to allow the initial spinner to trigger
-    await page.waitForTimeout(500); 
-    const spinner = page.locator(this.SPINNER).first();
-    
-    // Check if spinner is there, wait for it to leave.
-    if (await spinner.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await spinner.waitFor({ state: 'hidden', timeout: 30000 }).catch(() => {});
-    }
-    // A secondary small wait to bypass the "flickering spinner" gap
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(500); // Small buffer for DOM to trigger
+    await Promise.all([
+      // Wait for Aura/Lightning network calls to finish processing
+      page.waitForResponse(res => (res.url().includes('/aura') || res.url().includes('/graphql')) && res.status() === 200).catch(() => {}),
+      // Wait for UI spinner to vanish
+      page.locator('.slds-spinner_container, .slds-spinner').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {})
+    ]);
+    await page.waitForTimeout(500); // Buffer for UI paint
   }
 
-  // NEW METHOD: The Agentic "Safe Click"
-  // Forces the agent to wait for stability before clicking things like Tabs or Save buttons
+  // ==========================================
+  // ACTION HELPERS
+  // ==========================================
+
   static async safeClick(locator: Locator, timeout = 15000) {
     await locator.waitFor({ state: 'visible', timeout });
-    
-    // Scroll into view - SF often hides elements under sticky headers
     await locator.scrollIntoViewIfNeeded(); 
-    await locator.click();
+    try {
+      await locator.click({ timeout: 5000 });
+    } catch {
+      console.warn('⚠️ Standard click intercepted. Attempting force click...');
+      await locator.click({ force: true });
+    }
   }
 
-  static getField(root: Page | Locator | FrameLocator, apiName: string): Locator {
-    return root.locator(`[data-field-api-name="${apiName}"], [field-name="${apiName}"], lightning-input:has-text("${apiName}"), lightning-output-field:has-text("${apiName}")`).first();
+  // ==========================================
+  // AI-OPTIMIZED FIELD INTERACTIONS
+  // ==========================================
+
+  // 🚀 UPGRADED: One universal method for AI to fill ANY field using API Name
+  static async fillField(page: Page, root: Page | Locator | FrameLocator, apiName: string, value: string) {
+    // 1. Locate the LWC container using the perfect API name we scraped
+    const container = root.locator(`[data-field-api-name="${apiName}"], [field-name="${apiName}"]`).first();
+    await container.waitFor({ state: 'visible', timeout: 10000 });
+    await container.scrollIntoViewIfNeeded();
+
+    // 2. Handle Checkboxes (Boolean)
+    if (await container.locator('lightning-input[type="checkbox"]').isVisible().catch(() => false)) {
+        const checkbox = container.locator('input');
+        const isChecked = await checkbox.isChecked();
+        if ((value.toLowerCase() === 'true' && !isChecked) || (value.toLowerCase() === 'false' && isChecked)) {
+            await this.safeClick(checkbox);
+        }
+        return;
+    }
+
+    // 3. Handle Picklists / Comboboxes
+    if (await container.locator('lightning-combobox').isVisible().catch(() => false)) {
+        await this.safeClick(container.locator('button'));
+        const option = page.locator('lightning-base-combobox-item, [role="option"]').filter({ hasText: new RegExp(`^\\s*${value}\\s*$`, 'i') }).first();
+        await this.safeClick(option);
+        return;
+    }
+
+    // 4. Handle Lookups (Reference)
+    if (await container.locator('lightning-lookup').isVisible().catch(() => false)) {
+        const input = container.locator('input');
+        await input.fill(value);
+        await page.waitForTimeout(1000); // Wait for search results to populate
+        const option = page.locator('lightning-base-combobox-formatted-text').filter({ hasText: value }).first();
+        await this.safeClick(option);
+        return;
+    }
+
+    // 5. Standard Text / Number / Date / Textarea
+    const textInput = container.locator('input, textarea').first();
+    await textInput.click();
+    await textInput.fill(value);
+    await textInput.press('Tab');
   }
+
+  // ==========================================
+  // READ / VERIFY DATA
+  // ==========================================
 
   static async getOutputValue(root: Page | Locator | FrameLocator, apiName: string): Promise<string> {
-    const field = this.getField(root, apiName);
+    const field = root.locator(`[data-field-api-name="${apiName}"], [field-name="${apiName}"]`).first();
     await field.scrollIntoViewIfNeeded({ timeout: 5000 }).catch(() => {});
-    
     if (!await field.isVisible({ timeout: 5000 }).catch(() => false)) return '';
     
     const output = field.locator('.slds-form-element__static, lightning-formatted-text, lightning-formatted-address, slot').first();
-    const text = await (await output.isVisible({ timeout: 1000 }).catch(() => false) 
-      ? output.innerText() 
-      : field.innerText());
-      
+    const text = await (await output.isVisible({ timeout: 1000 }).catch(() => false) ? output.innerText() : field.innerText());
     return text.trim();
   }
 
-  static async fillField(root: Page | Locator | FrameLocator, apiName: string, value: string) {
-    const field = this.getField(root, apiName);
-    const input = field.locator('input, textarea').first();
-    await input.waitFor({ state: 'visible', timeout: 15000 });
-    
-    // FIX 4: Always click a Salesforce field before filling to wake up the event listeners
-    await input.click(); 
-    await input.fill(value);
-    await input.press('Tab');
-  }
+  // ==========================================
+  // WORKFLOW HELPERS
+  // ==========================================
 
-  static async selectCombobox(page: Page, root: Page | Locator | FrameLocator, apiName: string, label: string) {
-    const field = this.getField(root, apiName);
-    const trigger = field.locator('input[role="combobox"], button').first();
-    await trigger.click();
-    
-    // Wait for the dropdown to actually render in the DOM
-    await page.waitForTimeout(500); 
-
-    const option = page.locator('lightning-base-combobox-item, [role="option"]')
-      .filter({ hasText: new RegExp(`^${label}$`, 'i') }).first();
-    await option.scrollIntoViewIfNeeded();
-    await option.click();
-    await this.waitForLoading(page);
-  }
-
-  static async fillName(root: Page | Locator | FrameLocator, subFieldName: 'firstName' | 'lastName', value: string) {
-    const input = root.locator(`input[name="${subFieldName}"]`).first();
-    await input.waitFor({ state: 'visible', timeout: 15000 });
-    await input.click(); // Wake up listener
-    await input.fill(value);
-  }
-
-  static async waitForNavigationOrToast(page: Page, substrings: string | string[], recordName?: string): Promise<string> {
+  static async waitForNavigationOrToast(page: Page, substrings: string | string[]): Promise<string> {
     const subs = Array.isArray(substrings) ? substrings : [substrings];
     const checkMatch = (url: string) => subs.some(sub => url.includes(sub));
 
@@ -106,11 +126,8 @@ export class SFUtils {
 
     const toastLink = page.locator('.slds-notify--toast a, .toastMessage a').first();
     if (await toastLink.isVisible({ timeout: 5000 }).catch(() => false)) {
-      const href = await toastLink.getAttribute('href') ?? '';
-      if (!page.url().includes(href)) {
-        await toastLink.click();
-        await this.waitForLoading(page);
-      }
+      await this.safeClick(toastLink);
+      await this.waitForLoading(page);
       return page.url();
     }
 
@@ -118,20 +135,15 @@ export class SFUtils {
     throw new Error(`Navigation failed to ${subs.join(',')}`);
   }
 
-  private static async _triggerGlobalSearch(page: Page, query: string) {
+  static async searchAndOpen(page: Page, name: string): Promise<string> {
     await page.keyboard.press('/');
     const searchInput = page.locator('input[placeholder*="Search"]').first();
     await searchInput.waitFor({ state: 'visible', timeout: 5000 });
-    await searchInput.fill(query);
+    await searchInput.fill(name);
     await page.keyboard.press('Enter');
     await this.waitForLoading(page);
-  }
 
-  static async searchAndOpen(page: Page, name: string): Promise<string> {
-    await this._triggerGlobalSearch(page, name);
     const resultLink = page.getByRole('link', { name, exact: true }).first();
-    
-    // Use the new safeClick here too!
     await this.safeClick(resultLink); 
     await this.waitForLoading(page);
     return page.url();

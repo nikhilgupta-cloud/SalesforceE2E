@@ -1,473 +1,2945 @@
 {
   "account": {
-    "scrapedAt": "2026-04-28T12:37:13.704Z",
-    "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Account/new",
+    "scrapedAt": "2026-04-30T06:08:05.844Z",
+    "objectApiName": "Account",
     "fields": [
       {
-        "label": "Phone",
+        "label": "Account ID",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Phone\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Id\"]",
+        "apiName": "Id"
+      },
+      {
+        "label": "Deleted",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsDeleted\"]",
+        "apiName": "IsDeleted"
+      },
+      {
+        "label": "Master Record ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"MasterRecordId\"]",
+        "apiName": "MasterRecordId"
       },
       {
         "label": "Account Name",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Account Name\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Name\"]",
+        "apiName": "Name"
       },
       {
-        "label": "Fax",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Fax\") input",
-        "apiName": null
+        "label": "Account Type",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Type\"]",
+        "apiName": "Type"
       },
       {
-        "label": "Parent Account",
+        "label": "Parent Account ID",
         "componentTag": "lightning-lookup",
         "inputType": "lookup",
-        "selector": "lightning-lookup:has-text(\"Parent Account\") input",
-        "apiName": null
-      },
-      {
-        "label": "Website",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Website\") input",
-        "apiName": null
-      },
-      {
-        "label": "Account Currency",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Account Currency\") button",
-        "apiName": null
-      },
-      {
-        "label": "Type",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Type\") button",
-        "apiName": null
-      },
-      {
-        "label": "Employees",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Employees\") input",
-        "apiName": null
-      },
-      {
-        "label": "Industry",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Industry\") button",
-        "apiName": null
-      },
-      {
-        "label": "Annual Revenue",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Annual Revenue\") input",
-        "apiName": null
-      },
-      {
-        "label": "Description",
-        "componentTag": "lightning-textarea",
-        "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Description\") textarea",
-        "apiName": null
+        "selector": "[data-field-api-name=\"ParentId\"]",
+        "apiName": "ParentId"
       },
       {
         "label": "Billing Street",
         "componentTag": "lightning-textarea",
         "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Billing Street\") textarea",
-        "apiName": null
+        "selector": "[data-field-api-name=\"BillingStreet\"]",
+        "apiName": "BillingStreet"
       },
       {
         "label": "Billing City",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Billing City\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"BillingCity\"]",
+        "apiName": "BillingCity"
       },
       {
         "label": "Billing State/Province",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Billing State/Province\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"BillingState\"]",
+        "apiName": "BillingState"
       },
       {
         "label": "Billing Zip/Postal Code",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Billing Zip/Postal Code\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"BillingPostalCode\"]",
+        "apiName": "BillingPostalCode"
       },
       {
         "label": "Billing Country",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Billing Country\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"BillingCountry\"]",
+        "apiName": "BillingCountry"
+      },
+      {
+        "label": "Billing Latitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingLatitude\"]",
+        "apiName": "BillingLatitude"
+      },
+      {
+        "label": "Billing Longitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingLongitude\"]",
+        "apiName": "BillingLongitude"
+      },
+      {
+        "label": "Billing Geocode Accuracy",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"BillingGeocodeAccuracy\"]",
+        "apiName": "BillingGeocodeAccuracy"
+      },
+      {
+        "label": "Billing Address",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingAddress\"]",
+        "apiName": "BillingAddress"
       },
       {
         "label": "Shipping Street",
         "componentTag": "lightning-textarea",
         "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Shipping Street\") textarea",
-        "apiName": null
+        "selector": "[data-field-api-name=\"ShippingStreet\"]",
+        "apiName": "ShippingStreet"
       },
       {
         "label": "Shipping City",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Shipping City\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"ShippingCity\"]",
+        "apiName": "ShippingCity"
       },
       {
         "label": "Shipping State/Province",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Shipping State/Province\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"ShippingState\"]",
+        "apiName": "ShippingState"
       },
       {
         "label": "Shipping Zip/Postal Code",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Shipping Zip/Postal Code\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"ShippingPostalCode\"]",
+        "apiName": "ShippingPostalCode"
       },
       {
         "label": "Shipping Country",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Shipping Country\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"ShippingCountry\"]",
+        "apiName": "ShippingCountry"
+      },
+      {
+        "label": "Shipping Latitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingLatitude\"]",
+        "apiName": "ShippingLatitude"
+      },
+      {
+        "label": "Shipping Longitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingLongitude\"]",
+        "apiName": "ShippingLongitude"
+      },
+      {
+        "label": "Shipping Geocode Accuracy",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"ShippingGeocodeAccuracy\"]",
+        "apiName": "ShippingGeocodeAccuracy"
+      },
+      {
+        "label": "Shipping Address",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingAddress\"]",
+        "apiName": "ShippingAddress"
+      },
+      {
+        "label": "Account Phone",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Phone\"]",
+        "apiName": "Phone"
+      },
+      {
+        "label": "Account Fax",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Fax\"]",
+        "apiName": "Fax"
+      },
+      {
+        "label": "Account Number",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AccountNumber\"]",
+        "apiName": "AccountNumber"
+      },
+      {
+        "label": "Website",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Website\"]",
+        "apiName": "Website"
+      },
+      {
+        "label": "Photo URL",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"PhotoUrl\"]",
+        "apiName": "PhotoUrl"
+      },
+      {
+        "label": "SIC Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Sic\"]",
+        "apiName": "Sic"
+      },
+      {
+        "label": "Industry",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Industry\"]",
+        "apiName": "Industry"
+      },
+      {
+        "label": "Annual Revenue",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AnnualRevenue\"]",
+        "apiName": "AnnualRevenue"
+      },
+      {
+        "label": "Employees",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"NumberOfEmployees\"]",
+        "apiName": "NumberOfEmployees"
+      },
+      {
+        "label": "Ownership",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Ownership\"]",
+        "apiName": "Ownership"
+      },
+      {
+        "label": "Ticker Symbol",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"TickerSymbol\"]",
+        "apiName": "TickerSymbol"
+      },
+      {
+        "label": "Account Description",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Description\"]",
+        "apiName": "Description"
+      },
+      {
+        "label": "Account Rating",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Rating\"]",
+        "apiName": "Rating"
+      },
+      {
+        "label": "Account Site",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Site\"]",
+        "apiName": "Site"
+      },
+      {
+        "label": "Account Currency",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"CurrencyIsoCode\"]",
+        "apiName": "CurrencyIsoCode"
+      },
+      {
+        "label": "Owner ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"OwnerId\"]",
+        "apiName": "OwnerId"
+      },
+      {
+        "label": "Created Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"CreatedDate\"]",
+        "apiName": "CreatedDate"
+      },
+      {
+        "label": "Created By ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"CreatedById\"]",
+        "apiName": "CreatedById"
+      },
+      {
+        "label": "Last Modified Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastModifiedDate\"]",
+        "apiName": "LastModifiedDate"
+      },
+      {
+        "label": "Last Modified By ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"LastModifiedById\"]",
+        "apiName": "LastModifiedById"
+      },
+      {
+        "label": "System Modstamp",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"SystemModstamp\"]",
+        "apiName": "SystemModstamp"
+      },
+      {
+        "label": "Last Activity",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastActivityDate\"]",
+        "apiName": "LastActivityDate"
+      },
+      {
+        "label": "Last Viewed Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastViewedDate\"]",
+        "apiName": "LastViewedDate"
+      },
+      {
+        "label": "Last Referenced Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastReferencedDate\"]",
+        "apiName": "LastReferencedDate"
+      },
+      {
+        "label": "Data.com Key",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Jigsaw\"]",
+        "apiName": "Jigsaw"
+      },
+      {
+        "label": "Jigsaw Company ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"JigsawCompanyId\"]",
+        "apiName": "JigsawCompanyId"
+      },
+      {
+        "label": "Account Source",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"AccountSource\"]",
+        "apiName": "AccountSource"
+      },
+      {
+        "label": "SIC Description",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"SicDesc\"]",
+        "apiName": "SicDesc"
+      },
+      {
+        "label": "Billing Legal Entity",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"APTS_Billing_Legal_Entity__c\"]",
+        "apiName": "APTS_Billing_Legal_Entity__c"
+      },
+      {
+        "label": "Contract End Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"APTS_Contract_End_Date__c\"]",
+        "apiName": "APTS_Contract_End_Date__c"
+      },
+      {
+        "label": "Deal Registration Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"APTS_Seat_based_discount__c\"]",
+        "apiName": "APTS_Seat_based_discount__c"
+      },
+      {
+        "label": "CertCentral Instance",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"CertCentral_Instance__c\"]",
+        "apiName": "CertCentral_Instance__c"
+      },
+      {
+        "label": "Contract Status",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Contract_Status__c\"]",
+        "apiName": "Contract_Status__c"
+      },
+      {
+        "label": "DigiCert-branded Certificate Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"DigiCert_branded_Discount__c\"]",
+        "apiName": "DigiCert_branded_Discount__c"
+      },
+      {
+        "label": "MSP Partner Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MSP_Partner_Discount__c\"]",
+        "apiName": "MSP_Partner_Discount__c"
+      },
+      {
+        "label": "Non-Deal Registration Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Non_Registered_Discount__c\"]",
+        "apiName": "Non_Registered_Discount__c"
+      },
+      {
+        "label": "Program Status",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Program_Status__c\"]",
+        "apiName": "Program_Status__c"
+      },
+      {
+        "label": "Can Order via Quote/PO",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_CanOrderVia_QuotePO__c\"]",
+        "apiName": "RCA_CanOrderVia_QuotePO__c"
+      },
+      {
+        "label": "Limitations on quote/PO ordering",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_LimitationsOnQuotePO_Ordering__c\"]",
+        "apiName": "RCA_LimitationsOnQuotePO_Ordering__c"
+      },
+      {
+        "label": "Segment",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Segment__c\"]",
+        "apiName": "Segment__c"
+      },
+      {
+        "label": "Support Level",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Support_Level__c\"]",
+        "apiName": "Support_Level__c"
+      },
+      {
+        "label": "Velocity-branded Certificate Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Velocity_branded_Discount__c\"]",
+        "apiName": "Velocity_branded_Discount__c"
+      },
+      {
+        "label": "Partner Program Eligible?",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"APTS_Partner_Program_Discount__c\"]",
+        "apiName": "APTS_Partner_Program_Discount__c"
+      },
+      {
+        "label": "Partner Tier",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Partner_Tier__c\"]",
+        "apiName": "Partner_Tier__c"
+      },
+      {
+        "label": "ARR (GTM Account)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ARR__c\"]",
+        "apiName": "ARR__c"
       }
     ]
   },
   "contact": {
-    "scrapedAt": "2026-04-28T12:37:21.213Z",
-    "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Contact/new",
+    "scrapedAt": "2026-04-30T06:08:06.438Z",
+    "objectApiName": "Contact",
     "fields": [
       {
-        "label": "Phone",
+        "label": "Contact ID",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Phone\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Id\"]",
+        "apiName": "Id"
       },
       {
-        "label": "Salutation",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Salutation\") button",
-        "apiName": null
-      },
-      {
-        "label": "First Name",
+        "label": "Deleted",
         "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"First Name\") input",
-        "apiName": null
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsDeleted\"]",
+        "apiName": "IsDeleted"
+      },
+      {
+        "label": "Master Record ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"MasterRecordId\"]",
+        "apiName": "MasterRecordId"
+      },
+      {
+        "label": "Account ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"AccountId\"]",
+        "apiName": "AccountId"
       },
       {
         "label": "Last Name",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Last Name\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"LastName\"]",
+        "apiName": "LastName"
       },
       {
-        "label": "Mobile",
+        "label": "First Name",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Mobile\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"FirstName\"]",
+        "apiName": "FirstName"
       },
       {
-        "label": "Account Name",
-        "componentTag": "lightning-lookup",
-        "inputType": "lookup",
-        "selector": "lightning-lookup:has-text(\"Account Name\") input",
-        "apiName": null
-      },
-      {
-        "label": "Email",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Email\") input",
-        "apiName": null
-      },
-      {
-        "label": "Title",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Title\") input",
-        "apiName": null
-      },
-      {
-        "label": "Reports To",
-        "componentTag": "lightning-lookup",
-        "inputType": "lookup",
-        "selector": "lightning-lookup:has-text(\"Reports To\") input",
-        "apiName": null
-      },
-      {
-        "label": "Contact Currency",
+        "label": "Salutation",
         "componentTag": "lightning-combobox",
         "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Contact Currency\") button",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Salutation\"]",
+        "apiName": "Salutation"
       },
       {
-        "label": "Mailing Street",
-        "componentTag": "lightning-textarea",
-        "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Mailing Street\") textarea",
-        "apiName": null
-      },
-      {
-        "label": "Mailing City",
+        "label": "Full Name",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Mailing City\") input",
-        "apiName": null
-      },
-      {
-        "label": "Mailing State/Province",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Mailing State/Province\") input",
-        "apiName": null
-      },
-      {
-        "label": "Mailing Zip/Postal Code",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Mailing Zip/Postal Code\") input",
-        "apiName": null
-      },
-      {
-        "label": "Mailing Country",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Mailing Country\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Name\"]",
+        "apiName": "Name"
       },
       {
         "label": "Other Street",
         "componentTag": "lightning-textarea",
         "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Other Street\") textarea",
-        "apiName": null
+        "selector": "[data-field-api-name=\"OtherStreet\"]",
+        "apiName": "OtherStreet"
       },
       {
         "label": "Other City",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Other City\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"OtherCity\"]",
+        "apiName": "OtherCity"
       },
       {
         "label": "Other State/Province",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Other State/Province\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"OtherState\"]",
+        "apiName": "OtherState"
       },
       {
         "label": "Other Zip/Postal Code",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Other Zip/Postal Code\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"OtherPostalCode\"]",
+        "apiName": "OtherPostalCode"
       },
       {
         "label": "Other Country",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Other Country\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"OtherCountry\"]",
+        "apiName": "OtherCountry"
       },
       {
-        "label": "Fax",
+        "label": "Other Latitude",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Fax\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"OtherLatitude\"]",
+        "apiName": "OtherLatitude"
       },
       {
-        "label": "Lead Source",
+        "label": "Other Longitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"OtherLongitude\"]",
+        "apiName": "OtherLongitude"
+      },
+      {
+        "label": "Other Geocode Accuracy",
         "componentTag": "lightning-combobox",
         "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Lead Source\") button",
-        "apiName": null
+        "selector": "[data-field-api-name=\"OtherGeocodeAccuracy\"]",
+        "apiName": "OtherGeocodeAccuracy"
+      },
+      {
+        "label": "Other Address",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"OtherAddress\"]",
+        "apiName": "OtherAddress"
+      },
+      {
+        "label": "Mailing Street",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MailingStreet\"]",
+        "apiName": "MailingStreet"
+      },
+      {
+        "label": "Mailing City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MailingCity\"]",
+        "apiName": "MailingCity"
+      },
+      {
+        "label": "Mailing State/Province",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MailingState\"]",
+        "apiName": "MailingState"
+      },
+      {
+        "label": "Mailing Zip/Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MailingPostalCode\"]",
+        "apiName": "MailingPostalCode"
+      },
+      {
+        "label": "Mailing Country",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MailingCountry\"]",
+        "apiName": "MailingCountry"
+      },
+      {
+        "label": "Mailing Latitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MailingLatitude\"]",
+        "apiName": "MailingLatitude"
+      },
+      {
+        "label": "Mailing Longitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MailingLongitude\"]",
+        "apiName": "MailingLongitude"
+      },
+      {
+        "label": "Mailing Geocode Accuracy",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"MailingGeocodeAccuracy\"]",
+        "apiName": "MailingGeocodeAccuracy"
+      },
+      {
+        "label": "Mailing Address",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MailingAddress\"]",
+        "apiName": "MailingAddress"
+      },
+      {
+        "label": "Business Phone",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Phone\"]",
+        "apiName": "Phone"
+      },
+      {
+        "label": "Business Fax",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Fax\"]",
+        "apiName": "Fax"
+      },
+      {
+        "label": "Mobile Phone",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"MobilePhone\"]",
+        "apiName": "MobilePhone"
       },
       {
         "label": "Home Phone",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Home Phone\") input",
-        "apiName": null
-      },
-      {
-        "label": "Birthdate",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Birthdate\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"HomePhone\"]",
+        "apiName": "HomePhone"
       },
       {
         "label": "Other Phone",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Other Phone\") input",
-        "apiName": null
-      },
-      {
-        "label": "Department",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Department\") input",
-        "apiName": null
-      },
-      {
-        "label": "Assistant",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Assistant\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"OtherPhone\"]",
+        "apiName": "OtherPhone"
       },
       {
         "label": "Asst. Phone",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Asst. Phone\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"AssistantPhone\"]",
+        "apiName": "AssistantPhone"
       },
       {
-        "label": "Description",
-        "componentTag": "lightning-textarea",
-        "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Description\") textarea",
-        "apiName": null
-      }
-    ]
-  },
-  "opportunity": {
-    "scrapedAt": "2026-04-28T12:37:27.937Z",
-    "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/Opportunity/new",
-    "fields": [
-      {
-        "label": "Close Date",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Close Date\") input",
-        "apiName": null
-      },
-      {
-        "label": "Opportunity Name",
-        "componentTag": "lightning-input",
-        "inputType": "text",
-        "selector": "lightning-input:has-text(\"Opportunity Name\") input",
-        "apiName": null
-      },
-      {
-        "label": "Stage",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Stage\") button",
-        "apiName": null
-      },
-      {
-        "label": "Account Name",
+        "label": "Reports To ID",
         "componentTag": "lightning-lookup",
         "inputType": "lookup",
-        "selector": "lightning-lookup:has-text(\"Account Name\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"ReportsToId\"]",
+        "apiName": "ReportsToId"
       },
       {
-        "label": "Probability (%)",
+        "label": "Email",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Probability (%)\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Email\"]",
+        "apiName": "Email"
       },
       {
-        "label": "Type",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Type\") button",
-        "apiName": null
-      },
-      {
-        "label": "Amount",
+        "label": "Title",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Amount\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Title\"]",
+        "apiName": "Title"
       },
       {
-        "label": "C-NNACV",
+        "label": "Department",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"C-NNACV\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Department\"]",
+        "apiName": "Department"
       },
       {
-        "label": "Opportunity Currency",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Opportunity Currency\") button",
-        "apiName": null
-      },
-      {
-        "label": "Is Deal Registration",
+        "label": "Assistant's Name",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Is Deal Registration\") input",
-        "apiName": null
-      },
-      {
-        "label": "Opportunity Type",
-        "componentTag": "lightning-combobox",
-        "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Opportunity Type\") button",
-        "apiName": null
+        "selector": "[data-field-api-name=\"AssistantName\"]",
+        "apiName": "AssistantName"
       },
       {
         "label": "Lead Source",
         "componentTag": "lightning-combobox",
         "inputType": "combobox",
-        "selector": "lightning-combobox:has-text(\"Lead Source\") button",
-        "apiName": null
+        "selector": "[data-field-api-name=\"LeadSource\"]",
+        "apiName": "LeadSource"
       },
       {
-        "label": "Next Step",
+        "label": "Birthdate",
         "componentTag": "lightning-input",
         "inputType": "text",
-        "selector": "lightning-input:has-text(\"Next Step\") input",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Birthdate\"]",
+        "apiName": "Birthdate"
+      },
+      {
+        "label": "Contact Description",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Description\"]",
+        "apiName": "Description"
+      },
+      {
+        "label": "Contact Currency",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"CurrencyIsoCode\"]",
+        "apiName": "CurrencyIsoCode"
+      },
+      {
+        "label": "Owner ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"OwnerId\"]",
+        "apiName": "OwnerId"
+      },
+      {
+        "label": "Created Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"CreatedDate\"]",
+        "apiName": "CreatedDate"
+      },
+      {
+        "label": "Created By ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"CreatedById\"]",
+        "apiName": "CreatedById"
+      },
+      {
+        "label": "Last Modified Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastModifiedDate\"]",
+        "apiName": "LastModifiedDate"
+      },
+      {
+        "label": "Last Modified By ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"LastModifiedById\"]",
+        "apiName": "LastModifiedById"
+      },
+      {
+        "label": "System Modstamp",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"SystemModstamp\"]",
+        "apiName": "SystemModstamp"
+      },
+      {
+        "label": "Last Activity",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastActivityDate\"]",
+        "apiName": "LastActivityDate"
+      },
+      {
+        "label": "Last Stay-in-Touch Request Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastCURequestDate\"]",
+        "apiName": "LastCURequestDate"
+      },
+      {
+        "label": "Last Stay-in-Touch Save Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastCUUpdateDate\"]",
+        "apiName": "LastCUUpdateDate"
+      },
+      {
+        "label": "Last Viewed Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastViewedDate\"]",
+        "apiName": "LastViewedDate"
+      },
+      {
+        "label": "Last Referenced Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastReferencedDate\"]",
+        "apiName": "LastReferencedDate"
+      },
+      {
+        "label": "Email Bounced Reason",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"EmailBouncedReason\"]",
+        "apiName": "EmailBouncedReason"
+      },
+      {
+        "label": "Email Bounced Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"EmailBouncedDate\"]",
+        "apiName": "EmailBouncedDate"
+      },
+      {
+        "label": "Is Email Bounced",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsEmailBounced\"]",
+        "apiName": "IsEmailBounced"
+      },
+      {
+        "label": "Photo URL",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"PhotoUrl\"]",
+        "apiName": "PhotoUrl"
+      },
+      {
+        "label": "Data.com Key",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Jigsaw\"]",
+        "apiName": "Jigsaw"
+      },
+      {
+        "label": "Jigsaw Contact ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"JigsawContactId\"]",
+        "apiName": "JigsawContactId"
+      },
+      {
+        "label": "Individual ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"IndividualId\"]",
+        "apiName": "IndividualId"
+      }
+    ]
+  },
+  "opportunity": {
+    "scrapedAt": "2026-04-30T06:08:06.841Z",
+    "objectApiName": "Opportunity",
+    "fields": [
+      {
+        "label": "Opportunity ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Id\"]",
+        "apiName": "Id"
+      },
+      {
+        "label": "Deleted",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsDeleted\"]",
+        "apiName": "IsDeleted"
+      },
+      {
+        "label": "Account ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"AccountId\"]",
+        "apiName": "AccountId"
+      },
+      {
+        "label": "Private",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsPrivate\"]",
+        "apiName": "IsPrivate"
+      },
+      {
+        "label": "Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Name\"]",
+        "apiName": "Name"
       },
       {
         "label": "Description",
         "componentTag": "lightning-textarea",
         "inputType": "text",
-        "selector": "lightning-textarea:has-text(\"Description\") textarea",
-        "apiName": null
+        "selector": "[data-field-api-name=\"Description\"]",
+        "apiName": "Description"
+      },
+      {
+        "label": "Stage",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"StageName\"]",
+        "apiName": "StageName"
+      },
+      {
+        "label": "Amount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Amount\"]",
+        "apiName": "Amount"
+      },
+      {
+        "label": "Probability (%)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Probability\"]",
+        "apiName": "Probability"
+      },
+      {
+        "label": "Expected Amount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ExpectedRevenue\"]",
+        "apiName": "ExpectedRevenue"
+      },
+      {
+        "label": "Quantity",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"TotalOpportunityQuantity\"]",
+        "apiName": "TotalOpportunityQuantity"
+      },
+      {
+        "label": "Close Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"CloseDate\"]",
+        "apiName": "CloseDate"
+      },
+      {
+        "label": "Opportunity Type",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Type\"]",
+        "apiName": "Type"
+      },
+      {
+        "label": "Next Step",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"NextStep\"]",
+        "apiName": "NextStep"
+      },
+      {
+        "label": "Lead Source",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"LeadSource\"]",
+        "apiName": "LeadSource"
+      },
+      {
+        "label": "Closed",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsClosed\"]",
+        "apiName": "IsClosed"
+      },
+      {
+        "label": "Won",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsWon\"]",
+        "apiName": "IsWon"
+      },
+      {
+        "label": "Forecast Category",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"ForecastCategory\"]",
+        "apiName": "ForecastCategory"
+      },
+      {
+        "label": "Forecast Category",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"ForecastCategoryName\"]",
+        "apiName": "ForecastCategoryName"
+      },
+      {
+        "label": "Opportunity Currency",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"CurrencyIsoCode\"]",
+        "apiName": "CurrencyIsoCode"
+      },
+      {
+        "label": "Has Line Item",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"HasOpportunityLineItem\"]",
+        "apiName": "HasOpportunityLineItem"
+      },
+      {
+        "label": "Price Book ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Pricebook2Id\"]",
+        "apiName": "Pricebook2Id"
+      },
+      {
+        "label": "Owner ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"OwnerId\"]",
+        "apiName": "OwnerId"
+      },
+      {
+        "label": "Created Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"CreatedDate\"]",
+        "apiName": "CreatedDate"
+      },
+      {
+        "label": "Created By ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"CreatedById\"]",
+        "apiName": "CreatedById"
+      },
+      {
+        "label": "Last Modified Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastModifiedDate\"]",
+        "apiName": "LastModifiedDate"
+      },
+      {
+        "label": "Last Modified By ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"LastModifiedById\"]",
+        "apiName": "LastModifiedById"
+      },
+      {
+        "label": "System Modstamp",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"SystemModstamp\"]",
+        "apiName": "SystemModstamp"
+      },
+      {
+        "label": "Last Activity",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastActivityDate\"]",
+        "apiName": "LastActivityDate"
+      },
+      {
+        "label": "Fiscal Quarter",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"FiscalQuarter\"]",
+        "apiName": "FiscalQuarter"
+      },
+      {
+        "label": "Fiscal Year",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"FiscalYear\"]",
+        "apiName": "FiscalYear"
+      },
+      {
+        "label": "Fiscal Period",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Fiscal\"]",
+        "apiName": "Fiscal"
+      },
+      {
+        "label": "Contact ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"ContactId\"]",
+        "apiName": "ContactId"
+      },
+      {
+        "label": "Last Viewed Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastViewedDate\"]",
+        "apiName": "LastViewedDate"
+      },
+      {
+        "label": "Last Referenced Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastReferencedDate\"]",
+        "apiName": "LastReferencedDate"
+      },
+      {
+        "label": "Quote ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"SyncedQuoteId\"]",
+        "apiName": "SyncedQuoteId"
+      },
+      {
+        "label": "Contract ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"ContractId\"]",
+        "apiName": "ContractId"
+      },
+      {
+        "label": "Has Open Activity",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"HasOpenActivity\"]",
+        "apiName": "HasOpenActivity"
+      },
+      {
+        "label": "Has Overdue Task",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"HasOverdueTask\"]",
+        "apiName": "HasOverdueTask"
+      },
+      {
+        "label": "Opportunity History ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"LastAmountChangedHistoryId\"]",
+        "apiName": "LastAmountChangedHistoryId"
+      },
+      {
+        "label": "Opportunity History ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"LastCloseDateChangedHistoryId\"]",
+        "apiName": "LastCloseDateChangedHistoryId"
+      },
+      {
+        "label": "Last IPP Parameter Changed Date/Time",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"APTS_LastIPPParameterChangedDateTime__c\"]",
+        "apiName": "APTS_LastIPPParameterChangedDateTime__c"
+      },
+      {
+        "label": "RCA Synced Order Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"APTS_Synced_Apttus_Order_Name__c\"]",
+        "apiName": "APTS_Synced_Apttus_Order_Name__c"
+      },
+      {
+        "label": "Contract Type",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Contract_Type__c\"]",
+        "apiName": "Contract_Type__c"
+      },
+      {
+        "label": "Partner Sales Motion Type",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Partner_Sales_Motion_Type__c\"]",
+        "apiName": "Partner_Sales_Motion_Type__c"
+      },
+      {
+        "label": "Partner Sales Motion",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Partner_Sales_Motion__c\"]",
+        "apiName": "Partner_Sales_Motion__c"
+      },
+      {
+        "label": "Bill To Partner / Distributor",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Reseller__c\"]",
+        "apiName": "Reseller__c"
+      },
+      {
+        "label": "Is Deal Registration",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsDealRegistration__c\"]",
+        "apiName": "IsDealRegistration__c"
+      },
+      {
+        "label": "Billing Contact",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Billing_Contact__c\"]",
+        "apiName": "Billing_Contact__c"
+      },
+      {
+        "label": "Primary Contact",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Primary_Contact__c\"]",
+        "apiName": "Primary_Contact__c"
+      },
+      {
+        "label": "Opportunity Type",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Opportunity_Type__c\"]",
+        "apiName": "Opportunity_Type__c"
+      },
+      {
+        "label": "Previous Opportunity",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Previous_Opportunity__c\"]",
+        "apiName": "Previous_Opportunity__c"
+      },
+      {
+        "label": "Enterprise Trust C-NNACV",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Enterprise_Trust_NNACV__c\"]",
+        "apiName": "Enterprise_Trust_NNACV__c"
+      },
+      {
+        "label": "C-NNACV",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Forecast_NNACV__c\"]",
+        "apiName": "Forecast_NNACV__c"
+      },
+      {
+        "label": "Software Trust C-NNACV",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Software_Trust_NNACV__c\"]",
+        "apiName": "Software_Trust_NNACV__c"
       }
     ]
   },
   "quote": {
-    "scrapedAt": "2026-04-28T12:37:35.374Z",
-    "pageUrl": "https://rlmpartner1demojan2226org.my.salesforce.com/lightning/o/SBQQ__Quote__c/new",
-    "fields": []
+    "scrapedAt": "2026-04-30T06:08:07.727Z",
+    "objectApiName": "Quote",
+    "fields": [
+      {
+        "label": "Quote ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Id\"]",
+        "apiName": "Id"
+      },
+      {
+        "label": "Owner ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"OwnerId\"]",
+        "apiName": "OwnerId"
+      },
+      {
+        "label": "Deleted",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsDeleted\"]",
+        "apiName": "IsDeleted"
+      },
+      {
+        "label": "Quote Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Name\"]",
+        "apiName": "Name"
+      },
+      {
+        "label": "Currency ISO Code",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"CurrencyIsoCode\"]",
+        "apiName": "CurrencyIsoCode"
+      },
+      {
+        "label": "Created Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"CreatedDate\"]",
+        "apiName": "CreatedDate"
+      },
+      {
+        "label": "Created By ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"CreatedById\"]",
+        "apiName": "CreatedById"
+      },
+      {
+        "label": "Last Modified Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastModifiedDate\"]",
+        "apiName": "LastModifiedDate"
+      },
+      {
+        "label": "Last Modified By ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"LastModifiedById\"]",
+        "apiName": "LastModifiedById"
+      },
+      {
+        "label": "System Modstamp",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"SystemModstamp\"]",
+        "apiName": "SystemModstamp"
+      },
+      {
+        "label": "Last Viewed Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastViewedDate\"]",
+        "apiName": "LastViewedDate"
+      },
+      {
+        "label": "Last Referenced Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LastReferencedDate\"]",
+        "apiName": "LastReferencedDate"
+      },
+      {
+        "label": "Opportunity ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"OpportunityId\"]",
+        "apiName": "OpportunityId"
+      },
+      {
+        "label": "Price Book ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Pricebook2Id\"]",
+        "apiName": "Pricebook2Id"
+      },
+      {
+        "label": "Contact ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"ContactId\"]",
+        "apiName": "ContactId"
+      },
+      {
+        "label": "Quote Number",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteNumber\"]",
+        "apiName": "QuoteNumber"
+      },
+      {
+        "label": "Syncing",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"IsSyncing\"]",
+        "apiName": "IsSyncing"
+      },
+      {
+        "label": "Shipping and Handling",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingHandling\"]",
+        "apiName": "ShippingHandling"
+      },
+      {
+        "label": "Tax",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Tax\"]",
+        "apiName": "Tax"
+      },
+      {
+        "label": "Status",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Status\"]",
+        "apiName": "Status"
+      },
+      {
+        "label": "Expiration Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ExpirationDate\"]",
+        "apiName": "ExpirationDate"
+      },
+      {
+        "label": "Description",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Description\"]",
+        "apiName": "Description"
+      },
+      {
+        "label": "Subtotal",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Subtotal\"]",
+        "apiName": "Subtotal"
+      },
+      {
+        "label": "Total Price",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"TotalPrice\"]",
+        "apiName": "TotalPrice"
+      },
+      {
+        "label": "Line Items",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"LineItemCount\"]",
+        "apiName": "LineItemCount"
+      },
+      {
+        "label": "Bill To Street",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingStreet\"]",
+        "apiName": "BillingStreet"
+      },
+      {
+        "label": "Bill To City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingCity\"]",
+        "apiName": "BillingCity"
+      },
+      {
+        "label": "Bill To State/Province",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingState\"]",
+        "apiName": "BillingState"
+      },
+      {
+        "label": "Bill To Zip/Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingPostalCode\"]",
+        "apiName": "BillingPostalCode"
+      },
+      {
+        "label": "Bill To Country",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingCountry\"]",
+        "apiName": "BillingCountry"
+      },
+      {
+        "label": "Bill To Latitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingLatitude\"]",
+        "apiName": "BillingLatitude"
+      },
+      {
+        "label": "Bill To Longitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingLongitude\"]",
+        "apiName": "BillingLongitude"
+      },
+      {
+        "label": "Bill To Geocode Accuracy",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"BillingGeocodeAccuracy\"]",
+        "apiName": "BillingGeocodeAccuracy"
+      },
+      {
+        "label": "Bill To",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingAddress\"]",
+        "apiName": "BillingAddress"
+      },
+      {
+        "label": "Ship To Street",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingStreet\"]",
+        "apiName": "ShippingStreet"
+      },
+      {
+        "label": "Ship To City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingCity\"]",
+        "apiName": "ShippingCity"
+      },
+      {
+        "label": "Ship To State/Province",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingState\"]",
+        "apiName": "ShippingState"
+      },
+      {
+        "label": "Ship To Zip/Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingPostalCode\"]",
+        "apiName": "ShippingPostalCode"
+      },
+      {
+        "label": "Ship To Country",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingCountry\"]",
+        "apiName": "ShippingCountry"
+      },
+      {
+        "label": "Ship To Latitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingLatitude\"]",
+        "apiName": "ShippingLatitude"
+      },
+      {
+        "label": "Ship To Longitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingLongitude\"]",
+        "apiName": "ShippingLongitude"
+      },
+      {
+        "label": "Ship To Geocode Accuracy",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"ShippingGeocodeAccuracy\"]",
+        "apiName": "ShippingGeocodeAccuracy"
+      },
+      {
+        "label": "Ship To",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingAddress\"]",
+        "apiName": "ShippingAddress"
+      },
+      {
+        "label": "Quote To Street",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteToStreet\"]",
+        "apiName": "QuoteToStreet"
+      },
+      {
+        "label": "Quote To City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteToCity\"]",
+        "apiName": "QuoteToCity"
+      },
+      {
+        "label": "Quote To State/Province",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteToState\"]",
+        "apiName": "QuoteToState"
+      },
+      {
+        "label": "Quote To Zip/Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteToPostalCode\"]",
+        "apiName": "QuoteToPostalCode"
+      },
+      {
+        "label": "Quote To Country",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteToCountry\"]",
+        "apiName": "QuoteToCountry"
+      },
+      {
+        "label": "Quote To Latitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteToLatitude\"]",
+        "apiName": "QuoteToLatitude"
+      },
+      {
+        "label": "Quote To Longitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteToLongitude\"]",
+        "apiName": "QuoteToLongitude"
+      },
+      {
+        "label": "Quote To Geocode Accuracy",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"QuoteToGeocodeAccuracy\"]",
+        "apiName": "QuoteToGeocodeAccuracy"
+      },
+      {
+        "label": "Quote To",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteToAddress\"]",
+        "apiName": "QuoteToAddress"
+      },
+      {
+        "label": "Additional To Street",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AdditionalStreet\"]",
+        "apiName": "AdditionalStreet"
+      },
+      {
+        "label": "Additional To City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AdditionalCity\"]",
+        "apiName": "AdditionalCity"
+      },
+      {
+        "label": "Additional To State/Province",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AdditionalState\"]",
+        "apiName": "AdditionalState"
+      },
+      {
+        "label": "Additional To Zip/Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AdditionalPostalCode\"]",
+        "apiName": "AdditionalPostalCode"
+      },
+      {
+        "label": "Additional To Country",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AdditionalCountry\"]",
+        "apiName": "AdditionalCountry"
+      },
+      {
+        "label": "Additional To Latitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AdditionalLatitude\"]",
+        "apiName": "AdditionalLatitude"
+      },
+      {
+        "label": "Additional To Longitude",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AdditionalLongitude\"]",
+        "apiName": "AdditionalLongitude"
+      },
+      {
+        "label": "Additional To Geocode Accuracy",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"AdditionalGeocodeAccuracy\"]",
+        "apiName": "AdditionalGeocodeAccuracy"
+      },
+      {
+        "label": "Additional To",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AdditionalAddress\"]",
+        "apiName": "AdditionalAddress"
+      },
+      {
+        "label": "Bill To Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"BillingName\"]",
+        "apiName": "BillingName"
+      },
+      {
+        "label": "Ship To Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"ShippingName\"]",
+        "apiName": "ShippingName"
+      },
+      {
+        "label": "Quote To Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"QuoteToName\"]",
+        "apiName": "QuoteToName"
+      },
+      {
+        "label": "Additional To Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"AdditionalName\"]",
+        "apiName": "AdditionalName"
+      },
+      {
+        "label": "Email",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Email\"]",
+        "apiName": "Email"
+      },
+      {
+        "label": "Phone",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Phone\"]",
+        "apiName": "Phone"
+      },
+      {
+        "label": "Fax",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Fax\"]",
+        "apiName": "Fax"
+      },
+      {
+        "label": "Contract ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"ContractId\"]",
+        "apiName": "ContractId"
+      },
+      {
+        "label": "Account ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"AccountId\"]",
+        "apiName": "AccountId"
+      },
+      {
+        "label": "Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Discount\"]",
+        "apiName": "Discount"
+      },
+      {
+        "label": "Grand Total",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"GrandTotal\"]",
+        "apiName": "GrandTotal"
+      },
+      {
+        "label": "Can Create Quote Line Items",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"CanCreateQuoteLineItems\"]",
+        "apiName": "CanCreateQuoteLineItems"
+      },
+      {
+        "label": "Bill To",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"RCA_BillToAccountId__c\"]",
+        "apiName": "RCA_BillToAccountId__c"
+      },
+      {
+        "label": "Bill To (Local)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Bill_To_Local__c\"]",
+        "apiName": "RCA_Bill_To_Local__c"
+      },
+      {
+        "label": "Total MSRP W/O Support",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_MSRP_W_O_Support__c\"]",
+        "apiName": "RCA_Total_MSRP_W_O_Support__c"
+      },
+      {
+        "label": "Includes Threat Detection",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"Includes_Threat_Detection__c\"]",
+        "apiName": "Includes_Threat_Detection__c"
+      },
+      {
+        "label": "Account Segment",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Account_Segment__c\"]",
+        "apiName": "RCA_Account_Segment__c"
+      },
+      {
+        "label": "Account",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"RCA_Account__c\"]",
+        "apiName": "RCA_Account__c"
+      },
+      {
+        "label": "Alt Bill To Address",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Alt_Bill_To_Address__c\"]",
+        "apiName": "RCA_Alt_Bill_To_Address__c"
+      },
+      {
+        "label": "Alt Bill To City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Alt_Bill_To_City__c\"]",
+        "apiName": "RCA_Alt_Bill_To_City__c"
+      },
+      {
+        "label": "Alt Bill To Country Code",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Alt_Bill_To_Country_Code__c\"]",
+        "apiName": "RCA_Alt_Bill_To_Country_Code__c"
+      },
+      {
+        "label": "Alt Bill To Country",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Alt_Bill_To_Country__c\"]",
+        "apiName": "RCA_Alt_Bill_To_Country__c"
+      },
+      {
+        "label": "Alt Bill To Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Alt_Bill_To_Postal_Code__c\"]",
+        "apiName": "RCA_Alt_Bill_To_Postal_Code__c"
+      },
+      {
+        "label": "Alt Bill To State",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Alt_Bill_To_State__c\"]",
+        "apiName": "RCA_Alt_Bill_To_State__c"
+      },
+      {
+        "label": "Alt Sold To Address",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Alt_Sold_To_Address__c\"]",
+        "apiName": "RCA_Alt_Sold_To_Address__c"
+      },
+      {
+        "label": "Alt Sold To City",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Alt_Sold_To_City__c\"]",
+        "apiName": "RCA_Alt_Sold_To_City__c"
+      },
+      {
+        "label": "Alt Sold To Country Code",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Alt_Sold_To_Country_Code__c\"]",
+        "apiName": "RCA_Alt_Sold_To_Country_Code__c"
+      },
+      {
+        "label": "Alt Sold To Country",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Alt_Sold_To_Country__c\"]",
+        "apiName": "RCA_Alt_Sold_To_Country__c"
+      },
+      {
+        "label": "Alt Sold To Postal Code",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Alt_Sold_To_Postal_Code__c\"]",
+        "apiName": "RCA_Alt_Sold_To_Postal_Code__c"
+      },
+      {
+        "label": "Alt Sold To State",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Alt_Sold_To_State__c\"]",
+        "apiName": "RCA_Alt_Sold_To_State__c"
+      },
+      {
+        "label": "Approved (Entrust) Credit Amount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Approved_Credit_Amount__c\"]",
+        "apiName": "RCA_Approved_Credit_Amount__c"
+      },
+      {
+        "label": "Attribute Adjustment PAS ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Attribute_Adjustment_PAS_ID__c\"]",
+        "apiName": "RCA_Attribute_Adjustment_PAS_ID__c"
+      },
+      {
+        "label": "Billing Contact 2",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Billing_Contact_2__c\"]",
+        "apiName": "RCA_Billing_Contact_2__c"
+      },
+      {
+        "label": "Billing Contact 3",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Billing_Contact_3__c\"]",
+        "apiName": "RCA_Billing_Contact_3__c"
+      },
+      {
+        "label": "Billing Contact (Local)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Billing_Contact_Local__c\"]",
+        "apiName": "RCA_Billing_Contact_Local__c"
+      },
+      {
+        "label": "Billing Contact",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"RCA_Billing_Contact__c\"]",
+        "apiName": "RCA_Billing_Contact__c"
+      },
+      {
+        "label": "Bundle Adjustment PAS ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Bundle_Adjustment_PAS_ID__c\"]",
+        "apiName": "RCA_Bundle_Adjustment_PAS_ID__c"
+      },
+      {
+        "label": "Commit Discount PAS ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Commit_Discount_PAS_ID__c\"]",
+        "apiName": "RCA_Commit_Discount_PAS_ID__c"
+      },
+      {
+        "label": "Contains Custom Billing Plan",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Contains_Custom_Billing_Plan__c\"]",
+        "apiName": "RCA_Contains_Custom_Billing_Plan__c"
+      },
+      {
+        "label": "Contract Status",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Contract_Status__c\"]",
+        "apiName": "RCA_Contract_Status__c"
+      },
+      {
+        "label": "Contract Template Selector",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Contract_Template_Selector__c\"]",
+        "apiName": "RCA_Contract_Template_Selector__c"
+      },
+      {
+        "label": "Contract Type Template",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Contract_Type_Template__c\"]",
+        "apiName": "RCA_Contract_Type_Template__c"
+      },
+      {
+        "label": "Contract Type",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Contract_Type_Values__c\"]",
+        "apiName": "RCA_Contract_Type_Values__c"
+      },
+      {
+        "label": "Contract fee Line COUNT",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Contract_fee_Line_COUNT__c\"]",
+        "apiName": "RCA_Contract_fee_Line_COUNT__c"
+      },
+      {
+        "label": "Copy Primary Contact Address",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Copy_Primary_Contact_Address__c\"]",
+        "apiName": "RCA_Copy_Primary_Contact_Address__c"
+      },
+      {
+        "label": "Corporate Contact Email Address",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Corporate_Contact_Email_Address__c\"]",
+        "apiName": "RCA_Corporate_Contact_Email_Address__c"
+      },
+      {
+        "label": "Corporate Contact Job Title",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Corporate_Contact_Job_Title__c\"]",
+        "apiName": "RCA_Corporate_Contact_Job_Title__c"
+      },
+      {
+        "label": "Corporate Contact Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Corporate_Contact_Name__c\"]",
+        "apiName": "RCA_Corporate_Contact_Name__c"
+      },
+      {
+        "label": "Corporate Contact Phone Number",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Corporate_Contact_Phone_Number__c\"]",
+        "apiName": "RCA_Corporate_Contact_Phone_Number__c"
+      },
+      {
+        "label": "Corporate Legal Headquarter Address",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Corporate_Legal_Headquarter_Address__c\"]",
+        "apiName": "RCA_Corporate_Legal_Headquarter_Address__c"
+      },
+      {
+        "label": "Corporate License Number",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Corporate_License_Number__c\"]",
+        "apiName": "RCA_Corporate_License_Number__c"
+      },
+      {
+        "label": "Count of Amended Seat-based",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Count_of_Amended_Seat_based__c\"]",
+        "apiName": "RCA_Count_of_Amended_Seat_based__c"
+      },
+      {
+        "label": "Current User LoB",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Current_User_LoB__c\"]",
+        "apiName": "RCA_Current_User_LoB__c"
+      },
+      {
+        "label": "Custom PAS ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Custom_PAS_ID__c\"]",
+        "apiName": "RCA_Custom_PAS_ID__c"
+      },
+      {
+        "label": "Custom Slab Tier ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Custom_Slab_Tier_ID__c\"]",
+        "apiName": "RCA_Custom_Slab_Tier_ID__c"
+      },
+      {
+        "label": "Deal Registration Partner",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"RCA_Deal_Registration_Partner__c\"]",
+        "apiName": "RCA_Deal_Registration_Partner__c"
+      },
+      {
+        "label": "Deal Type",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Deal_Type__c\"]",
+        "apiName": "RCA_Deal_Type__c"
+      },
+      {
+        "label": "DigiCert-branded Certificate Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Digicert_Branded_Discount__c\"]",
+        "apiName": "RCA_Digicert_Branded_Discount__c"
+      },
+      {
+        "label": "Discounted Subtotal",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Discounted_Subtotal__c\"]",
+        "apiName": "RCA_Discounted_Subtotal__c"
+      },
+      {
+        "label": "End Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_EndDate__c\"]",
+        "apiName": "RCA_EndDate__c"
+      },
+      {
+        "label": "Existing QTY (users/seats)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Existing_QTY_users_seats__c\"]",
+        "apiName": "RCA_Existing_QTY_users_seats__c"
+      },
+      {
+        "label": "ExpectedStartDate",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_ExpectedStartDate__c\"]",
+        "apiName": "RCA_ExpectedStartDate__c"
+      },
+      {
+        "label": "Fulfill/Un-registered Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Fulfill_Un_registered_Discount__c\"]",
+        "apiName": "RCA_Fulfill_Un_registered_Discount__c"
+      },
+      {
+        "label": "GrandTotal",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_GrandTotal__c\"]",
+        "apiName": "RCA_GrandTotal__c"
+      },
+      {
+        "label": "Grand Total W/O Support",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Grand_Total_W_O_Support__c\"]",
+        "apiName": "RCA_Grand_Total_W_O_Support__c"
+      },
+      {
+        "label": "IPP Synced Date/Time",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_IPPSyncedDateTime__c\"]",
+        "apiName": "RCA_IPPSyncedDateTime__c"
+      },
+      {
+        "label": "Include PS - Packaged?",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Include_PS_Packaged__c\"]",
+        "apiName": "RCA_Include_PS_Packaged__c"
+      },
+      {
+        "label": "Includes Ascertia",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Includes_Ascertia__c\"]",
+        "apiName": "RCA_Includes_Ascertia__c"
+      },
+      {
+        "label": "Include PS - Packaged?",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Is_PS_Packaged_in_the_cart__c\"]",
+        "apiName": "RCA_Is_PS_Packaged_in_the_cart__c"
+      },
+      {
+        "label": "Ismigrated",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Ismigrated__c\"]",
+        "apiName": "RCA_Ismigrated__c"
+      },
+      {
+        "label": "Legacyid",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Legacyid__c\"]",
+        "apiName": "RCA_Legacyid__c"
+      },
+      {
+        "label": "Marketplace Partner Account IPP?",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Marketplace_Partner_Account_IPP__c\"]",
+        "apiName": "RCA_Marketplace_Partner_Account_IPP__c"
+      },
+      {
+        "label": "# of SSL Standalone Products",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_N_of_SSL_Standalone_Products__c\"]",
+        "apiName": "RCA_N_of_SSL_Standalone_Products__c"
+      },
+      {
+        "label": "New QTY total (user/seats)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_New_QTY_total_user_seats__c\"]",
+        "apiName": "RCA_New_QTY_total_user_seats__c"
+      },
+      {
+        "label": "Non-Deal Registration discount (Default)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Non_Registered_Discount_Default__c\"]",
+        "apiName": "RCA_Non_Registered_Discount_Default__c"
+      },
+      {
+        "label": "Non-Deal Registration discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Non_Registered_Discount__c\"]",
+        "apiName": "RCA_Non_Registered_Discount__c"
+      },
+      {
+        "label": "Partner Contract Active?",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Partner_Contract_Active__c\"]",
+        "apiName": "RCA_Partner_Contract_Active__c"
+      },
+      {
+        "label": "Partner Sales Motion Type",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Partner_Sales_Motion_Type__c\"]",
+        "apiName": "RCA_Partner_Sales_Motion_Type__c"
+      },
+      {
+        "label": "Partner Sales Motion",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Partner_Sales_Motion__c\"]",
+        "apiName": "RCA_Partner_Sales_Motion__c"
+      },
+      {
+        "label": "Quote ABO Type",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Quote_ABO_Type__c\"]",
+        "apiName": "RCA_Quote_ABO_Type__c"
+      },
+      {
+        "label": "RCA_Quote LoB",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Quote_LoB__c\"]",
+        "apiName": "RCA_Quote_LoB__c"
+      },
+      {
+        "label": "Support Level (New)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Quote_Support_Level__c\"]",
+        "apiName": "RCA_Quote_Support_Level__c"
+      },
+      {
+        "label": "Quote Type",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Quote_Type__c\"]",
+        "apiName": "RCA_Quote_Type__c"
+      },
+      {
+        "label": "Deal Registration Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Seat_based_discount__c\"]",
+        "apiName": "RCA_Seat_based_discount__c"
+      },
+      {
+        "label": "Sold To",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"RCA_SoldToAccountId__c\"]",
+        "apiName": "RCA_SoldToAccountId__c"
+      },
+      {
+        "label": "Special Instructions",
+        "componentTag": "lightning-textarea",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Special_Instructions__c\"]",
+        "apiName": "RCA_Special_Instructions__c"
+      },
+      {
+        "label": "Standard Tier PAS ID",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Standard_Tier_PAS_ID__c\"]",
+        "apiName": "RCA_Standard_Tier_PAS_ID__c"
+      },
+      {
+        "label": "Technical Contact Email Address",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Technical_Contact_Email_Address__c\"]",
+        "apiName": "RCA_Technical_Contact_Email_Address__c"
+      },
+      {
+        "label": "Technical Contact Job Title",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Technical_Contact_Job_Title__c\"]",
+        "apiName": "RCA_Technical_Contact_Job_Title__c"
+      },
+      {
+        "label": "Technical Contact Name",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Technical_Contact_Name__c\"]",
+        "apiName": "RCA_Technical_Contact_Name__c"
+      },
+      {
+        "label": "Technical Contact Phone Number",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Technical_Contact_Phone_Number__c\"]",
+        "apiName": "RCA_Technical_Contact_Phone_Number__c"
+      },
+      {
+        "label": "Total Cert Based Net Amount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Cert_Based_Net_Amount__c\"]",
+        "apiName": "RCA_Total_Cert_Based_Net_Amount__c"
+      },
+      {
+        "label": "Total Cert Based Support Net Amount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Cert_Based_Support_Net_Amount__c\"]",
+        "apiName": "RCA_Total_Cert_Based_Support_Net_Amount__c"
+      },
+      {
+        "label": "Total Seat-based Value",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_PKI_Value__c\"]",
+        "apiName": "RCA_Total_PKI_Value__c"
+      },
+      {
+        "label": "Total Certificate-based Value",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_SSL_Value__c\"]",
+        "apiName": "RCA_Total_SSL_Value__c"
+      },
+      {
+        "label": "Total Seat Based Net Amount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Seat_Based_Net_Amount__c\"]",
+        "apiName": "RCA_Total_Seat_Based_Net_Amount__c"
+      },
+      {
+        "label": "Total Seat Based Support Net Amount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Seat_Based_Support_Net_Amount__c\"]",
+        "apiName": "RCA_Total_Seat_Based_Support_Net_Amount__c"
+      },
+      {
+        "label": "VAT ID Required?",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_VAT_Required__c\"]",
+        "apiName": "RCA_VAT_Required__c"
+      },
+      {
+        "label": "Deprecated Support Product Count",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Deprecated_Support_Product_Count__c\"]",
+        "apiName": "RCA_Deprecated_Support_Product_Count__c"
+      },
+      {
+        "label": "Digicert Business Support Count",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Digicert_Business_Support_Count__c\"]",
+        "apiName": "RCA_Digicert_Business_Support_Count__c"
+      },
+      {
+        "label": "Digicert Business Support Plus Count",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Digicert_Business_Supprt_Plus_Count__c\"]",
+        "apiName": "RCA_Digicert_Business_Supprt_Plus_Count__c"
+      },
+      {
+        "label": "Digicert Premium Support Count",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Digicert_Premium_Support_Count__c\"]",
+        "apiName": "RCA_Digicert_Premium_Support_Count__c"
+      },
+      {
+        "label": "Digicert Standard Support Count",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Digicert_Standard_Support_Count__c\"]",
+        "apiName": "RCA_Digicert_Standard_Support_Count__c"
+      },
+      {
+        "label": "Maximum Start Date (Primary RampedLines)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Max_Start_Date_Primary_RampedLines__c\"]",
+        "apiName": "RCA_Max_Start_Date_Primary_RampedLines__c"
+      },
+      {
+        "label": "Maximum End Date (Primary Lines)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Maximum_End_Date_Primary_Lines__c\"]",
+        "apiName": "RCA_Maximum_End_Date_Primary_Lines__c"
+      },
+      {
+        "label": "Maximum Start Date (Primary Lines)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Maximum_Start_Date_Primary_Lines__c\"]",
+        "apiName": "RCA_Maximum_Start_Date_Primary_Lines__c"
+      },
+      {
+        "label": "Minimum Start Date (Primary RampedLines)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Min_Start_Date_Primary_RampedLines__c\"]",
+        "apiName": "RCA_Min_Start_Date_Primary_RampedLines__c"
+      },
+      {
+        "label": "Minimum End Date (Primary Lines)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Minimum_End_Date_Primary_Lines__c\"]",
+        "apiName": "RCA_Minimum_End_Date_Primary_Lines__c"
+      },
+      {
+        "label": "Minimum Start Date (Primary Lines)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Minimum_Start_Date_Primary_Lines__c\"]",
+        "apiName": "RCA_Minimum_Start_Date_Primary_Lines__c"
+      },
+      {
+        "label": "Platinum Support Count",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Platinum_Support_Count__c\"]",
+        "apiName": "RCA_Platinum_Support_Count__c"
+      },
+      {
+        "label": "Optional Pricing Type count",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Pricing_Type__c\"]",
+        "apiName": "RCA_Pricing_Type__c"
+      },
+      {
+        "label": "Ramp Line Validation Check",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Ramp_Line_Validation_Check__c\"]",
+        "apiName": "RCA_Ramp_Line_Validation_Check__c"
+      },
+      {
+        "label": "Subtotal",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Subtotal__c\"]",
+        "apiName": "RCA_Subtotal__c"
+      },
+      {
+        "label": "Total Net Price (Business Plus Support)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_NetPrice_BusinessPlus_Support__c\"]",
+        "apiName": "RCA_Total_NetPrice_BusinessPlus_Support__c"
+      },
+      {
+        "label": "Total Net Price (Premium Support)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Net_Price_Premium_Support__c\"]",
+        "apiName": "RCA_Total_Net_Price_Premium_Support__c"
+      },
+      {
+        "label": "Total Standalone Support Count",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Standalone_Support_Count__c\"]",
+        "apiName": "RCA_Total_Standalone_Support_Count__c"
+      },
+      {
+        "label": "Total Support (Certificate-based) Value",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Support_Cert_based_Value__c\"]",
+        "apiName": "RCA_Total_Support_Cert_based_Value__c"
+      },
+      {
+        "label": "Total Support (Seat-based) Value",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Support_Seat_based_Value__c\"]",
+        "apiName": "RCA_Total_Support_Seat_based_Value__c"
+      },
+      {
+        "label": "Calculated Deal Type",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_CalculatedDealType__c\"]",
+        "apiName": "RCA_CalculatedDealType__c"
+      },
+      {
+        "label": "CertCentral Instance",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_CertCentral_Instance__c\"]",
+        "apiName": "RCA_CertCentral_Instance__c"
+      },
+      {
+        "label": "Fire Validation for Standalone SSL",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Fire_Validation_for_Standalone_SSL__c\"]",
+        "apiName": "RCA_Fire_Validation_for_Standalone_SSL__c"
+      },
+      {
+        "label": "IPP Data Refresh needs?",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_IPP_Data_Refresh_needs__c\"]",
+        "apiName": "RCA_IPP_Data_Refresh_needs__c"
+      },
+      {
+        "label": "Partner Program Eligible?",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Partner_Program_Eligible__c\"]",
+        "apiName": "RCA_Partner_Program_Eligible__c"
+      },
+      {
+        "label": "Partner Support Check",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Partner_Support_Check__c\"]",
+        "apiName": "RCA_Partner_Support_Check__c"
+      },
+      {
+        "label": "Partner Tier",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Partner_Tier__c\"]",
+        "apiName": "RCA_Partner_Tier__c"
+      },
+      {
+        "label": "Start and End Date Check",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Start_and_End_Date_Check__c\"]",
+        "apiName": "RCA_Start_and_End_Date_Check__c"
+      },
+      {
+        "label": "Support Level (Existing)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Support_Level_Account__c\"]",
+        "apiName": "RCA_Support_Level_Account__c"
+      },
+      {
+        "label": "Support Level (Existing) Internal",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Support_Level_Existing__c\"]",
+        "apiName": "RCA_Support_Level_Existing__c"
+      },
+      {
+        "label": "Tax Amount (Japan)",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Tax_Amount__c\"]",
+        "apiName": "RCA_Tax_Amount__c"
+      },
+      {
+        "label": "Throw Error on Cart for Partner deals?",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_ThrowErrorOnCartForPartnerDeals__c\"]",
+        "apiName": "RCA_ThrowErrorOnCartForPartnerDeals__c"
+      },
+      {
+        "label": "Total MSRP with Support USD",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_MSRP_with_Support_USD__c\"]",
+        "apiName": "RCA_Total_MSRP_with_Support_USD__c"
+      },
+      {
+        "label": "Total MSRP with Support",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_MSRP_with_Support__c\"]",
+        "apiName": "RCA_Total_MSRP_with_Support__c"
+      },
+      {
+        "label": "Total Net Price (Premium Support) USD",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Net_Price_Premium_Support_USD__c\"]",
+        "apiName": "RCA_Total_Net_Price_Premium_Support_USD__c"
+      },
+      {
+        "label": "Total Quote Value",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Quote_Value__c\"]",
+        "apiName": "RCA_Total_Quote_Value__c"
+      },
+      {
+        "label": "Total Support Value",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Support_Value__c\"]",
+        "apiName": "RCA_Total_Support_Value__c"
+      },
+      {
+        "label": "Total NetPrice(BusinessPlus Support) USD",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_TotlNetPrice_BusinessPlusSupprt_USD__c\"]",
+        "apiName": "RCA_TotlNetPrice_BusinessPlusSupprt_USD__c"
+      },
+      {
+        "label": "Bill Tax Exempt",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Bill_To_Tax_Exempt__c\"]",
+        "apiName": "RCA_Bill_To_Tax_Exempt__c"
+      },
+      {
+        "label": "Current Date",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Current_Date__c\"]",
+        "apiName": "RCA_Current_Date__c"
+      },
+      {
+        "label": "Previous Grand Total",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_PreviousGrandTotal__c\"]",
+        "apiName": "RCA_PreviousGrandTotal__c"
+      },
+      {
+        "label": "RCA Current Date New",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Current_Date_New__c\"]",
+        "apiName": "RCA_Current_Date_New__c"
+      },
+      {
+        "label": "SSL Sales Leader ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"SSL_Sales_Leader_ID__c\"]",
+        "apiName": "SSL_Sales_Leader_ID__c"
+      },
+      {
+        "label": "Quote Owner Manager",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Quote_Owner_Manager_User__c\"]",
+        "apiName": "Quote_Owner_Manager_User__c"
+      },
+      {
+        "label": "Opportunity Owner AVP ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Opportunity_Owner_AVP_ID__c\"]",
+        "apiName": "Opportunity_Owner_AVP_ID__c"
+      },
+      {
+        "label": "Partner Rep ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Partner_Rep_ID__c\"]",
+        "apiName": "Partner_Rep_ID__c"
+      },
+      {
+        "label": "Partner Rep Manager ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Partner_Rep_Manager_ID__c\"]",
+        "apiName": "Partner_Rep_Manager_ID__c"
+      },
+      {
+        "label": "Inline Reseller Owner ID",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"Inline_Reseller_Owner_ID__c\"]",
+        "apiName": "Inline_Reseller_Owner_ID__c"
+      },
+      {
+        "label": "Auto Renew",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"Flat_Fee_Auto_Renew__c\"]",
+        "apiName": "Flat_Fee_Auto_Renew__c"
+      },
+      {
+        "label": "Auto Renewal Term (Months)",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"Auto_Renewal_Term_Months__c\"]",
+        "apiName": "Auto_Renewal_Term_Months__c"
+      },
+      {
+        "label": "Requested Credit Limit",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Requested_Credit_Limit__c\"]",
+        "apiName": "RCA_Requested_Credit_Limit__c"
+      },
+      {
+        "label": "Allow Overage",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Allow_Overage__c\"]",
+        "apiName": "RCA_Allow_Overage__c"
+      },
+      {
+        "label": "Execution Status",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Execution_Status__c\"]",
+        "apiName": "RCA_Execution_Status__c"
+      },
+      {
+        "label": "Auto Renewal Term (Months)",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_AutoRenewalTermMonths__c\"]",
+        "apiName": "RCA_AutoRenewalTermMonths__c"
+      },
+      {
+        "label": "Auto Renew",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Flat_Fee_Auto_Renew__c\"]",
+        "apiName": "RCA_Flat_Fee_Auto_Renew__c"
+      },
+      {
+        "label": "Good Faith Negotiation",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Good_Faith_Negotiation__c\"]",
+        "apiName": "RCA_Good_Faith_Negotiation__c"
+      },
+      {
+        "label": "Subsidiary/Affiliate MSA",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Subsidiary_Affiliate_MSA__c\"]",
+        "apiName": "RCA_Subsidiary_Affiliate_MSA__c"
+      },
+      {
+        "label": "Termination Clause",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Termination_Clause__c\"]",
+        "apiName": "RCA_Termination_Clause__c"
+      },
+      {
+        "label": "Existing Support available",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Existing_Support_available__c\"]",
+        "apiName": "RCA_Existing_Support_available__c"
+      },
+      {
+        "label": "Grand Total W/O Cancel",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Grand_Total_W_O_Cancel__c\"]",
+        "apiName": "RCA_Grand_Total_W_O_Cancel__c"
+      },
+      {
+        "label": "Payment Terms",
+        "componentTag": "lightning-combobox",
+        "inputType": "combobox",
+        "selector": "[data-field-api-name=\"RCA_Payment_Terms__c\"]",
+        "apiName": "RCA_Payment_Terms__c"
+      },
+      {
+        "label": "Total Manual PKI Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Manual_PKI_Discount__c\"]",
+        "apiName": "RCA_Total_Manual_PKI_Discount__c"
+      },
+      {
+        "label": "Total Manual SSL Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Manual_SSL_Discount__c\"]",
+        "apiName": "RCA_Total_Manual_SSL_Discount__c"
+      },
+      {
+        "label": "Total Seat-based MSRP",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_PKI_MSRP__c\"]",
+        "apiName": "RCA_Total_PKI_MSRP__c"
+      },
+      {
+        "label": "Total Certificate-based MSRP",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_SSL_MSRP__c\"]",
+        "apiName": "RCA_Total_SSL_MSRP__c"
+      },
+      {
+        "label": "Total Support (Cert-based) MSRP",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Support_Certificate_basedMSRP__c\"]",
+        "apiName": "RCA_Total_Support_Certificate_basedMSRP__c"
+      },
+      {
+        "label": "RCA_C-NNACV",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_C_NNACV__c\"]",
+        "apiName": "RCA_C_NNACV__c"
+      },
+      {
+        "label": "RCA_Deal review required",
+        "componentTag": "lightning-input",
+        "inputType": "checkbox",
+        "selector": "[data-field-api-name=\"RCA_Deal_review_required__c\"]",
+        "apiName": "RCA_Deal_review_required__c"
+      },
+      {
+        "label": "Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Discount__c\"]",
+        "apiName": "RCA_Discount__c"
+      },
+      {
+        "label": "Total Certificate-based MSRP (New)Total",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Certificate_based_MSRP__c\"]",
+        "apiName": "RCA_Total_Certificate_based_MSRP__c"
+      },
+      {
+        "label": "Total Manual Discount %",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Manual_Discount_Pct__c\"]",
+        "apiName": "RCA_Total_Manual_Discount_Pct__c"
+      },
+      {
+        "label": "Total Manual Discount",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Manual_Discount__c\"]",
+        "apiName": "RCA_Total_Manual_Discount__c"
+      },
+      {
+        "label": "Total Quote MSRP",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_Total_Quote_MSRP__c\"]",
+        "apiName": "RCA_Total_Quote_MSRP__c"
+      },
+      {
+        "label": "Previous Proposal",
+        "componentTag": "lightning-lookup",
+        "inputType": "lookup",
+        "selector": "[data-field-api-name=\"RCA_Previous_Proposal__c\"]",
+        "apiName": "RCA_Previous_Proposal__c"
+      },
+      {
+        "label": "ARR",
+        "componentTag": "lightning-input",
+        "inputType": "text",
+        "selector": "[data-field-api-name=\"RCA_ARR__c\"]",
+        "apiName": "RCA_ARR__c"
+      }
+    ]
   }
 }

@@ -1,23 +1,22 @@
 ---
 name: agent-3-test-plan-drafter
-description: Generate a CPQ-aware test plan AND structured test scenarios from ACs. Converts acceptance criteria into positive, negative, and edge case coverage. No hardcoding. Fully dynamic.
+description: Generate a CPQ-aware test plan AND structured test scenarios from ACs. Converts acceptance criteria into positive, negative, and edge case coverage. Preserves strict API Name mappings for downstream automation. No hardcoding. Fully dynamic.
 ---
 
 # Agent 3 — Test Plan + Scenario Generator
 
 ## Role
-Transform structured ACs into:
-
+Transform structured ACs (from Agent 2) into:
 1. **Human-readable test plan**
-2. **Structured test scenarios (TCs)**
+2. **Structured test scenarios (TCs)** (Markdown files)
 
 This agent bridges:
-👉 AC logic → Test coverage
+👉 AC logic → Test coverage → Execution instructions
 
 ---
 
 ## Inputs
-- AC list from Agent 2 (structured JSON)
+- AC list from Agent 2 (structured JSON, **including `apiName` mappings**)
 - Domain context from Agent 1 (including Field Tiering: Hard/Soft)
 - `knowledge/FLow/Flow.mp4` (End-to-end journey video)
 - `prompts/framework-config.json`
@@ -32,6 +31,7 @@ This agent MUST:
 - MUST use `Flow.mp4` to define the sequence of UI transitions for the Positive Path.
 - MUST incorporate the **Soft vs. Hard field strategy** into the Risk Mitigation section.
 - MUST ensure **coverage completeness** (Positive, Negative, AND Edge cases).
+- **CRITICAL: MUST preserve the backend `apiName` in the output scenarios so Agent 4 knows what to automate.**
 
 ---
 
@@ -62,102 +62,70 @@ Boundary or alternate path. **Example: Maximum discount applied, or empty option
 
 ## Example (CPQ)
 
-AC:
-```
-Order Form Not Required = TRUE AND Purchase Order Not Required = TRUE
-```
+AC (from Agent 2 JSON):
+Field: Order Form Not Required (apiName: Order_Form_Not_Required__c) = TRUE
+Field: Purchase Order Not Required (apiName: PO_Not_Required__c) = TRUE
+
 
 Generate:
-
-```
 TC-QTE-001 (Positive)
 → Both TRUE → Status updates
 
 TC-QTE-002 (Negative)
 → One TRUE, one FALSE → No update
 
-TC-QTE-003 (Edge)
-→ Both FALSE → Validation triggered
-```
 
 ---
 
-# 🧠 STEP 3: TC STRUCTURE
+# 🧠 STEP 3: INTERNAL TC STRUCTURE
 
-Each Test Case:
+Before formatting as Markdown, internally model each test case to preserve data:
 
-```
+```json
 {
-  id: "TC-QTE-001",
-  acMapping: ["AC-005-26"],
-  type: "Positive",
-  object: "Quote",
-  scenario: "Execution Status updates when both checkboxes are TRUE",
-  preconditions: [],
-  testData: {},
-  expected: {}
+  "id": "TC-QTE-001",
+  "acMapping": ["AC-005-26"],
+  "type": "Positive",
+  "object": "Quote",
+  "scenario": "Execution Status updates when both checkboxes are TRUE",
+  "apiNamesUsed": ["Order_Form_Not_Required__c", "PO_Not_Required__c"],
+  "preconditions": [],
+  "expected": {}
 }
-```
-
----
-
-# 🧠 STEP 4: COVERAGE RULES (VERY IMPORTANT)
-
+🧠 STEP 4: COVERAGE RULES (VERY IMPORTANT)
 Ensure:
 
-- Every AC has AT LEAST:
-  - 1 Positive
-  - 1 Negative
+Every AC has AT LEAST: 1 Positive, 1 Negative
 
-- For BOOLEAN ACs:
-  → Must generate ALL combinations
+For BOOLEAN ACs: MUST generate ALL logic combinations (e.g., 2 conditions → 4 combinations).
 
-Example:
-2 conditions → 4 combinations
+🧠 STEP 5: TEST DATA STRATEGY (UPDATED)
+Prerequisites: Assume parent records (Account, Opportunity) are seeded via backend API before the test starts. Tests should navigate directly to the target record ID.
 
----
+Dynamic Data: Only if the UI test specifically requires creating a new record via the UI, use dynamic formats:
 
-# 🧠 STEP 5: TEST DATA STRATEGY
+AutoAcc-${Date.now()}
 
-Dynamic only:
+NEVER hardcode IDs.
 
-- Use:
-  - `AutoAcc-${Date.now()}`
-  - `AutoQuote-${Date.now()}`
-
-- NEVER:
-  - Hardcode account names
-  - Hardcode IDs
-
----
-
-# 🧠 STEP 6: EXECUTION ORDER
-
+🧠 STEP 6: EXECUTION ORDER
 Maintain dependency:
 
-```
-Account → Contact → Opportunity → Quote
-```
-
----
-
-# 🧠 STEP 7: RISK ANALYSIS
-
+Account → Contact → Opportunity → Quote → Order → Contract
+🧠 STEP 7: RISK ANALYSIS
 Enhance with CPQ-specific risks:
 
-- Pricing recalculation delays
-- Quote Line Editor sync issues
-- Amendment quote data loss
-- Async order creation
-- **"Soft" field visibility:** Optional fields may be hidden by layout changes (Mitigation: use soft-fail warning).
+Pricing recalculation delays (Requires SFUtils.waitForLoading)
 
----
+Quote Line Editor sync issues
 
-# 🧠 STEP 8: OUTPUT FORMAT
+Amendment quote data loss
 
-## 1. Test Plan (Markdown)
+"Soft" field visibility: Optional fields may be hidden by layout changes (Mitigation: use soft-fail warning).
 
-```
+🧠 STEP 8: OUTPUT FORMAT (STRICT)
+1. Test Plan (Markdown)
+Markdown
 # Test Plan
 
 ## Scope
@@ -171,67 +139,36 @@ Enhance with CPQ-specific risks:
 
 ## Risks
 ...
-```
-
----
-
-## 2. Test Scenario Files (VERY IMPORTANT)
-
-Scenarios are written to per-object Markdown files (NOT a single JSON):
-
-```
-generated/test-scenarios/account-scenarios.md
-generated/test-scenarios/contact-scenarios.md
-generated/test-scenarios/opportunity-scenarios.md
+2. Test Scenario Files (VERY IMPORTANT)
+Scenarios are written to per-object Markdown files:
 generated/test-scenarios/quote-scenarios.md
-```
 
-Each file uses this table format:
+Each file uses this table format. You MUST include the API Names column.
 
-```markdown
+Markdown
 ## US-XXX: Title
 
-| TC ID | Scenario | Expected Result | AC Ref |
-|-------|----------|-----------------|--------|
-| TC-QTE-001 | Positive — both conditions TRUE | Status = Ready for Acceptance | AC-005-26 |
-| TC-QTE-002 | Negative — one condition FALSE | Status unchanged | AC-005-26 |
-| TC-QTE-003 | Edge — both conditions FALSE | Validation triggered | AC-005-26 |
-```
+| TC ID | Scenario | Target API Names | Expected Result | AC Ref |
+|-------|----------|------------------|-----------------|--------|
+| TC-QTE-001 | Positive — both conditions TRUE | `Order_Form_Not_Required__c`, `PO_Not_Required__c` | Status = Ready for Acceptance | AC-005-26 |
+| TC-QTE-002 | Negative — one condition FALSE | `Order_Form_Not_Required__c`, `PO_Not_Required__c` | Status unchanged | AC-005-26 |
+The pipeline verifies these files exist at generated/test-scenarios/{object.scenarioFile}.
 
-The pipeline verifies these files exist at `generated/test-scenarios/{object.scenarioFile}` — no JSON output is produced by this step.
+🧠 STEP 9: DEDUPLICATION
+Do NOT duplicate scenarios. Merge similar ones ONLY if logically identical.
 
----
+🧠 STEP 10: CHANGE DETECTION
+Use hash. Do not overwrite if unchanged.
 
-# 🧠 STEP 9: DEDUPLICATION
+🚨 CONSTRAINTS
+DO NOT drop the apiName values mapped by Agent 2. Agent 4 relies on them.
 
-- Do NOT duplicate scenarios
-- Merge similar ones ONLY if logically identical
+DO NOT hardcode story IDs.
 
----
+DO NOT mix objects.
 
-# 🧠 STEP 10: CHANGE DETECTION
-
-- Use hash
-- Do not overwrite if unchanged
-
----
-
-# 🚨 CONSTRAINTS
-
-- DO NOT hardcode story IDs
-- DO NOT skip AC coverage
-- DO NOT create vague scenarios
-- DO NOT mix objects
-
----
-
-# ✅ SUCCESS CRITERIA
-
+✅ SUCCESS CRITERIA
 Agent is correct ONLY if:
-
-✔ Every AC is mapped to test cases  
-✔ Positive + Negative + Edge exist  
-✔ CPQ logic combinations covered  
-✔ Output usable for Playwright generation  
-
----
+✔ Positive + Negative + Edge exist
+✔ CPQ logic combinations are covered
+✔ Output Markdown tables explicitly list the backend apiNames needed for the test.
