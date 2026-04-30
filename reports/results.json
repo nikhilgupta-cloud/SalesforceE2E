@@ -61,14 +61,14 @@
   "suites": [],
   "errors": [
     {
-      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected token (464:0)\n\n\u001b[0m \u001b[90m 462 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 463 |\u001b[39m   \u001b[90m// ── US-005 END ───────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 464 |\u001b[39m\n \u001b[90m     |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m",
-      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected token (464:0)\n\n\u001b[0m \u001b[90m 462 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 463 |\u001b[39m   \u001b[90m// ── US-005 END ───────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 464 |\u001b[39m\n \u001b[90m     |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m",
+      "message": "Error: ENOENT: no such file or directory, open 'D:\\SalesforceE2E1\\tests\\test-data.json'",
+      "stack": "Error: ENOENT: no such file or directory, open 'D:\\SalesforceE2E1\\tests\\test-data.json'\n    at Object.<anonymous> (D:\\SalesforceE2E1\\tests\\account.spec.ts:6:28)",
       "location": {
         "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-        "line": 464,
-        "column": 0
+        "column": 28,
+        "line": 6
       },
-      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:464\n\n\u001b[0m \u001b[90m 462 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 463 |\u001b[39m   \u001b[90m// ── US-005 END ───────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 464 |\u001b[39m\u001b[0m"
+      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:6\n\n\u001b[0m \u001b[90m 4 |\u001b[39m \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m path \u001b[36mfrom\u001b[39m \u001b[32m'path'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 5 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 6 |\u001b[39m \u001b[36mconst\u001b[39m data \u001b[33m=\u001b[39m \u001b[33mJSON\u001b[39m\u001b[33m.\u001b[39mparse(fs\u001b[33m.\u001b[39mreadFileSync(path\u001b[33m.\u001b[39mjoin(process\u001b[33m.\u001b[39mcwd()\u001b[33m,\u001b[39m \u001b[32m'tests'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'test-data.json'\u001b[39m)\u001b[33m,\u001b[39m \u001b[32m'utf8'\u001b[39m))\u001b[33m;\u001b[39m\n \u001b[90m   |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 7 |\u001b[39m\n \u001b[90m 8 |\u001b[39m \u001b[36mconst\u001b[39m \u001b[33mSF\u001b[39m \u001b[33m=\u001b[39m process\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mSF_SANDBOX_URL\u001b[39m \u001b[33m||\u001b[39m process\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mSF_LOGIN_URL\u001b[39m \u001b[33m||\u001b[39m \u001b[32m''\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 9 |\u001b[39m\u001b[0m"
     },
     {
       "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
@@ -76,8 +76,8 @@
     }
   ],
   "stats": {
-    "startTime": "2026-04-30T12:54:13.221Z",
-    "duration": 465.75300000000016,
+    "startTime": "2026-04-30T13:21:04.429Z",
+    "duration": 460.9920000000002,
     "expected": 0,
     "skipped": 0,
     "unexpected": 0,

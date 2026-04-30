@@ -1009,7 +1009,25 @@ export async function generateTestsFromUserStories(jiraStories: any[]) {
     }
   }
 
-  if (added === 0 && updated === 0 && skipped === 0 && failed === 0) {
+  // ── 4. SAFELY CLOSE ALL DESCRIBE BLOCKS ──────────────────────────────────
+  if (anyChange) {
+    const testsDir = 'tests';
+    if (fs.existsSync(testsDir)) {
+      const specFiles = fs.readdirSync(testsDir).filter(f => f.endsWith('.spec.ts'));
+      for (const file of specFiles) {
+        const filePath = path.join(testsDir, file);
+        const content = fs.readFileSync(filePath, 'utf8');
+        
+        // If the file has code but doesn't end properly, close it!
+        if (content.includes('test.describe') && !content.trim().endsWith('});')) {
+          fs.appendFileSync(filePath, `\n});\n`, 'utf8');
+          console.log(`[generate] 🔧 Closed describe block in ${file}`);
+        }
+      }
+    }
+  }
+
+ if (added === 0 && updated === 0 && skipped === 0 && failed === 0) {
     return { added: 0, updated: 0, skipped: 0, failed: 0 };
   }
 
