@@ -712,7 +712,7 @@ Requirements:
 1. Import { test, expect, Page } from '@playwright/test'.
 2. Import { SFUtils } from '../utils/SFUtils';
 3. Import * as fs and * as path.
-4. Define data: const data = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'tests', 'test-data.json'), 'utf8'));
+4. Define data: const data = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'tests', 'fixtures', 'test-data.json'), 'utf8'));
 5. Define SF URL: const SF = process.env.SF_SANDBOX_URL || process.env.SF_LOGIN_URL || '';
 6. End with: test.describe('${obj.displayName} Lifecycle', () => {
 `;
