@@ -64,6 +64,10 @@ function stopSpinner(timer: NodeJS.Timeout, finalMsg: string): void {
   }
 }
 
+
+
+
+
 async function callClaudeCode(systemPrompt: string, userPrompt: string, label = 'Calling Claude CLI'): Promise<ClaudeResult | null> {
   const spinner = startSpinner(label);
   const start   = Date.now();
@@ -659,6 +663,35 @@ Respond using EXACTLY this format — no JSON, no markdown fences, no extra text
   };
 }
 
+// ── Markdown stripper ────────────────────────────────────────────────────────
+
+/**
+ * Strip markdown prose that Claude sometimes wraps around generated code.
+ * Priority: extract the first ```typescript / ```ts / ``` fenced block.
+ * Fallback: remove lines that are clearly markdown (tables, bold, headings,
+ * blockquotes, horizontal rules) so only TypeScript survives.
+ */
+function cleanGeneratedCode(text: string): string {
+  // 1. Extract first fenced code block (```typescript, ```ts, or plain ```)
+  const fenceMatch = text.match(/```(?:typescript|ts)?\r?\n([\s\S]*?)```/);
+  if (fenceMatch) return fenceMatch[1].trimEnd();
+
+  // 2. No fence found — strip obvious markdown lines line-by-line
+  return text
+    .split('\n')
+    .filter(line => {
+      const t = line.trim();
+      if (t.startsWith('|'))   return false; // table row / divider
+      if (t.startsWith('**'))  return false; // bold prose
+      if (t.startsWith('> '))  return false; // blockquote
+      if (/^#{1,6} /.test(t)) return false; // heading
+      if (/^---+$/.test(t))   return false; // horizontal rule
+      return true;
+    })
+    .join('\n')
+    .trimEnd();
+}
+
 // ── Bootstrap: create spec + scenario files from scratch ─────────────────────
 
 /**
@@ -701,8 +734,8 @@ _totalTokensIn  += header.tokensIn;
 _totalTokensOut += header.tokensOut;
 
 fs.mkdirSync('tests', { recursive: true });
-// Ensure no hallucinated code follows the describe block
-const cleanHeader = header.text.trim();
+// Strip markdown fences / prose that Claude sometimes wraps around the code
+const cleanHeader = cleanGeneratedCode(header.text);
 fs.writeFileSync(specPath, cleanHeader + '\n\n', 'utf8');
 console.log(`[generate] ✅ Created ${obj.specFile} header`);
 }
