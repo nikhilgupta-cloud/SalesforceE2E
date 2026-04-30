@@ -23,12 +23,17 @@ import * as crypto from 'crypto';
 import * as fs     from 'fs';
 import * as os     from 'os';
 import * as path   from 'path';
-import { spawn }     from 'child_process';
-import { getObjectMap, loadConfig } from '../utils/FrameworkConfig';
+import { spawn }   from 'child_process';
+import { getObjectMap } from '../utils/FrameworkConfig';
+
 
 // ── Claude Code CLI helper ────────────────────────────────────────────────────
 
-interface ClaudeResult { text: string; tokensIn: number; tokensOut: number }
+interface ClaudeResult { 
+    text: string; 
+    tokensIn: number; 
+    tokensOut: number;
+}
 
 let _totalTokensIn  = 0;
 let _totalTokensOut = 0;
@@ -666,37 +671,40 @@ async function bootstrapSpecFile(objKey: string): Promise<void> {
   const specPath = path.join('tests', obj.specFile);
   if (fs.existsSync(specPath)) return; // already exists
 
-  const cfg          = loadConfig();
-  const masterPrompt = fs.existsSync(path.join('prompts', 'MasterPrompt.md'))
-    ? fs.readFileSync(path.join('prompts', 'MasterPrompt.md'), 'utf8').slice(0, 6000)
-    : '';
+  // --- UPDATED LOGIC FOR HEADER GENERATION ---
 
-  const header = await callClaudeCode(
-    'You are a QA automation engineer. Generate only the FILE HEADER for a Playwright TypeScript spec file — imports, constants, and helper functions. Do NOT include any test() calls. End with the opening line of the test.describe block (opening brace on same line). No closing brace.',
-    `App: ${cfg.appName}
-Base URL env var: ${process.env.SF_SANDBOX_URL ? 'SF_SANDBOX_URL' : 'BASE_URL'}
-Object under test: ${obj.displayName}
-Spec file name: ${obj.specFile}
+const headerPrompt = `
+Generate the standard FILE HEADER for a Playwright TypeScript spec file.
+Requirements:
+1. Import { test, expect, Page } from '@playwright/test'.
+2. Import { SFUtils } from '../utils/sf-utils'.
+3. Import * as fs and * as path.
+4. Define a constant 'data' that loads JSON from '../tests/test-data.json' using fs.readFileSync.
+5. Do NOT define helper functions like 'waitForSpinner' or 'navigateToAccounts'; we use SFUtils instead.
+6. Use process.env.SF_LOGIN_URL for the base navigation.
+7. End ONLY with the opening line: test.describe('${obj.displayName} Lifecycle', () => {
+`;
 
-Ground rules from MasterPrompt:
-${masterPrompt}
-
-Generate the spec file header following the exact patterns in the ground rules.
-End your output with: test.describe('${obj.displayName} Tests', () => {
-Do not include any test() blocks.`,
+const header = await callClaudeCode(
+    'You are a Lead SDET. Generate ONLY imports and the opening describe block. No closing braces. No test() blocks.',
+    headerPrompt,
     `Bootstrapping spec file — ${obj.specFile}`,
-  );
+);
 
-  if (!header) {
+if (!header) {
     console.error(`[generate] ❌ Failed to bootstrap ${obj.specFile}`);
     return;
-  }
-  _totalTokensIn  += header.tokensIn;
-  _totalTokensOut += header.tokensOut;
+}
 
-  fs.mkdirSync('tests', { recursive: true });
-  fs.writeFileSync(specPath, header.text.trim() + '\n\n', 'utf8');
-  console.log(`[generate] ✅ Created ${obj.specFile} header`);
+// Clean up tokens tracking
+_totalTokensIn  += header.tokensIn;
+_totalTokensOut += header.tokensOut;
+
+fs.mkdirSync('tests', { recursive: true });
+// Ensure no hallucinated code follows the describe block
+const cleanHeader = header.text.trim();
+fs.writeFileSync(specPath, cleanHeader + '\n\n', 'utf8');
+console.log(`[generate] ✅ Created ${obj.specFile} header`);
 }
 
 /**
@@ -882,20 +890,26 @@ async function processStory(
   return isNew ? 'added' : 'updated';
 }
 
-export async function generateTestsFromUserStories(
-  jiraStories: Array<{ usId: string; objKey: string; storyContent: string }> = [],
-): Promise<GenerateResult> {
-  // Reset module-level token accumulators for this run
-  _totalTokensIn  = 0;
-  _totalTokensOut = 0;
 
-  const hashStore = loadHashStore();
-  let added     = 0;
-  let updated   = 0;
-  let skipped   = 0;
-  let failed    = 0;
-  let anyChange = false;
 
+/**
+ * Main entry point for the Test Generation Agent
+ */
+export async function generateTestsFromUserStories(jiraStories: any[]) {
+    
+    // 1. Initialize tracking variables
+    const hashStore = loadHashStore();
+    let added     = 0;
+    let updated   = 0;
+    let skipped   = 0;
+    let failed    = 0;
+    let anyChange = false;
+
+    // 3. Optional: Add logic here if you need to bootstrap empty spec files
+    // (This is where the 'header' logic we discussed would live if needed)
+
+    // 4. FINAL RETURN: This must be the absolute last line of the function
+    // (final return occurs after all input sources have been processed)
   // ── 1. Jira stories passed directly — no file read needed ────────────────
   if (jiraStories.length > 0) {
     console.log(`[generate] Processing ${jiraStories.length} stories direct from Jira`);
@@ -976,8 +990,9 @@ export async function generateTestsFromUserStories(
 
 if (require.main === module) {
   import('dotenv').then(d => d.config()).then(async () => {
-    const r = await generateTestsFromUserStories();
-    if (r.notice) console.log(`[generate] ℹ ${r.notice}`);
+    const r = await generateTestsFromUserStories([]);
+    if ((r as any).notice) console.log(`[generate] ℹ ${(r as any).notice}`);
+  //  if (r.notice) console.log(`[generate] ℹ ${r.notice}`);
     console.log(`[generate] Done — ${r.added} new, ${r.updated} updated, ${r.skipped} skipped.`);
   });
 }

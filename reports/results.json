@@ -61,14 +61,14 @@
   "suites": [],
   "errors": [
     {
-      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Missing semicolon. (90:19)\n\n\u001b[0m \u001b[90m 88 |\u001b[39m \u001b[32m */\u001b[39m\n \u001b[90m 89 |\u001b[39m \u001b[32masync function navigateToAccounts(page: Page): Promise<void> {\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 90 |\u001b[39m \u001b[32m  await page.goto(`\u001b[39m${\u001b[33mBASE_URL\u001b[39m}\u001b[33m/\u001b[39mlightning\u001b[33m/\u001b[39mo\u001b[33m/\u001b[39m\u001b[33mAccount\u001b[39m\u001b[33m/\u001b[39mlist\u001b[32m`);\u001b[39m\n \u001b[90m    |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 91 |\u001b[39m \u001b[32m  await page.waitForLoadState('domcontentloaded');\u001b[39m\n \u001b[90m 92 |\u001b[39m \u001b[32m  await page.locator(PAGE_HDR).first().waitFor({ state: 'visible', timeout: 30000 });\u001b[39m\n \u001b[90m 93 |\u001b[39m \u001b[32m  await waitForSpinner(page);\u001b[39m\u001b[0m",
-      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Missing semicolon. (90:19)\n\n\u001b[0m \u001b[90m 88 |\u001b[39m \u001b[32m */\u001b[39m\n \u001b[90m 89 |\u001b[39m \u001b[32masync function navigateToAccounts(page: Page): Promise<void> {\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 90 |\u001b[39m \u001b[32m  await page.goto(`\u001b[39m${\u001b[33mBASE_URL\u001b[39m}\u001b[33m/\u001b[39mlightning\u001b[33m/\u001b[39mo\u001b[33m/\u001b[39m\u001b[33mAccount\u001b[39m\u001b[33m/\u001b[39mlist\u001b[32m`);\u001b[39m\n \u001b[90m    |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 91 |\u001b[39m \u001b[32m  await page.waitForLoadState('domcontentloaded');\u001b[39m\n \u001b[90m 92 |\u001b[39m \u001b[32m  await page.locator(PAGE_HDR).first().waitFor({ state: 'visible', timeout: 30000 });\u001b[39m\n \u001b[90m 93 |\u001b[39m \u001b[32m  await waitForSpinner(page);\u001b[39m\u001b[0m",
+      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected token (16:0)\n\n\u001b[0m \u001b[90m 14 |\u001b[39m \u001b[33m--\u001b[39m\u001b[33m-\u001b[39m\n \u001b[90m 15 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 16 |\u001b[39m \u001b[33m**\u001b[39m\u001b[33mWhat\u001b[39m\u001b[32m's included and why:**\u001b[39m\n \u001b[90m    |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 17 |\u001b[39m\n \u001b[90m 18 |\u001b[39m \u001b[33m|\u001b[39m \u001b[33mLine\u001b[39m \u001b[33m|\u001b[39m \u001b[33mRequirement\u001b[39m \u001b[33mMet\u001b[39m \u001b[33m|\u001b[39m\n \u001b[90m 19 |\u001b[39m \u001b[33m|\u001b[39m\u001b[33m--\u001b[39m\u001b[33m-\u001b[39m\u001b[33m|\u001b[39m\u001b[33m--\u001b[39m\u001b[33m-\u001b[39m\u001b[33m|\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected token (16:0)\n\n\u001b[0m \u001b[90m 14 |\u001b[39m \u001b[33m--\u001b[39m\u001b[33m-\u001b[39m\n \u001b[90m 15 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 16 |\u001b[39m \u001b[33m**\u001b[39m\u001b[33mWhat\u001b[39m\u001b[32m's included and why:**\u001b[39m\n \u001b[90m    |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 17 |\u001b[39m\n \u001b[90m 18 |\u001b[39m \u001b[33m|\u001b[39m \u001b[33mLine\u001b[39m \u001b[33m|\u001b[39m \u001b[33mRequirement\u001b[39m \u001b[33mMet\u001b[39m \u001b[33m|\u001b[39m\n \u001b[90m 19 |\u001b[39m \u001b[33m|\u001b[39m\u001b[33m--\u001b[39m\u001b[33m-\u001b[39m\u001b[33m|\u001b[39m\u001b[33m--\u001b[39m\u001b[33m-\u001b[39m\u001b[33m|\u001b[39m\u001b[0m",
       "location": {
         "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-        "line": 90,
-        "column": 19
+        "line": 16,
+        "column": 0
       },
-      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:90\n\n\u001b[0m \u001b[90m 88 |\u001b[39m \u001b[32m */\u001b[39m\n \u001b[90m 89 |\u001b[39m \u001b[32masync function navigateToAccounts(page: Page): Promise<void> {\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 90 |\u001b[39m \u001b[32m  await page.goto(`\u001b[39m${\u001b[33mBASE_URL\u001b[39m}\u001b[33m/\u001b[39mlightning\u001b[33m/\u001b[39mo\u001b[33m/\u001b[39m\u001b[33mAccount\u001b[39m\u001b[33m/\u001b[39mlist\u001b[32m`);\u001b[39m\n \u001b[90m    |\u001b[39m                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 91 |\u001b[39m \u001b[32m  await page.waitForLoadState('domcontentloaded');\u001b[39m\n \u001b[90m 92 |\u001b[39m \u001b[32m  await page.locator(PAGE_HDR).first().waitFor({ state: 'visible', timeout: 30000 });\u001b[39m\n \u001b[90m 93 |\u001b[39m \u001b[32m  await waitForSpinner(page);\u001b[39m\u001b[0m"
+      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:16\n\n\u001b[0m \u001b[90m 14 |\u001b[39m \u001b[33m--\u001b[39m\u001b[33m-\u001b[39m\n \u001b[90m 15 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 16 |\u001b[39m \u001b[33m**\u001b[39m\u001b[33mWhat\u001b[39m\u001b[32m's included and why:**\u001b[39m\n \u001b[90m 17 |\u001b[39m\n \u001b[90m 18 |\u001b[39m \u001b[33m|\u001b[39m \u001b[33mLine\u001b[39m \u001b[33m|\u001b[39m \u001b[33mRequirement\u001b[39m \u001b[33mMet\u001b[39m \u001b[33m|\u001b[39m\n \u001b[90m 19 |\u001b[39m \u001b[33m|\u001b[39m\u001b[33m--\u001b[39m\u001b[33m-\u001b[39m\u001b[33m|\u001b[39m\u001b[33m--\u001b[39m\u001b[33m-\u001b[39m\u001b[33m|\u001b[39m\u001b[0m"
     },
     {
       "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
@@ -76,8 +76,8 @@
     }
   ],
   "stats": {
-    "startTime": "2026-04-30T06:14:52.347Z",
-    "duration": 596.5619999999999,
+    "startTime": "2026-04-30T07:25:36.162Z",
+    "duration": 381.76800000000003,
     "expected": 0,
     "skipped": 0,
     "unexpected": 0,
