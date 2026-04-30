@@ -1,1 +1,6 @@
 TC ID,Object,User Story,Title,Status,Duration (s),AC Reference,Error Message,File,Line,Run Date
+TC-ACC-001,Account,US-005,TC-ACC-001 — Verify Account Billing Address and Payment Terms,passed,30.57,AC-005-01,,account.spec.ts,50,2026-04-30
+TC-ACC-002,Account,US-005,"TC-ACC-002 — Create Contact on Account, Opportunity from Contact, Verify Primary Contact Role",failed,69.21,"AC-005-02, AC-005-03, AC-005-04",TimeoutError: locator.waitFor: Timeout 20000ms exceeded.,account.spec.ts,92,2026-04-30
+TC-ACC-003,Account,US-005,"TC-ACC-003 — Create Quote, Browse Catalogs, Add Product, Validate Cart",failed,1.38,"QO-005-05, PC-005-06, PC-005-07, PC-005-08, PC-005-09",Error: TC-ACC-002 must run first to populate oppUrl,account.spec.ts,180,2026-04-30
+TC-ACC-004,Account,US-005,"TC-ACC-004 — Accept Quote, Create Contract (None/No Prices), Activate Contract",failed,1.35,"QL-005-10, QL-005-11, CR-005-12",Error: TC-ACC-003 must run first to populate quoteUrl,account.spec.ts,272,2026-04-30
+TC-ACC-005,Account,US-005,TC-ACC-005 — Create Single Order from Quote and Activate Order,failed,1.41,"OR-005-13, OR-005-14, OR-005-15, OR-005-16",Error: TC-ACC-003 must run first to populate quoteUrl,account.spec.ts,363,2026-04-30

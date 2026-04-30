@@ -714,7 +714,7 @@ Requirements:
 3. Import * as fs and * as path.
 4. Define data: const data = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'tests', 'fixtures', 'test-data.json'), 'utf8'));
 5. Define SF URL: const SF = process.env.SF_SANDBOX_URL || process.env.SF_LOGIN_URL || '';
-6. End with: test.describe('${obj.displayName} Lifecycle', () => {
+6. End with: test.describe('\${obj.displayName} Lifecycle', () => {
 `;
 
 const header = await callClaudeCode(
@@ -845,6 +845,17 @@ async function processStory(
     console.warn(`[generate] Cannot detect object for ${usId} — skipping`);
     return 'skipped';
   }
+
+const strictLeash = `
+*** CRITICAL SYSTEM DIRECTIVE: REDUCE OUTPUT TOKENS ***
+You are a headless code generator. Your output is piped directly into a .ts file.
+1. OUTPUT RAW TYPESCRIPT CODE ONLY.
+2. NO EXPLANATIONS, NO CHAT, NO GREETINGS.
+3. NO MARKDOWN TABLES, NO "Here is your code" summaries, NO test plans.
+4. DO NOT repeat the Acceptance Criteria in plain text.
+5. Generate a MAXIMUM of 5 focused test scenarios.
+Failure to follow these rules will cause a syntax error and crash the pipeline.
+`;
 
   // Normalize and hash
   const currentHash = md5(storyContent);

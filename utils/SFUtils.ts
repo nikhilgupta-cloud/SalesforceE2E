@@ -59,7 +59,8 @@ export class SFUtils {
   static async fillField(page: Page, root: Page | Locator | FrameLocator, apiName: string, value: string) {
     // 1. Locate the LWC container using the perfect API name we scraped
     const container = root.locator(`[data-field-api-name="${apiName}"], [field-name="${apiName}"]`).first();
-    await container.waitFor({ state: 'visible', timeout: 10000 });
+    await container.waitFor({ state: 'visible', timeout: 15000 });
+    await page.waitForTimeout(500);
     await container.scrollIntoViewIfNeeded();
 
     // 2. Handle Checkboxes (Boolean)

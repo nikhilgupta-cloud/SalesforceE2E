@@ -1,38 +1,35 @@
-# Salesforce CPQ — End-to-End QA Test Plan
+# Salesforce CPQ — QA Test Plan
 
 **Version:** 1.0
 **Date:** 2026-04-30
 **Author:** AI-Generated
-**Project:** Salesforce CPQ — Account to Order Activation Lifecycle
 
 ---
 
 ## 1. Scope
 
-### 1.1 In-Scope Objects
+The following Salesforce objects are in scope for this test plan. They represent the end-to-end Revenue Cloud / CPQ lifecycle from customer identification through order activation, contract management, and post-contract operations.
 
-| Object | Reason for Inclusion |
-|--------|----------------------|
-| Account | Root anchor record; all downstream objects depend on an Account |
-| Contact | Created from Account's Contacts related list; assigned as Primary Contact Role on Opportunity |
-| Opportunity | Created from Contact's Opportunities related list; hosts the Quote |
-| Quote (CPQ) | Created from Opportunity; product catalog browsing, line item selection, and pricing validation |
-| Contract | Generated from an accepted Quote; must be activated before Order creation |
-| Order | Derived from activated Contract; activation status verified end-to-end |
-| Amendment | Post-contract change lifecycle; covered as a future extension in execution order |
-| Renewal | Contract renewal lifecycle; covered as a future extension in execution order |
+| Object | Prefix | Rationale |
+|--------|--------|-----------|
+| Account | ACC | Root record; billing address and payment terms must be validated before any downstream flow |
+| Contact | CON | Primary contact role on Opportunity is a CPQ prerequisite |
+| Opportunity | OPP | Gate for Quote creation; drives CPQ lifecycle entry |
+| Quote (CPQ) | QTE | Core CPQ object; product selection, pricing, and approval states tested here |
+| Contract | CTR | Generated from accepted Quote; activation and term validation required |
+| Order | ORD | Generated from Quote; activation status is the final delivery signal |
+| Amendment | AMD | Post-activation contract change; verifies amendment flow integrity |
+| Renewal | RNW | Post-term renewal; verifies renewal opportunity and quote generation |
 
-### 1.2 Out of Scope
-
-- Manual test cases and exploratory testing
-- Load testing and performance benchmarking
-- API-only flows (REST / SOAP / Bulk API)
-- Integration tests with external third-party systems
-- Non-CPQ Salesforce modules (Service Cloud, Marketing Cloud, etc.)
+**Out of Scope:**
+- Manual (non-automated) test cases
+- Load and performance testing
+- API-only flows (no Playwright UI interaction)
+- Flows that do not originate from an Account record
 
 ---
 
-## 2. Test Coverage Summary
+## 2. Test Case Summary
 
 | Object | User Stories | Total TCs | Positive | Negative | Edge Cases |
 |--------|-------------|-----------|----------|----------|------------|
@@ -44,181 +41,117 @@
 | Order (ORD) | — | 0 | — | — | — |
 | Amendment (AMD) | — | 0 | — | — | — |
 | Renewal (RNW) | — | 0 | — | — | — |
-| **TOTAL** | **1** | **5** | **3** | **1** | **1** |
+| **Total** | **1** | **5** | **3** | **1** | **1** |
 
-> **Note:** Contact, Opportunity, Quote, Contract, Order, Amendment, and Renewal test cases are embedded within the US-005 E2E flow (TC-ACC-002 through TC-ACC-005). Dedicated user stories and standalone TC suites for those prefixes are pending authoring.
+### Test Case Detail — Account (US-005)
 
----
+| TC ID | Type | Scenario | AC Ref |
+|-------|------|----------|--------|
+| TC-ACC-001 | Positive | Identify existing Account; verify Billing Address and Payment Terms on Details tab; soft-fail warning if either field is missing | AC-005-01 |
+| TC-ACC-002 | Positive | Create Contact on Account; create Opportunity from Contact Related list; verify Contact assigned as Primary Contact Role on Opportunity | AC-005-02, AC-005-03, AC-005-04 |
+| TC-ACC-003 | Positive | Create Quote from Opportunity; open Browse Catalogs; select Standard Price Book and All Products; add first product; save; validate product row in cart | QO-005-05, PC-005-06, PC-005-07, PC-005-08, PC-005-09 |
+| TC-ACC-004 | Edge Case | Accept Quote and mark as Current; create Contract via New Contract (None — no prices/discounts); open Contract; set Contract Term to 12 months; activate | QL-005-10, QL-005-11, CR-005-12 |
+| TC-ACC-005 | Negative | Open Quote; click Create Order → single Order; navigate to Order record; click Activate; confirm Order Status = Activated | OR-005-13, OR-005-14, OR-005-15, OR-005-16 |
 
-## 3. Test Case Register
-
-### 3.1 Account (US-005)
-
-| TC ID | Title | Type | AC Reference | Priority |
-|-------|-------|------|--------------|----------|
-| TC-ACC-001 | Verify Billing Address and Payment Terms on Account Details tab | Edge Case (soft-fail) | AC-005-01 | P2 |
-| TC-ACC-002 | Create Contact from Account Contacts related list | Positive | AC-005-02 | P1 |
-| TC-ACC-003 | Create Opportunity and assign Primary Contact Role | Positive | AC-005-03, AC-005-04 | P1 |
-| TC-ACC-004 | Create Quote, browse catalog, add product, verify line item | Positive | QO-005-05, PC-005-06, PC-005-07, PC-005-08, PC-005-09 | P1 |
-| TC-ACC-005 | Accept Quote → Activate Contract → Create & Activate Order | Negative (multi-step failure path guarded) | QL-005-10 through OR-005-16 | P1 |
+> **Note:** Objects Contact, Opportunity, Quote, Contract, Order, Amendment, and Renewal carry zero standalone test cases in the current story set. Their UI interactions are exercised transitively within the ACC suite (TC-ACC-002 through TC-ACC-005). Dedicated user stories for these objects must be provided before standalone TC IDs can be assigned.
 
 ---
 
-## 4. Test Data Strategy
+## 3. Test Data Strategy
 
-### 4.1 Uniqueness
-
-- All record names that require uniqueness use a `Date.now()` timestamp suffix at runtime.
-  - Example Account: `AutoAcc-${Date.now()}`
-  - Example Contact: uses `data.contact.First_Name` + `data.contact.Last_Name` from `getTestData()`
-  - Example Opportunity: uses `data.opportunity.Name` from `getTestData()`
-
-### 4.2 Supporting Records
-
-- All prerequisite records (Account, Contact, Opportunity, Quote, Contract) are **created in-test** during the same run.
-- Record URLs are captured from navigation and stored in shared state variables for downstream test steps — global search is never used to retrieve records created in the same run (Salesforce search indexing delay).
-
-### 4.3 Key Naming Rules
-
-All test data access must use the exact `TestData` interface keys:
-
-| Object | Correct Key | Never Use |
-|--------|------------|-----------|
-| Account | `data.account.Account_Name` | `data.account.name` |
-| Contact | `data.contact.First_Name`, `data.contact.Last_Name` | `data.contact.firstName` |
-| Contact | `data.contact.Email`, `data.contact.Phone` | `data.contact.email` |
-| Opportunity | `data.opportunity.Name`, `data.opportunity.Stage`, `data.opportunity.Close_Date` | `data.opportunity.oppName` |
-| Quote | `data.quote.Name`, `data.quote.Contract_Type` | `data.quote.quoteName` |
-
-Fields not in `test-data.json` use hardcoded fallbacks:
-
-| Field | Hardcoded Value |
-|-------|----------------|
-| `priceBook` | `'Standard Price Book'` |
-| `expirationDate` | `'12/31/2026'` |
-
-### 4.4 Credentials
-
-- No credentials are hardcoded in test files.
-- `SF_USERNAME`, `SF_PASSWORD`, and `SF_SANDBOX_URL` are read exclusively from `.env`.
-- `auth/session.json` holds the authenticated Playwright browser state.
+| Principle | Implementation |
+|-----------|----------------|
+| **Uniqueness** | All dynamically created record names are suffixed with `Date.now()` (e.g., `AutoAcc-${Date.now()}`) to prevent collisions across runs |
+| **Supporting records** | Contacts, Opportunities, Quotes, Contracts, and Orders are created in-test in sequential order; no pre-seeded records assumed beyond the root Account |
+| **Account lookup** | A single existing Account is identified at runtime; if not found, one is created with a timestamped name |
+| **Price Book** | Hardcoded to `'Standard Price Book'` — not sourced from test-data.json |
+| **Expiration / Contract dates** | Hardcoded to `'12/31/2026'`; Contract Term hardcoded to `12` months |
+| **Test data file keys** | All keys consumed via `getTestData()` use exact `TestData` interface casing: `data.account.Account_Name`, `data.contact.First_Name`, `data.contact.Last_Name`, `data.opportunity.Name`, `data.opportunity.Stage`, `data.opportunity.Close_Date`, `data.quote.Name`, `data.quote.Contract_Type` |
+| **No optional chaining** | `?.` is never used on `TestData` fields — all keys are guaranteed present |
+| **No hardcoded credentials** | All auth material stored exclusively in `auth/session.json` and `.env`; never committed |
 
 ---
 
-## 5. Execution Order
+## 4. Execution Order
 
-Tests execute **sequentially** in a single Playwright worker (`workers: 1`). The lifecycle order is:
+Tests execute strictly sequentially. Playwright is configured with **1 worker only**. Each phase depends on the record URL captured in the preceding phase.
 
 ```
-Account → Contact → Opportunity → Quote (CPQ) → Contract → Order → Amendment → Renewal
+Account (TC-ACC-001)
+  └─► Contact + Opportunity (TC-ACC-002)
+        └─► Quote / CPQ (TC-ACC-003)
+              └─► Contract (TC-ACC-004)
+                    └─► Order (TC-ACC-005)
+                          └─► Amendment  [future: TC-AMD-xxx]
+                                └─► Renewal  [future: TC-RNW-xxx]
 ```
 
-| Step | Object | TC Range | Depends On |
-|------|--------|----------|------------|
-| 1 | Account | TC-ACC-001 – TC-ACC-005 | Valid session, sandbox URL |
-| 2 | Contact | TC-CON-* (pending) | Account record URL |
-| 3 | Opportunity | TC-OPP-* (pending) | Contact record URL |
-| 4 | Quote / CPQ | TC-QTE-* (pending) | Opportunity record URL |
-| 5 | Contract | TC-CTR-* (pending) | Accepted Quote |
-| 6 | Order | TC-ORD-* (pending) | Activated Contract |
-| 7 | Amendment | TC-AMD-* (pending) | Activated Contract |
-| 8 | Renewal | TC-RNW-* (pending) | Activated Contract |
+**State passing rule:** Record URLs (containing `/Contact/`, `/Opportunity/`, `/Quote/`, `/Contract/`, `/Order/`) are captured from navigation and used for direct access in subsequent steps. Salesforce global search is never used to navigate to records created in the same test run.
 
 ---
 
-## 6. Entry Criteria
+## 5. Entry Criteria
 
-All of the following must be satisfied before test execution begins:
+All of the following must be satisfied before execution begins:
 
-| # | Criterion | Validation Method |
-|---|-----------|-------------------|
-| 1 | `auth/session.json` exists and contains a valid Salesforce session | File present; `npx ts-node scripts/refresh-session.ts` exits with code 0 |
-| 2 | `SF_SANDBOX_URL` is set in `.env` | `dotenv` loads without error; URL is reachable |
-| 3 | `SF_USERNAME` and `SF_PASSWORD` are set in `.env` | Present and non-empty |
-| 4 | Playwright is installed (`@playwright/test`) | `npx playwright --version` succeeds |
-| 5 | TypeScript compiles without errors | `npx tsc --noEmit` exits with code 0 |
-| 6 | Target Salesforce org is accessible | HTTP 200 response on `SF_SANDBOX_URL` |
+- [ ] `auth/session.json` exists and contains a valid, non-expired Salesforce session
+- [ ] `.env` file is present with `SF_SANDBOX_URL`, `SF_USERNAME`, and `SF_PASSWORD` set
+- [ ] Playwright and all `npm` dependencies are installed (`npm install` has been run)
+- [ ] `npx playwright --version` exits cleanly
+- [ ] Target sandbox is reachable and not in a maintenance window
+- [ ] `prompts/user-stories/` contains the latest story file for US-005
 
 ---
 
-## 7. Exit Criteria
+## 6. Exit Criteria
 
-The QA cycle is complete when all of the following conditions are met:
+Execution is considered complete when all of the following are true:
 
-| # | Criterion |
-|---|-----------|
-| 1 | All 5 registered TCs have been executed (pass, fail, or `test.fixme()` with documented reason) |
-| 2 | Self-healing (Agent 6) has completed up to 3 retry iterations for any failing TC |
-| 3 | Residual failures after 3 retries are marked `test.fixme()` with a root-cause comment |
-| 4 | `reports/dashboard.html` is updated with final pass/fail/fixme counts |
-| 5 | `reports/results.json` contains structured per-TC results |
-| 6 | `reports/pipeline-state.json` reflects final pipeline state |
-| 7 | No unhandled exceptions remain in Playwright stderr output |
+- [ ] All 5 TC-ACC test cases have been executed (pass, fail, or fixme)
+- [ ] Self-healing (Agent 6) has completed up to 3 retry iterations for any failing test
+- [ ] Any test that cannot be healed within 3 iterations is marked `test.fixme()` with a descriptive comment
+- [ ] `reports/dashboard.html` reflects the final run status
+- [ ] `reports/results.json` and `reports/pipeline-state.json` are written and up to date
+- [ ] No test is silently skipped without a recorded reason
 
 ---
 
-## 8. Risks and Mitigations
+## 7. Risks and Mitigations
 
-| # | Risk | Impact | Mitigation |
-|---|------|--------|------------|
-| R-01 | Salesforce session expiry mid-run | All subsequent steps fail with `INVALID_SESSION_ID` | Refresh session before each run via `npx ts-node scripts/refresh-session.ts`; never change selectors when console shows `INVALID_SESSION_ID` |
-| R-02 | Spinner / page load timing | Premature interaction with elements before Salesforce renders | Explicit `waitFor({ state: 'hidden' })` on `.slds-spinner` with 30 s timeout; no `networkidle` dependency |
-| R-03 | Lookup search indexing lag | Lookup field does not resolve recently-created records | `waitForTimeout(3000)` before initiating any lookup interaction; use related-list links or success-toast links to navigate to same-run records instead of global search |
-| R-04 | Shadow DOM / LWC encapsulation | Standard CSS selectors fail to pierce Lightning Web Components | Use native `lightning-*` locators and `[data-field-api-name]` attributes only; never use XPath as a first choice |
-| R-05 | CPQ pricing engine delay | Quote line totals appear stale or zero after product add | Assert line items using `waitFor` on the cart table row; avoid immediate price assertion after add |
-| R-06 | Flaky modal detection | Wrong dialog intercepted (e.g., error modal) | Scope all modal interactions to `[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])` |
-| R-07 | Incomplete user stories for downstream objects | Contact, Opportunity, Quote, Contract, Order suites have 0 TCs | Raise story authoring as a blocking dependency; pipeline stages 2–8 are marked pending until stories are delivered |
+| # | Risk | Likelihood | Impact | Mitigation |
+|---|------|-----------|--------|------------|
+| R-01 | **Salesforce session expiry** mid-run invalidates all subsequent steps | Medium | High | Re-run `npx ts-node scripts/refresh-session.ts` before pipeline start; Agent 6 detects `INVALID_SESSION_ID` in console and halts selector changes, escalating to session refresh |
+| R-02 | **Spinner / loading overlay** not dismissed before next interaction causes stale-element or click failures | High | Medium | All steps execute `await page.locator('.slds-spinner').waitFor({ state: 'hidden' }).catch(() => {})` with a 30-second timeout before proceeding |
+| R-03 | **Lookup search indexing lag** causes lookup fields to return no results | High | Medium | A `waitForTimeout(3000)` pause is inserted before every lookup field interaction; lookup fields use `[data-field-api-name]` locators, not text search |
+| R-04 | **Shadow DOM** in Lightning Web Components prevents standard locator access | Medium | High | Only native `lightning-*` element locators and `[data-field-api-name]` attribute selectors are used; no `pierce/` or JS `shadowRoot` hacks |
+| R-05 | **Salesforce HTTP 4xx / 5xx** errors misclassified as selector failures | Low | High | Agent 6 inspects browser console and `stderr` for HTTP error codes before modifying any selector; healing is suppressed and the error is escalated if a 4xx/5xx is detected |
+| R-06 | **Insufficient AC coverage** for CON, OPP, QTE, CTR, ORD, AMD, RNW objects | High (current) | Medium | Downstream objects are exercised transitively via TC-ACC-002 – TC-ACC-005; dedicated user stories must be supplied to generate standalone TCs for those prefixes |
+| R-07 | **Wrong test-data key casing** causes runtime `undefined` access | Medium | High | CI lint step validates all `data.*` key references against the `TestData` interface; camelCase variants are rejected at code-review time |
 
 ---
 
-## 9. Traceability Matrix
+## 8. Traceability Matrix
 
-Every test case must carry a traceability comment in the spec file header:
+Every test case maps to at least one Acceptance Criterion. No test may be generated without an AC reference.
 
-```
-// TC-ACC-001 | AC Reference: AC-005-01
-```
-
-No test case may exist without an AC reference. Orphaned TCs are invalid output.
-
-| TC ID | User Story | AC Reference(s) | Spec File |
-|-------|-----------|-----------------|-----------|
+| TC ID | User Story | AC References | Spec File |
+|-------|-----------|---------------|-----------|
 | TC-ACC-001 | US-005 | AC-005-01 | tests/account.spec.ts |
-| TC-ACC-002 | US-005 | AC-005-02 | tests/account.spec.ts |
-| TC-ACC-003 | US-005 | AC-005-03, AC-005-04 | tests/account.spec.ts |
-| TC-ACC-004 | US-005 | QO-005-05, PC-005-06 – PC-005-09 | tests/account.spec.ts |
-| TC-ACC-005 | US-005 | QL-005-10 – OR-005-16 | tests/account.spec.ts |
+| TC-ACC-002 | US-005 | AC-005-02, AC-005-03, AC-005-04 | tests/account.spec.ts |
+| TC-ACC-003 | US-005 | QO-005-05, PC-005-06, PC-005-07, PC-005-08, PC-005-09 | tests/account.spec.ts |
+| TC-ACC-004 | US-005 | QL-005-10, QL-005-11, CR-005-12 | tests/account.spec.ts |
+| TC-ACC-005 | US-005 | OR-005-13, OR-005-14, OR-005-15, OR-005-16 | tests/account.spec.ts |
 
 ---
 
-## 10. Tooling and Environment
+## 9. Tooling and Pipeline
 
-| Tool | Version / Config | Purpose |
-|------|-----------------|---------|
-| Playwright | Latest stable | Test runner and browser automation |
-| TypeScript | Strict mode | Test authoring language |
-| Node.js | LTS | Runtime |
-| Claude API | Agent pipeline | Test generation, self-healing, reporting |
-| dotenv | — | Environment variable injection |
-| `workers` | **1** (enforced) | Sequential execution; no parallel spec files |
-
----
-
-## 11. Defect Classification
-
-| Severity | Definition | Action |
-|----------|------------|--------|
-| P1 — Blocker | Core lifecycle step fails (e.g., Quote cannot be created) | Block release; immediate fix required |
-| P2 — Critical | Data validation failure; soft-fail logged but execution continues | Fix before release; document in dashboard |
-| P3 — Major | UI cosmetic or non-blocking assertion failure | Fix in next sprint |
-| Fixme | Failure persists after 3 self-healing iterations | `test.fixme()` applied; root-cause comment mandatory |
-
----
-
-## 12. Approval
-
-| Role | Name | Status |
-|------|------|--------|
-| QA Lead | AI-Generated | Approved |
-| Dev Lead | — | Pending |
-| Product Owner | — | Pending |
+| Step | Agent | Responsibility |
+|------|-------|----------------|
+| 1 | Agent 1 — Knowledge Base | Load `quote-lifecycle.md`, `pricing.md`, `foundations-and-coexistence.md`, `contract-lifecycle.md`, `order-management.md` |
+| 2 | Agent 2 — Story Reader | Parse US-005 into structured ACs with TEMP IDs where missing |
+| 3 | Agent 3 — Test Plan Drafter | Generate this document and structured scenario table |
+| 4 | Agent 4 — Scenario Drafter | Emit Playwright TypeScript spec using SFUtils engine only |
+| 5 | Agent 5 — Test Executor | Execute spec; log pass/fail/fixme per TC |
+| 6 | Agent 6 — Self-Healer | Classify failures; apply fixes; re-run up to 3 times |
+| 7 | Agent 7 — Dashboard Reporter | Aggregate results into `dashboard.html`, `results.json`, `pipeline-state.json` |
