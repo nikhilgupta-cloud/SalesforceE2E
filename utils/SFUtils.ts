@@ -135,7 +135,25 @@ export class SFUtils {
     throw new Error(`Navigation failed to ${subs.join(',')}`);
   }
 
-  static async searchAndOpen(page: Page, name: string): Promise<string> {
+  static async fillName(root: Page | Locator | FrameLocator, type: 'firstName' | 'lastName', value: string): Promise<void> {
+    const nameComp = root.locator('lightning-input-name').first();
+    if (await nameComp.isVisible({ timeout: 5000 }).catch(() => false)) {
+      const input = nameComp.locator(`[name="${type}"]`).first();
+      await input.fill(value);
+      await input.press('Tab');
+      return;
+    }
+    const label = type === 'firstName' ? 'First' : 'Last';
+    const input = root.locator(`input[name="${type}"], input[placeholder*="${label}"]`).first();
+    await input.fill(value);
+    await input.press('Tab');
+  }
+
+  static async selectCombobox(page: Page, root: Page | Locator | FrameLocator, apiName: string, label: string): Promise<void> {
+    return this.fillField(page, root, apiName, label);
+  }
+
+  static async searchAndOpen(page: Page, name: string, _objectType?: string): Promise<string> {
     await page.keyboard.press('/');
     const searchInput = page.locator('input[placeholder*="Search"]').first();
     await searchInput.waitFor({ state: 'visible', timeout: 5000 });
