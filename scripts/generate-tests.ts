@@ -707,15 +707,14 @@ async function bootstrapSpecFile(objKey: string): Promise<void> {
   // --- UPDATED LOGIC FOR HEADER GENERATION ---
 
 const headerPrompt = `
-Generate the standard FILE HEADER for a Playwright TypeScript spec file.
+Generate the FILE HEADER for a Playwright TypeScript spec file.
 Requirements:
 1. Import { test, expect, Page } from '@playwright/test'.
-2. Import { SFUtils } from '../utils/sf-utils'.
+2. Import { SFUtils } from '../utils/SFUtils';
 3. Import * as fs and * as path.
-4. Define a constant 'data' that loads JSON from '../tests/test-data.json' using fs.readFileSync.
-5. Do NOT define helper functions like 'waitForSpinner' or 'navigateToAccounts'; we use SFUtils instead.
-6. Use process.env.SF_LOGIN_URL for the base navigation.
-7. End ONLY with the opening line: test.describe('${obj.displayName} Lifecycle', () => {
+4. Define data: const data = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'tests', 'test-data.json'), 'utf8'));
+5. Define SF URL: const SF = process.env.SF_SANDBOX_URL || process.env.SF_LOGIN_URL || '';
+6. End with: test.describe('${obj.displayName} Lifecycle', () => {
 `;
 
 const header = await callClaudeCode(

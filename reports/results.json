@@ -61,14 +61,14 @@
   "suites": [],
   "errors": [
     {
-      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected token (450:0)\n\n\u001b[0m \u001b[90m 448 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 449 |\u001b[39m   \u001b[90m// ── US-005 END ───────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 450 |\u001b[39m\n \u001b[90m     |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m",
-      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected token (450:0)\n\n\u001b[0m \u001b[90m 448 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 449 |\u001b[39m   \u001b[90m// ── US-005 END ───────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 450 |\u001b[39m\n \u001b[90m     |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m",
+      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected token (355:0)\n\n\u001b[0m \u001b[90m 353 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 354 |\u001b[39m   \u001b[90m// ── US-005 END ───────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 355 |\u001b[39m\n \u001b[90m     |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: Unexpected token (355:0)\n\n\u001b[0m \u001b[90m 353 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 354 |\u001b[39m   \u001b[90m// ── US-005 END ───────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 355 |\u001b[39m\n \u001b[90m     |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m",
       "location": {
         "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-        "line": 450,
+        "line": 355,
         "column": 0
       },
-      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:450\n\n\u001b[0m \u001b[90m 448 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 449 |\u001b[39m   \u001b[90m// ── US-005 END ───────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 450 |\u001b[39m\u001b[0m"
+      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:355\n\n\u001b[0m \u001b[90m 353 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 354 |\u001b[39m   \u001b[90m// ── US-005 END ───────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 355 |\u001b[39m\u001b[0m"
     },
     {
       "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
@@ -76,8 +76,8 @@
     }
   ],
   "stats": {
-    "startTime": "2026-04-30T07:48:12.605Z",
-    "duration": 420.8299999999999,
+    "startTime": "2026-04-30T08:11:19.922Z",
+    "duration": 426.02199999999993,
     "expected": 0,
     "skipped": 0,
     "unexpected": 0,

@@ -186,10 +186,10 @@ function stepExecution(): boolean {
     .filter(file => fs.existsSync(file));
 
   const result = spawnSync(
-    'npx',
-    ['playwright', 'test', ...specFiles, '--headed'],
-    { stdio: 'inherit', shell: true }
-  );
+  'npx',
+  ['playwright', 'test', ...specFiles, '--headed', '--workers=1'], // Added --workers=1
+  { stdio: 'inherit', shell: true }
+);
 
   return result.status === 0;
 }
