@@ -566,6 +566,17 @@ async function callClaude(
 
   const knowledgeContext  = loadKnowledgeContext(objKey);
   const scrapedLocators   = loadScrapedLocators(objKey);
+  const strictLeash = `
+
+*** CRITICAL SYSTEM DIRECTIVE: REDUCE OUTPUT TOKENS ***
+You are a headless code-generation function. Your output is piped directly into an executable compiler.
+1. You must output ONLY valid, raw TypeScript code.
+2. DO NOT write test plans, scenarios, or summaries.
+3. DO NOT wrap the code in \`\`\`typescript markdown blocks.
+4. DO NOT say "Here is the code" or provide any conversational filler.
+5. You must BEGIN your response exactly with the word "import".
+6. You must END your response exactly with "});".
+`;
 
   const system = `You are a Salesforce Revenue Cloud QA engineer writing Playwright TypeScript tests.
 Rules (apply to every line of code):
@@ -584,7 +595,7 @@ Rules (apply to every line of code):
 - TAB NAVIGATION: Always call clickTab(page, 'Details') before accessing fields on a record page.
 - TEST DATA: Use data from tests/fixtures/test-data.json via the 'data' constant.
 - E2E FLOW VIDEO: If knowledge/FLow/Flow.mp4 exists, review it to understand the visual flow and transitions.
-${scrapedLocators}${knowledgeContext}`;
+${scrapedLocators}${knowledgeContext}${strictLeash}`;
 
   const updateContext = isUpdate ? `
 IMPORTANT — this is an UPDATE. The story was previously processed.
@@ -845,17 +856,6 @@ async function processStory(
     console.warn(`[generate] Cannot detect object for ${usId} — skipping`);
     return 'skipped';
   }
-
-const strictLeash = `
-*** CRITICAL SYSTEM DIRECTIVE: REDUCE OUTPUT TOKENS ***
-You are a headless code generator. Your output is piped directly into a .ts file.
-1. OUTPUT RAW TYPESCRIPT CODE ONLY.
-2. NO EXPLANATIONS, NO CHAT, NO GREETINGS.
-3. NO MARKDOWN TABLES, NO "Here is your code" summaries, NO test plans.
-4. DO NOT repeat the Acceptance Criteria in plain text.
-5. Generate a MAXIMUM of 5 focused test scenarios.
-Failure to follow these rules will cause a syntax error and crash the pipeline.
-`;
 
   // Normalize and hash
   const currentHash = md5(storyContent);

@@ -24,16 +24,19 @@ export class SFUtils {
     await this.waitForLoading(page);
   }
 
-  // 🚀 UPGRADED: Now waits for the Network to settle, not just the spinner!
+  // 🚀 UPGRADED: Lightning-fast wait strategy based ONLY on the UI spinner
   static async waitForLoading(page: Page) {
-    await page.waitForTimeout(500); // Small buffer for DOM to trigger
-    await Promise.all([
-      // Wait for Aura/Lightning network calls to finish processing
-      page.waitForResponse(res => (res.url().includes('/aura') || res.url().includes('/graphql')) && res.status() === 200).catch(() => {}),
-      // Wait for UI spinner to vanish
-      page.locator('.slds-spinner_container, .slds-spinner').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {})
-    ]);
-    await page.waitForTimeout(500); // Buffer for UI paint
+    // 1. Tiny buffer to give Salesforce a millisecond to trigger the spinner on screen
+    await page.waitForTimeout(500); 
+
+    // 2. Wait for the spinner to vanish. 
+    // If the spinner is not on screen, Playwright moves on INSTANTLY (0 seconds).
+    await page.locator('.slds-spinner_container, .slds-spinner').first()
+      .waitFor({ state: 'hidden', timeout: 15000 })
+      .catch(() => {});
+
+    // 3. Tiny buffer to let the UI paint the fields after the spinner disappears
+    await page.waitForTimeout(500); 
   }
 
   // ==========================================

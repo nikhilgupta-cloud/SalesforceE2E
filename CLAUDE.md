@@ -1,266 +1,79 @@
-# CLAUDE.md — Salesforce E2E Test Framework
+CLAUDE.md — Salesforce E2E Test Framework (API-Driven)
 
-This file gives Claude Code persistent context about the project. Read it before making any changes.
+This file gives Claude Code persistent context. Read it before making any changes.
 
----
+1. Project Overview & Core Strategy
 
-## Project Overview
+An AI-enhanced, end-to-end Salesforce test automation framework using Playwright + TypeScript.
+Core Strategy: Use Salesforce API Metadata (knowledge/scraped-locators.json) for 100% deterministic field interaction via SFUtils.
 
-An AI-enhanced, end-to-end Salesforce test automation framework built on **Playwright + TypeScript**. It combines deterministic automation with AI-driven test generation and self-healing.
+2. Navigation & Record Creation (MANDATORY)
 
-**Salesforce Objects Under Test**: Account, Contact, Opportunity, Quote (Revenue Cloud / CPQ flow)
+Salesforce UI layouts (Related Lists) are dynamic and cause test timeouts.
 
----
+❌ NEVER click "New" buttons inside Related Lists (e.g., Contacts under Account).
 
-## Knowledge Base
+✅ ALWAYS use Direct URL Navigation to create records to bypass UI layout issues.
 
-The `knowledge/agentforce-rm/` directory contains the Agentforce Revenue Management domain knowledge base.
-The `knowledge/FLow/Flow.mp4` file contains the end-to-end user journey video.
+Example (Contact): await SFUtils.goto(page, \${SF}/lightning/o/Contact/new`);`
 
-### Mandatory Usage Rules
-1. ALWAYS start from `knowledge/agentforce-rm/INDEX.md`
-2. Review `knowledge/FLow/Flow.mp4` to understand the step-by-step UI interactions and transitions.
-3. Load relevant domain file(s) based on object under test
-4. Use domain knowledge for:
-   - Field names
-   - UI patterns
-   - Salesforce limitations
-   - CPQ lifecycle behavior
+Example (Opportunity): await SFUtils.goto(page, \${SF}/lightning/o/Opportunity/new`);`
 
-### Object → Domain Mapping
+Example (Quote): await SFUtils.goto(page, \${SF}/lightning/o/Quote/new`);`
 
-| Object | Domain Files |
-|--------|-------------|
-| Quote, QuoteLineItem | `quote-lifecycle.md`, `pricing.md` |
-| Product | `product-modeling.md` |
-| Pricing | `pricing.md` |
-| Contract | `contract-lifecycle.md` |
-| Order | `order-management.md` |
-| Approvals | `approvals.md` |
-| Amendments | `amendments.md` |
-| Renewals | `renewals.md` |
-| Account, Contact, Opportunity | `foundations-and-coexistence.md` |
+3. Locator & UI Strategy (MANDATORY)
 
-❌ DO NOT generate tests without loading domain knowledge  
-❌ DO NOT invent field names  
+RULE #1: Always use SFUtils with API Names.
 
----
+Primary (Fields): await SFUtils.fillField(page, root, 'API_Name__c', value);
 
-## User Story Input Handling (CRITICAL)
+Dynamic Waits: ❌ DO NOT use page.waitForTimeout(). ✅ ALWAYS use await SFUtils.waitForLoading(page); and rely on specific locator .waitFor({ state: 'visible' }) mechanisms.
 
-User stories may come in ANY format:
-- Plain text
-- Jira export
-- Bullet points
-- Excel-like data
+⚠️ Salesforce Specific Quirks
 
-### Rules:
-1. Detect Acceptance Criteria using:
-   - `AC-\d+`
-   - "Acceptance Criteria"
-   - Given / When / Then
-2. If AC IDs missing:
-   - Generate TEMP IDs: `TEMP-AC-001`
-3. Normalize BEFORE parsing
-4. NEVER reject story due to format
+Compound Fields (Addresses): When verifying addresses in Read-Only mode (Details tab), ALWAYS use the compound API name ('BillingAddress', 'ShippingAddress') instead of individual fields (like 'BillingStreet').
 
----
+Handling Lookups: Salesforce lookups require a strict Fill -> Wait -> Click pattern.
 
-## Test Data Strategy (MANDATORY)
-
-Test data may come from:
-- JSON (`getTestData`)
-- Inline AC values
-- Runtime generation
-
-### ⚠️ EXACT KEY NAMES — DO NOT INVENT OR CAMELCASE (CRITICAL)
-
-`getTestData()` returns a typed `TestData` object. Always use these exact keys:
-
-| Object | Correct Key | ❌ Wrong (never use) |
-|--------|------------|----------------------|
-| account | `data.account.Account_Name` | `data.account.name`, `data.account.accountName` |
-| contact | `data.contact.First_Name` | `data.contact.firstName`, `data.contact.first_name` |
-| contact | `data.contact.Last_Name` | `data.contact.lastName`, `data.contact.last_name` |
-| contact | `data.contact.Email` | `data.contact.email` |
-| contact | `data.contact.Phone` | `data.contact.phone` |
-| contact | `data.contact.Full_Name` | `data.contact.fullName` |
-| opportunity | `data.opportunity.Name` | `data.opportunity.name`, `data.opportunity.oppName` |
-| opportunity | `data.opportunity.Stage` | `data.opportunity.stage` |
-| opportunity | `data.opportunity.Close_Date` | `data.opportunity.closeDate`, `data.opportunity.close_date` |
-| quote | `data.quote.Name` | `data.quote.name`, `data.quote.quoteName` |
-| quote | `data.quote.Contract_Type` | `data.quote.contractType` |
-
-Fields **not in test-data.json** (use hardcoded fallbacks, never read from `data`):
-- `priceBook` → `'Standard Price Book'`
-- `expirationDate` / `expiryDate` → `'12/31/2026'`
-
-❌ NEVER use optional chaining (`?.`) when accessing typed `TestData` fields — the keys always exist  
-❌ NEVER invent keys not in the `TestData` interface in `utils/test-data.ts`
-
-### Rules:
-1. Map data to objects:
-   - `data.account` → Account
-   - `data.contact` → Contact
-   - `data.opportunity` → Opportunity
-2. If data missing:
-
-AutoAcc-${Date.now()}
-
-3. NEVER hardcode business data
-4. ALWAYS keep tests reusable
-
----
-
-## Multi-Object Flow Handling (VERY IMPORTANT)
-
-Salesforce flows are sequential:
+// DO NOT JUST FILL. YOU MUST SELECT THE DROPDOWN OPTION.
+await SFUtils.fillField(page, root, 'AccountId', data.account.Account_Name);
+await SFUtils.waitForLoading(page);
+await page.locator('[role="option"], lightning-base-combobox-item').filter({ hasText: data.account.Account_Name }).first().click();
 
 
-Account → Contact → Opportunity → Quote → Contract → Order
+4. Test Data Strategy
 
+Always use the exact keys from tests/fixtures/test-data.json. DO NOT CAMELCASE.
 
-### Rules:
-- Maintain state across objects
-- Reuse existing records
-- Avoid duplicate creation
-- Support E2E lifecycle flows
+Account: data.account.Account_Name
 
----
+Contact: data.contact.First_Name, data.contact.Last_Name, data.contact.Email
 
-## Tech Stack
+Opportunity: data.opportunity.Name, data.opportunity.Stage, data.opportunity.Close_Date
 
-| Tool | Role |
-|------|------|
-| Playwright | Test runner |
-| TypeScript | Language |
-| Claude API | AI generation + healing |
-| dotenv | Environment config |
+Quote: data.quote.Name
 
----
+5. Spec File Architecture
 
-## Key Commands
+Every .spec.ts generated must follow this structure:
 
-```bash
-npm run pipeline
-npm run watch:stories
-npx playwright test
-npx ts-node scripts/refresh-session.ts
-npx ts-node scripts/generate-tests.ts
-npx ts-node scripts/self-heal.ts
-Directory Structure
-knowledge/          → Domain knowledge
-tests/              → Playwright specs
-utils/              → Helpers
-scripts/            → Pipeline scripts
-prompts/            → Config + user stories
-generated/          → AI output (DO NOT EDIT)
-reports/            → Results
-auth/session.json   → Auth state
-.env                → Secrets
-Architecture Patterns
-Locator Strategy (STRICT)
+Header: Imports test, expect, SFUtils, and loads data:
+const data = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'tests', 'fixtures', 'test-data.json'), 'utf8'));
 
-Priority order:
+Base URL: const SF = process.env.SF_SANDBOX_URL || process.env.SF_LOGIN_URL || '';
 
-API Locator
-[data-field-api-name="Name"] input
-Role-based
-page.getByRole('button', { name: 'Save', exact: true })
-Label-based
-page.getByLabel('Account Name')
-LWC fallback
-lightning-input filter
-XPath (LAST)
+Sequential State: Use variables (e.g., let quoteUrl = '';) at the describe level to pass data.
 
-❌ Never skip hierarchy
+BeforeEach: Use await SFUtils.goto(page, SF); and await SFUtils.waitForAppReady(page);.
 
-Modal Handling
-const modal = page.locator('[role="dialog"]:not([id="auraError"]):not([aria-hidden="true"])');
-Spinner Handling
-await page.locator('.slds-spinner').waitFor({ state: 'hidden' }).catch(() => {});
-Navigation Helpers
-await page.goto(process.env.SF_SANDBOX_URL);
-await page.waitForLoadState('domcontentloaded');
-AI Pipeline (7 Steps)
-Agent 1 → Knowledge
-Agent 2 → AC Parsing
-Agent 3 → Test Plan
-Agent 4 → Test Generation
-Agent 5 → Execution
-Agent 6 → Self-Healing
-Agent 7 → Reporting
-Traceability Rule (MANDATORY)
+6. Token Limit & AI Output Directive
 
-Every test MUST map:
+*** CRITICAL SYSTEM DIRECTIVE ***
 
-AC → TC → Code
+OUTPUT RAW TYPESCRIPT CODE ONLY.
 
-Example:
+NO EXPLANATIONS, NO MARKDOWN TABLES, NO CHAT, NO GREETINGS.
 
-// TC-QTE-001 | AC Reference: AC-005-01
+Keep tests DRY. Generate a maximum of 5 E2E scenarios per file.
 
-❌ No AC → NO test
-
-Test Naming Convention
-Item	Format
-TC ID	TC-ACC-001
-Prefix	ACC, CON, OPP, QTE
-Data	AutoAcc-${Date.now()}
-Playwright Rules
-Workers = 1 ONLY
-No networkidle
-No isVisible() for logic
-Always .first()
-Always exact: true
-Never use global search (SFUtils.searchAndOpen) to navigate to a record saved in the same test run — Salesforce search indexing has a minutes-long delay; use the Related list link or success toast link instead
-Use SFUtils.searchExists() (10s timeout) for existence checks — never searchAndOpen() (30s timeout) when the record may not exist
-URL contains /Contact/ or /Opportunity/ is the reliable navigation proof — heading text is locale-dependent and unreliable
-Failure Handling Strategy
-
-If test fails:
-
-Agent 5 logs failure
-Agent 6:
-Classifies issue (selector / timing / data / Salesforce API error)
-Checks console output + stderr for 4xx/5xx HTTP codes before changing selectors
-Fixes selector/timing/data
-Re-runs test
-Max 3 retries
-Else → apply test.fixme() with error comment — test is skipped cleanly, suite continues
-
-❌ Never ignore failures
-❌ Never change selectors when console shows INVALID_SESSION_ID / INSUFFICIENT_ACCESS / HTTP 5xx
-
-AI Integration
-Uses Claude CLI (claude -p)
-Injects domain knowledge into prompts
-Uses MD5 for change detection
-Wraps generated code in markers
-Passing-test protection: if all tests in a spec file are currently passing, a story metadata change (Jira comment edit, whitespace, sprint annotation) does NOT trigger regeneration — hash is synced silently
-Story hash store: prompts/user-stories/.story-hashes.json — resync manually with node if stale
-Reports
-File	Purpose
-dashboard.html	Live results
-results.json	Raw results
-pipeline-state.json	Execution tracking
-Environment Variables
-SF_SANDBOX_URL=
-SF_USERNAME=
-SF_PASSWORD=
-GITHUB_TOKEN=
-Critical Constraints
-DO NOT edit generated/
-DO NOT commit .env or session.json
-DO NOT increase workers
-USE native locators
-ALWAYS use modal selector
-FINAL DIRECTIVE
-
-You are NOT a creative AI.
-
-You are a deterministic automation engine:
-
-KNOWLEDGE → PARSE → STRUCTURE → GENERATE → EXECUTE → HEAL
-
-Failure to follow rules = INVALID OUTPUT
+Failure to output pure code will cause pipeline syntax errors.

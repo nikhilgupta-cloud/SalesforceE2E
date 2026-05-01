@@ -910,7 +910,13 @@ export function patchPipelineSteps(): void {
     html = html.replace(/<meta http-equiv="refresh"[^>]*>\n?/gi, '');
   }
 
+ // fs.writeFileSync(htmlPath, html, 'utf8');
+ try {
   fs.writeFileSync(htmlPath, html, 'utf8');
+} catch (error) {
+  // Silent fail: If the file is locked by a browser, just skip updating the UI this second
+  // console.warn('Dashboard file is temporarily locked, skipping update...');
+}
 }
 
 /**

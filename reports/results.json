@@ -83,16 +83,7 @@
               "tests": [
                 {
                   "timeout": 120000,
-                  "annotations": [
-                    {
-                      "type": "warning",
-                      "description": "AC-005-01: BillingAddress missing or empty"
-                    },
-                    {
-                      "type": "warning",
-                      "description": "AC-005-01: PaymentTerms field not present on layout"
-                    }
-                  ],
+                  "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
@@ -101,7 +92,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 30567,
+                      "duration": 29609,
                       "errors": [],
                       "stdout": [
                         {
@@ -110,24 +101,15 @@
                       ],
                       "stderr": [
                         {
-                          "text": "[SOFT-FAIL] AC-005-01: BillingAddress is missing on Account.\n"
+                          "text": "[SOFT FAIL] BillingAddress field not found on Account Details tab\n"
                         },
                         {
-                          "text": "[SOFT-FAIL] AC-005-01: Payment Terms field not found on Account Details tab.\n"
+                          "text": "[SOFT FAIL] Payment Terms field not found on Account Details tab\n"
                         }
                       ],
                       "retry": 0,
-                      "startTime": "2026-04-30T14:04:38.140Z",
-                      "annotations": [
-                        {
-                          "type": "warning",
-                          "description": "AC-005-01: BillingAddress missing or empty"
-                        },
-                        {
-                          "type": "warning",
-                          "description": "AC-005-01: PaymentTerms field not present on layout"
-                        }
-                      ],
+                      "startTime": "2026-05-01T04:09:39.337Z",
+                      "annotations": [],
                       "attachments": []
                     }
                   ],
@@ -136,11 +118,11 @@
               ],
               "id": "ad4620ead4e6d9cc2627-f8ac31e5abe6c97960dc",
               "file": "account.spec.ts",
-              "line": 50,
+              "line": 39,
               "column": 7
             },
             {
-              "title": "TC-ACC-002 — Create Contact on Account, Opportunity from Contact, Verify Primary Contact Role",
+              "title": "TC-ACC-002 — Create New Contact Linked to Account",
               "ok": false,
               "tags": [],
               "tests": [
@@ -155,25 +137,25 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 69211,
+                      "duration": 45751,
                       "error": {
-                        "message": "TimeoutError: locator.waitFor: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[title=\"New Contact\"], button[title=\"New Contact\"]').first() to be visible\u001b[22m\n",
-                        "stack": "TimeoutError: locator.waitFor: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[title=\"New Contact\"], button[title=\"New Contact\"]').first() to be visible\u001b[22m\n\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:105:25",
+                        "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.modal-container, [role=\"dialog\"]').first().locator('input[name=\"firstName\"], input[placeholder*=\"First\"]').first()\u001b[22m\n",
+                        "stack": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.modal-container, [role=\"dialog\"]').first().locator('input[name=\"firstName\"], input[placeholder*=\"First\"]').first()\u001b[22m\n\n    at Function.fillName (D:\\SalesforceE2E1\\utils\\SFUtils.ts:152:17)\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:83:5",
                         "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 25,
-                          "line": 105
+                          "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                          "column": 17,
+                          "line": 152
                         },
-                        "snippet": "\u001b[0m \u001b[90m 103 |\u001b[39m     \u001b[90m// \"New Contact\" button lives inside the Contacts related list section\u001b[39m\n \u001b[90m 104 |\u001b[39m     \u001b[36mconst\u001b[39m newContactBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'a[title=\"New Contact\"], button[title=\"New Contact\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 105 |\u001b[39m     \u001b[36mawait\u001b[39m newContactBtn\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 106 |\u001b[39m     \u001b[36mawait\u001b[39m newContactBtn\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 107 |\u001b[39m     \u001b[36mawait\u001b[39m dismissAuraError(page)\u001b[33m;\u001b[39m\n \u001b[90m 108 |\u001b[39m\u001b[0m"
+                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:152\n\n\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[36mconst\u001b[39m label \u001b[33m=\u001b[39m type \u001b[33m===\u001b[39m \u001b[32m'firstName'\u001b[39m \u001b[33m?\u001b[39m \u001b[32m'First'\u001b[39m \u001b[33m:\u001b[39m \u001b[32m'Last'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 151 |\u001b[39m     \u001b[36mconst\u001b[39m input \u001b[33m=\u001b[39m root\u001b[33m.\u001b[39mlocator(\u001b[32m`input[name=\"${type}\"], input[placeholder*=\"${label}\"]`\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     \u001b[36mawait\u001b[39m input\u001b[33m.\u001b[39mfill(value)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m     \u001b[36mawait\u001b[39m input\u001b[33m.\u001b[39mpress(\u001b[32m'Tab'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 154 |\u001b[39m   }\n \u001b[90m 155 |\u001b[39m\u001b[0m"
                       },
                       "errors": [
                         {
                           "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 25,
-                            "line": 105
+                            "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                            "column": 17,
+                            "line": 152
                           },
-                          "message": "TimeoutError: locator.waitFor: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[title=\"New Contact\"], button[title=\"New Contact\"]').first() to be visible\u001b[22m\n\n\n\u001b[0m \u001b[90m 103 |\u001b[39m     \u001b[90m// \"New Contact\" button lives inside the Contacts related list section\u001b[39m\n \u001b[90m 104 |\u001b[39m     \u001b[36mconst\u001b[39m newContactBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'a[title=\"New Contact\"], button[title=\"New Contact\"]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 105 |\u001b[39m     \u001b[36mawait\u001b[39m newContactBtn\u001b[33m.\u001b[39mwaitFor({ state\u001b[33m:\u001b[39m \u001b[32m'visible'\u001b[39m\u001b[33m,\u001b[39m timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 106 |\u001b[39m     \u001b[36mawait\u001b[39m newContactBtn\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 107 |\u001b[39m     \u001b[36mawait\u001b[39m dismissAuraError(page)\u001b[33m;\u001b[39m\n \u001b[90m 108 |\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:105:25\u001b[22m"
+                          "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.modal-container, [role=\"dialog\"]').first().locator('input[name=\"firstName\"], input[placeholder*=\"First\"]').first()\u001b[22m\n\n\n\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:152\n\n\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[36mconst\u001b[39m label \u001b[33m=\u001b[39m type \u001b[33m===\u001b[39m \u001b[32m'firstName'\u001b[39m \u001b[33m?\u001b[39m \u001b[32m'First'\u001b[39m \u001b[33m:\u001b[39m \u001b[32m'Last'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 151 |\u001b[39m     \u001b[36mconst\u001b[39m input \u001b[33m=\u001b[39m root\u001b[33m.\u001b[39mlocator(\u001b[32m`input[name=\"${type}\"], input[placeholder*=\"${label}\"]`\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     \u001b[36mawait\u001b[39m input\u001b[33m.\u001b[39mfill(value)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m     \u001b[36mawait\u001b[39m input\u001b[33m.\u001b[39mpress(\u001b[32m'Tab'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 154 |\u001b[39m   }\n \u001b[90m 155 |\u001b[39m\u001b[0m\n\u001b[2m    at Function.fillName (D:\\SalesforceE2E1\\utils\\SFUtils.ts:152:17)\u001b[22m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:83:5\u001b[22m"
                         }
                       ],
                       "stdout": [
@@ -183,38 +165,38 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-30T14:05:10.377Z",
+                      "startTime": "2026-05-01T04:10:11.370Z",
                       "annotations": [],
                       "attachments": [
                         {
                           "name": "screenshot",
                           "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account--obj-displayName-L-78f4c-Verify-Primary-Contact-Role-chromium\\test-failed-1.png"
+                          "path": "D:\\SalesforceE2E1\\test-results\\account--obj-displayName-L-4c1fe-w-Contact-Linked-to-Account-chromium\\test-failed-1.png"
                         },
                         {
                           "name": "error-context",
                           "contentType": "text/markdown",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account--obj-displayName-L-78f4c-Verify-Primary-Contact-Role-chromium\\error-context.md"
+                          "path": "D:\\SalesforceE2E1\\test-results\\account--obj-displayName-L-4c1fe-w-Contact-Linked-to-Account-chromium\\error-context.md"
                         }
                       ],
                       "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 25,
-                        "line": 105
+                        "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
+                        "column": 17,
+                        "line": 152
                       }
                     }
                   ],
                   "status": "unexpected"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-0233f88c8c326728ccde",
+              "id": "ad4620ead4e6d9cc2627-5a7cc5ee68e3a0d28d2a",
               "file": "account.spec.ts",
-              "line": 92,
+              "line": 74,
               "column": 7
             },
             {
-              "title": "TC-ACC-003 — Create Quote, Browse Catalogs, Add Product, Validate Cart",
-              "ok": false,
+              "title": "TC-ACC-003 — Create Opportunity and Verify Primary Contact Role",
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -225,60 +207,30 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 1380,
-                      "error": {
-                        "message": "Error: TC-ACC-002 must run first to populate oppUrl\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"\"\u001b[39m",
-                        "stack": "Error: TC-ACC-002 must run first to populate oppUrl\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"\"\u001b[39m\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:181:68",
-                        "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 68,
-                          "line": 181
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 179 |\u001b[39m   \u001b[90m// TC-ACC-003 | AC Reference: QO-005-05, PC-005-06, PC-005-07, PC-005-08, PC-005-09\u001b[39m\n \u001b[90m 180 |\u001b[39m   test(\u001b[32m'TC-ACC-003 — Create Quote, Browse Catalogs, Add Product, Validate Cart'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 181 |\u001b[39m     expect(oppUrl\u001b[33m,\u001b[39m \u001b[32m'TC-ACC-002 must run first to populate oppUrl'\u001b[39m)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 182 |\u001b[39m\n \u001b[90m 183 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m oppUrl)\u001b[33m;\u001b[39m\n \u001b[90m 184 |\u001b[39m     \u001b[36mawait\u001b[39m dismissAuraError(page)\u001b[33m;\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 68,
-                            "line": 181
-                          },
-                          "message": "Error: TC-ACC-002 must run first to populate oppUrl\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"\"\u001b[39m\n\n\u001b[0m \u001b[90m 179 |\u001b[39m   \u001b[90m// TC-ACC-003 | AC Reference: QO-005-05, PC-005-06, PC-005-07, PC-005-08, PC-005-09\u001b[39m\n \u001b[90m 180 |\u001b[39m   test(\u001b[32m'TC-ACC-003 — Create Quote, Browse Catalogs, Add Product, Validate Cart'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 181 |\u001b[39m     expect(oppUrl\u001b[33m,\u001b[39m \u001b[32m'TC-ACC-002 must run first to populate oppUrl'\u001b[39m)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 182 |\u001b[39m\n \u001b[90m 183 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m oppUrl)\u001b[33m;\u001b[39m\n \u001b[90m 184 |\u001b[39m     \u001b[36mawait\u001b[39m dismissAuraError(page)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:181:68\u001b[22m"
-                        }
-                      ],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-30T14:06:22.156Z",
+                      "startTime": "2026-05-01T04:10:58.067Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account--obj-displayName-L-c8814-s-Add-Product-Validate-Cart-chromium\\test-failed-1.png"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 68,
-                        "line": 181
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-aafdd0309738f53c5b4c",
+              "id": "ad4620ead4e6d9cc2627-6f4ad24f104881139922",
               "file": "account.spec.ts",
-              "line": 180,
+              "line": 101,
               "column": 7
             },
             {
-              "title": "TC-ACC-004 — Accept Quote, Create Contract (None/No Prices), Activate Contract",
-              "ok": false,
+              "title": "TC-ACC-004 — Create Quote, Add Product via Catalog, Accept Quote, and Initiate Contract",
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -289,60 +241,30 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 1352,
-                      "error": {
-                        "message": "Error: TC-ACC-003 must run first to populate quoteUrl\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"\"\u001b[39m",
-                        "stack": "Error: TC-ACC-003 must run first to populate quoteUrl\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"\"\u001b[39m\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:273:72",
-                        "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 72,
-                          "line": 273
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 271 |\u001b[39m   \u001b[90m// TC-ACC-004 | AC Reference: QL-005-10, QL-005-11, CR-005-12\u001b[39m\n \u001b[90m 272 |\u001b[39m   test(\u001b[32m'TC-ACC-004 — Accept Quote, Create Contract (None/No Prices), Activate Contract'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 273 |\u001b[39m     expect(quoteUrl\u001b[33m,\u001b[39m \u001b[32m'TC-ACC-003 must run first to populate quoteUrl'\u001b[39m)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 274 |\u001b[39m\n \u001b[90m 275 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m quoteUrl)\u001b[33m;\u001b[39m\n \u001b[90m 276 |\u001b[39m     \u001b[36mawait\u001b[39m dismissAuraError(page)\u001b[33m;\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 72,
-                            "line": 273
-                          },
-                          "message": "Error: TC-ACC-003 must run first to populate quoteUrl\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"\"\u001b[39m\n\n\u001b[0m \u001b[90m 271 |\u001b[39m   \u001b[90m// TC-ACC-004 | AC Reference: QL-005-10, QL-005-11, CR-005-12\u001b[39m\n \u001b[90m 272 |\u001b[39m   test(\u001b[32m'TC-ACC-004 — Accept Quote, Create Contract (None/No Prices), Activate Contract'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 273 |\u001b[39m     expect(quoteUrl\u001b[33m,\u001b[39m \u001b[32m'TC-ACC-003 must run first to populate quoteUrl'\u001b[39m)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 274 |\u001b[39m\n \u001b[90m 275 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m quoteUrl)\u001b[33m;\u001b[39m\n \u001b[90m 276 |\u001b[39m     \u001b[36mawait\u001b[39m dismissAuraError(page)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:273:72\u001b[22m"
-                        }
-                      ],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-30T14:06:26.751Z",
+                      "startTime": "2026-05-01T04:10:58.126Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account--obj-displayName-L-b023a-No-Prices-Activate-Contract-chromium\\test-failed-1.png"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 72,
-                        "line": 273
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-f2ee3fe899292134dd1a",
+              "id": "ad4620ead4e6d9cc2627-adb01d84a6d271c0096b",
               "file": "account.spec.ts",
-              "line": 272,
+              "line": 143,
               "column": 7
             },
             {
-              "title": "TC-ACC-005 — Create Single Order from Quote and Activate Order",
-              "ok": false,
+              "title": "TC-ACC-005 — Activate Contract, Create Single Order from Quote, and Activate Order",
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -353,55 +275,25 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 1409,
-                      "error": {
-                        "message": "Error: TC-ACC-003 must run first to populate quoteUrl\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"\"\u001b[39m",
-                        "stack": "Error: TC-ACC-003 must run first to populate quoteUrl\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"\"\u001b[39m\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:364:72",
-                        "location": {
-                          "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                          "column": 72,
-                          "line": 364
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 362 |\u001b[39m   \u001b[90m// TC-ACC-005 | AC Reference: OR-005-13, OR-005-14, OR-005-15, OR-005-16\u001b[39m\n \u001b[90m 363 |\u001b[39m   test(\u001b[32m'TC-ACC-005 — Create Single Order from Quote and Activate Order'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 364 |\u001b[39m     expect(quoteUrl\u001b[33m,\u001b[39m \u001b[32m'TC-ACC-003 must run first to populate quoteUrl'\u001b[39m)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 365 |\u001b[39m\n \u001b[90m 366 |\u001b[39m     \u001b[90m// OR-005-13: Open the Quote created in TC-ACC-003 (PC-005-06)\u001b[39m\n \u001b[90m 367 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m quoteUrl)\u001b[33m;\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                            "column": 72,
-                            "line": 364
-                          },
-                          "message": "Error: TC-ACC-003 must run first to populate quoteUrl\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31m\"\"\u001b[39m\n\n\u001b[0m \u001b[90m 362 |\u001b[39m   \u001b[90m// TC-ACC-005 | AC Reference: OR-005-13, OR-005-14, OR-005-15, OR-005-16\u001b[39m\n \u001b[90m 363 |\u001b[39m   test(\u001b[32m'TC-ACC-005 — Create Single Order from Quote and Activate Order'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 364 |\u001b[39m     expect(quoteUrl\u001b[33m,\u001b[39m \u001b[32m'TC-ACC-003 must run first to populate quoteUrl'\u001b[39m)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 365 |\u001b[39m\n \u001b[90m 366 |\u001b[39m     \u001b[90m// OR-005-13: Open the Quote created in TC-ACC-003 (PC-005-06)\u001b[39m\n \u001b[90m 367 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[33mSFUtils\u001b[39m\u001b[33m.\u001b[39mgoto(page\u001b[33m,\u001b[39m quoteUrl)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:364:72\u001b[22m"
-                        }
-                      ],
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-04-30T14:06:30.832Z",
+                      "startTime": "2026-05-01T04:10:58.210Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account--obj-displayName-L-43bb6-om-Quote-and-Activate-Order-chromium\\test-failed-1.png"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-                        "column": 72,
-                        "line": 364
-                      }
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "skipped"
                 }
               ],
-              "id": "ad4620ead4e6d9cc2627-b425de6ca0ca0c528780",
+              "id": "ad4620ead4e6d9cc2627-f5ee9e02dbd2f5b0d416",
               "file": "account.spec.ts",
-              "line": 363,
+              "line": 238,
               "column": 7
             }
           ]
@@ -411,11 +303,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-04-30T14:04:35.705Z",
-    "duration": 117275.971,
+    "startTime": "2026-05-01T04:09:36.484Z",
+    "duration": 81982.154,
     "expected": 1,
-    "skipped": 0,
-    "unexpected": 4,
+    "skipped": 3,
+    "unexpected": 1,
     "flaky": 0
   }
 }
