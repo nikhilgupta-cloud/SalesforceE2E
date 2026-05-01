@@ -61,14 +61,14 @@
   "suites": [],
   "errors": [
     {
-      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: 'import' and 'export' may only appear at the top level. (14:2)\n\n\u001b[0m \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[90m// ── US-005 START ─────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m   \u001b[36mimport\u001b[39m { test\u001b[33m,\u001b[39m expect\u001b[33m,\u001b[39m \u001b[33mPage\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@playwright/test'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 15 |\u001b[39m   \u001b[36mimport\u001b[39m { \u001b[33mSFUtils\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'../utils/SFUtils'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 16 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m fs \u001b[36mfrom\u001b[39m \u001b[32m'fs'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 17 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m path \u001b[36mfrom\u001b[39m \u001b[32m'path'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m",
-      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: 'import' and 'export' may only appear at the top level. (14:2)\n\n\u001b[0m \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[90m// ── US-005 START ─────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m   \u001b[36mimport\u001b[39m { test\u001b[33m,\u001b[39m expect\u001b[33m,\u001b[39m \u001b[33mPage\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@playwright/test'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 15 |\u001b[39m   \u001b[36mimport\u001b[39m { \u001b[33mSFUtils\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'../utils/SFUtils'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 16 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m fs \u001b[36mfrom\u001b[39m \u001b[32m'fs'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 17 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m path \u001b[36mfrom\u001b[39m \u001b[32m'path'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m",
+      "message": "ReferenceError: obj is not defined",
+      "stack": "ReferenceError: obj is not defined\n    at Object.<anonymous> (D:\\SalesforceE2E1\\tests\\account.spec.ts:10:18)",
       "location": {
         "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
-        "line": 14,
-        "column": 2
+        "column": 18,
+        "line": 10
       },
-      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:14\n\n\u001b[0m \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[90m// ── US-005 START ─────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m   \u001b[36mimport\u001b[39m { test\u001b[33m,\u001b[39m expect\u001b[33m,\u001b[39m \u001b[33mPage\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@playwright/test'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 15 |\u001b[39m   \u001b[36mimport\u001b[39m { \u001b[33mSFUtils\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'../utils/SFUtils'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 16 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m fs \u001b[36mfrom\u001b[39m \u001b[32m'fs'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 17 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m path \u001b[36mfrom\u001b[39m \u001b[32m'path'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m"
+      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:10\n\n\u001b[0m \u001b[90m  8 |\u001b[39m \u001b[36mconst\u001b[39m \u001b[33mSF\u001b[39m \u001b[33m=\u001b[39m process\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mSF_SANDBOX_URL\u001b[39m \u001b[33m||\u001b[39m process\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mSF_LOGIN_URL\u001b[39m \u001b[33m||\u001b[39m \u001b[32m''\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m  9 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 10 |\u001b[39m test\u001b[33m.\u001b[39mdescribe(\u001b[32m`${obj.displayName} Lifecycle`\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 11 |\u001b[39m\n \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[90m// ── US-005 START ─────────────────────────────────────────────────────\u001b[39m\u001b[0m"
     },
     {
       "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
@@ -76,8 +76,8 @@
     }
   ],
   "stats": {
-    "startTime": "2026-05-01T05:06:38.147Z",
-    "duration": 449.576,
+    "startTime": "2026-05-01T07:53:19.013Z",
+    "duration": 1403.768,
     "expected": 0,
     "skipped": 0,
     "unexpected": 0,

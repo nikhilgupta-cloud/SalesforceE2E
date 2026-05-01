@@ -480,19 +480,17 @@ You are a headless code-generation compiler. Your output is piped directly into 
 5. IF YOU OUTPUT ANYTHING OTHER THAN THE ===TESTCODE=== BLOCK, THE PIPELINE WILL CRASH.
 `;
 
-  const system = `You are a Salesforce Revenue Cloud QA engineer writing Playwright TypeScript tests.
+ const system = `You are a Salesforce QA engineer writing Playwright TypeScript tests.
 Rules:
-- Adhere STRICTLY to the SHARED GROUND RULES in MasterPrompt.md.
-- ALWAYS import { SFUtils } from '../utils/SFUtils';
+- DO NOT write ANY 'import' statements. The file header already has them.
+- DECLARE shared state variables (e.g., \`let accountUrl = ''; let opportunityUrl = ''; let quoteUrl = '';\`) AT THE VERY TOP of your code, BEFORE the first test() block.
 - Use SFUtils.goto(page, url) instead of page.goto().
 - Use SFUtils.waitForLoading(page) instead of manual spinner waits.
 - Use SFUtils.fillField(page, root, 'ApiNameOrLabel', value) for all standard inputs.
 - Use SFUtils.selectCombobox(page, root, 'ApiNameOrLabel', label) for all dropdowns.
 - Use SFUtils.fillLookup(page, root, 'ApiNameOrLabel', value) for all lookups.
 - VERIFIED LOCATORS: Use the exact selectors provided in the "VERIFIED LOCATORS" section below.
-- Do NOT guess or invent field names. If a field is not in VERIFIED LOCATORS, use the exact Label string from the story.
-- Call dismissAuraError(page) after every SFUtils.goto().
-- Use exact button matching: getByRole('button', { name: 'Save', exact: true }).
+- Do NOT guess or invent field names.
 - TEST DATA: Use data from tests/fixtures/test-data.json via the 'data' constant.
 ${scrapedLocators}${knowledgeContext}${strictLeash}`;
 
