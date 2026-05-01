@@ -1,6 +1,1 @@
 TC ID,Object,User Story,Title,Status,Duration (s),AC Reference,Error Message,File,Line,Run Date
-TC-ACC-001,Account,US-005,TC-ACC-001 — Verify Account Billing Address and Payment Terms,passed,29.61,AC-005-01,,account.spec.ts,39,2026-05-01
-TC-ACC-002,Account,US-005,TC-ACC-002 — Create New Contact Linked to Account,failed,45.75,AC-005-02,TimeoutError: locator.fill: Timeout 30000ms exceeded.,account.spec.ts,74,2026-05-01
-TC-ACC-003,Account,US-005,TC-ACC-003 — Create Opportunity and Verify Primary Contact Role,skipped,0.00,"AC-005-03, AC-005-04",,account.spec.ts,101,2026-05-01
-TC-ACC-004,Account,US-005,"TC-ACC-004 — Create Quote, Add Product via Catalog, Accept Quote, and Initiate Contract",skipped,0.00,"QO-005-05, PC-005-06, PC-005-07, PC-005-08, PC-005-09, QL-005-10, QL-005-11",,account.spec.ts,143,2026-05-01
-TC-ACC-005,Account,US-005,"TC-ACC-005 — Activate Contract, Create Single Order from Quote, and Activate Order",skipped,0.00,"CR-005-12, OR-005-13, OR-005-14, OR-005-15, OR-005-16",,account.spec.ts,238,2026-05-01

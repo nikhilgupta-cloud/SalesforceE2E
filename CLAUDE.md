@@ -23,6 +23,8 @@ Example (Quote): await SFUtils.goto(page, \${SF}/lightning/o/Quote/new`);`
 
 3. Locator & UI Strategy (MANDATORY)
 
+
+
 RULE #1: Always use SFUtils with API Names.
 
 Primary (Fields): await SFUtils.fillField(page, root, 'API_Name__c', value);
@@ -39,6 +41,12 @@ Handling Lookups: Salesforce lookups require a strict Fill -> Wait -> Click patt
 await SFUtils.fillField(page, root, 'AccountId', data.account.Account_Name);
 await SFUtils.waitForLoading(page);
 await page.locator('[role="option"], lightning-base-combobox-item').filter({ hasText: data.account.Account_Name }).first().click();
+
+### ⚠️ Banned Methods (CRITICAL)
+- ❌ **NEVER** use `SFUtils.fillName()`. It relies on flaky HTML DOM.
+- ✅ **ALWAYS** use `SFUtils.fillField()` for names. 
+  - *Example:* `await SFUtils.fillField(page, modal, 'FirstName', data.contact.First_Name);`
+  - *Example:* `await SFUtils.fillField(page, modal, 'LastName', data.contact.Last_Name);`
 
 
 4. Test Data Strategy

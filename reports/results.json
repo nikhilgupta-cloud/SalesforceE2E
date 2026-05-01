@@ -10,18 +10,14 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {
-      "actualWorkers": 1
-    },
+    "metadata": {},
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "D:/SalesforceE2E1/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "chromium",
         "name": "chromium",
         "testDir": "D:/SalesforceE2E1/tests",
@@ -62,252 +58,29 @@
     "workers": 1,
     "webServer": null
   },
-  "suites": [
+  "suites": [],
+  "errors": [
     {
-      "title": "account.spec.ts",
-      "file": "account.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "${obj.displayName} Lifecycle",
-          "file": "account.spec.ts",
-          "line": 10,
-          "column": 6,
-          "specs": [
-            {
-              "title": "TC-ACC-001 — Verify Account Billing Address and Payment Terms",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 29609,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
-                        }
-                      ],
-                      "stderr": [
-                        {
-                          "text": "[SOFT FAIL] BillingAddress field not found on Account Details tab\n"
-                        },
-                        {
-                          "text": "[SOFT FAIL] Payment Terms field not found on Account Details tab\n"
-                        }
-                      ],
-                      "retry": 0,
-                      "startTime": "2026-05-01T04:09:39.337Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-f8ac31e5abe6c97960dc",
-              "file": "account.spec.ts",
-              "line": 39,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-002 — Create New Contact Linked to Account",
-              "ok": false,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 45751,
-                      "error": {
-                        "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.modal-container, [role=\"dialog\"]').first().locator('input[name=\"firstName\"], input[placeholder*=\"First\"]').first()\u001b[22m\n",
-                        "stack": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.modal-container, [role=\"dialog\"]').first().locator('input[name=\"firstName\"], input[placeholder*=\"First\"]').first()\u001b[22m\n\n    at Function.fillName (D:\\SalesforceE2E1\\utils\\SFUtils.ts:152:17)\n    at D:\\SalesforceE2E1\\tests\\account.spec.ts:83:5",
-                        "location": {
-                          "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
-                          "column": 17,
-                          "line": 152
-                        },
-                        "snippet": "\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:152\n\n\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[36mconst\u001b[39m label \u001b[33m=\u001b[39m type \u001b[33m===\u001b[39m \u001b[32m'firstName'\u001b[39m \u001b[33m?\u001b[39m \u001b[32m'First'\u001b[39m \u001b[33m:\u001b[39m \u001b[32m'Last'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 151 |\u001b[39m     \u001b[36mconst\u001b[39m input \u001b[33m=\u001b[39m root\u001b[33m.\u001b[39mlocator(\u001b[32m`input[name=\"${type}\"], input[placeholder*=\"${label}\"]`\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     \u001b[36mawait\u001b[39m input\u001b[33m.\u001b[39mfill(value)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m     \u001b[36mawait\u001b[39m input\u001b[33m.\u001b[39mpress(\u001b[32m'Tab'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 154 |\u001b[39m   }\n \u001b[90m 155 |\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
-                            "column": 17,
-                            "line": 152
-                          },
-                          "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.modal-container, [role=\"dialog\"]').first().locator('input[name=\"firstName\"], input[placeholder*=\"First\"]').first()\u001b[22m\n\n\n\u001b[90m   at \u001b[39m..\\utils\\SFUtils.ts:152\n\n\u001b[0m \u001b[90m 150 |\u001b[39m     \u001b[36mconst\u001b[39m label \u001b[33m=\u001b[39m type \u001b[33m===\u001b[39m \u001b[32m'firstName'\u001b[39m \u001b[33m?\u001b[39m \u001b[32m'First'\u001b[39m \u001b[33m:\u001b[39m \u001b[32m'Last'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 151 |\u001b[39m     \u001b[36mconst\u001b[39m input \u001b[33m=\u001b[39m root\u001b[33m.\u001b[39mlocator(\u001b[32m`input[name=\"${type}\"], input[placeholder*=\"${label}\"]`\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 152 |\u001b[39m     \u001b[36mawait\u001b[39m input\u001b[33m.\u001b[39mfill(value)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 153 |\u001b[39m     \u001b[36mawait\u001b[39m input\u001b[33m.\u001b[39mpress(\u001b[32m'Tab'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 154 |\u001b[39m   }\n \u001b[90m 155 |\u001b[39m\u001b[0m\n\u001b[2m    at Function.fillName (D:\\SalesforceE2E1\\utils\\SFUtils.ts:152:17)\u001b[22m\n\u001b[2m    at D:\\SalesforceE2E1\\tests\\account.spec.ts:83:5\u001b[22m"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "⚠️ App Ready indicator not visible, continuing anyway...\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-01T04:10:11.370Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account--obj-displayName-L-4c1fe-w-Contact-Linked-to-Account-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "D:\\SalesforceE2E1\\test-results\\account--obj-displayName-L-4c1fe-w-Contact-Linked-to-Account-chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "D:\\SalesforceE2E1\\utils\\SFUtils.ts",
-                        "column": 17,
-                        "line": 152
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-5a7cc5ee68e3a0d28d2a",
-              "file": "account.spec.ts",
-              "line": 74,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-003 — Create Opportunity and Verify Primary Contact Role",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-01T04:10:58.067Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-6f4ad24f104881139922",
-              "file": "account.spec.ts",
-              "line": 101,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-004 — Create Quote, Add Product via Catalog, Accept Quote, and Initiate Contract",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-01T04:10:58.126Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-adb01d84a6d271c0096b",
-              "file": "account.spec.ts",
-              "line": 143,
-              "column": 7
-            },
-            {
-              "title": "TC-ACC-005 — Activate Contract, Create Single Order from Quote, and Activate Order",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 120000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": -1,
-                      "parallelIndex": -1,
-                      "status": "skipped",
-                      "duration": 0,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2026-05-01T04:10:58.210Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "skipped"
-                }
-              ],
-              "id": "ad4620ead4e6d9cc2627-f5ee9e02dbd2f5b0d416",
-              "file": "account.spec.ts",
-              "line": 238,
-              "column": 7
-            }
-          ]
-        }
-      ]
+      "message": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: 'import' and 'export' may only appear at the top level. (14:2)\n\n\u001b[0m \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[90m// ── US-005 START ─────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m   \u001b[36mimport\u001b[39m { test\u001b[33m,\u001b[39m expect\u001b[33m,\u001b[39m \u001b[33mPage\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@playwright/test'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 15 |\u001b[39m   \u001b[36mimport\u001b[39m { \u001b[33mSFUtils\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'../utils/SFUtils'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 16 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m fs \u001b[36mfrom\u001b[39m \u001b[32m'fs'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 17 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m path \u001b[36mfrom\u001b[39m \u001b[32m'path'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: D:\\SalesforceE2E1\\tests\\account.spec.ts: 'import' and 'export' may only appear at the top level. (14:2)\n\n\u001b[0m \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[90m// ── US-005 START ─────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m   \u001b[36mimport\u001b[39m { test\u001b[33m,\u001b[39m expect\u001b[33m,\u001b[39m \u001b[33mPage\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@playwright/test'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 15 |\u001b[39m   \u001b[36mimport\u001b[39m { \u001b[33mSFUtils\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'../utils/SFUtils'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 16 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m fs \u001b[36mfrom\u001b[39m \u001b[32m'fs'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 17 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m path \u001b[36mfrom\u001b[39m \u001b[32m'path'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "D:\\SalesforceE2E1\\tests\\account.spec.ts",
+        "line": 14,
+        "column": 2
+      },
+      "snippet": "\u001b[90m   at \u001b[39maccount.spec.ts:14\n\n\u001b[0m \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[90m// ── US-005 START ─────────────────────────────────────────────────────\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 14 |\u001b[39m   \u001b[36mimport\u001b[39m { test\u001b[33m,\u001b[39m expect\u001b[33m,\u001b[39m \u001b[33mPage\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@playwright/test'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 15 |\u001b[39m   \u001b[36mimport\u001b[39m { \u001b[33mSFUtils\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'../utils/SFUtils'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 16 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m fs \u001b[36mfrom\u001b[39m \u001b[32m'fs'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 17 |\u001b[39m   \u001b[36mimport\u001b[39m \u001b[33m*\u001b[39m \u001b[36mas\u001b[39m path \u001b[36mfrom\u001b[39m \u001b[32m'path'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+      "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
     }
   ],
-  "errors": [],
   "stats": {
-    "startTime": "2026-05-01T04:09:36.484Z",
-    "duration": 81982.154,
-    "expected": 1,
-    "skipped": 3,
-    "unexpected": 1,
+    "startTime": "2026-05-01T05:06:38.147Z",
+    "duration": 449.576,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 0,
     "flaky": 0
   }
 }
