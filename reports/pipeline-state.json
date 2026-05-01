@@ -81,10 +81,11 @@
       "n": 7,
       "label": "Push to GitHub",
       "icon": "🚀",
-      "status": "running",
-      "detail": "Git push...",
-      "timestamp": "09:46:22",
-      "startedAtMs": 1777608982938
+      "status": "failed",
+      "detail": "Command failed: git push\nTo https://github.com/nikhilgupta-cloud/SalesforceE2E.git\n ! [rejected]        main -> main (fetch first)\nerror: failed to push some refs to 'https://github.com/nikhilgupta-cloud/SalesforceE2E.git'\nhint: Updates were rejected because the remote contains work that you do not\nhint: have locally. This is usually caused by another repository pushing to\nhint: the same ref. If you want to integrate the remote changes, use\nhint: 'git pull' before pushing again.\nhint: See the 'Note about fast-forwards' in 'git push --help' for details.\n",
+      "timestamp": "09:46:28",
+      "startedAtMs": 1777608982938,
+      "durationMs": 5708
     }
   ]
 }

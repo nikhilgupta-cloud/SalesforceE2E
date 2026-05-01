@@ -508,15 +508,28 @@ body::after{
         
         
       </div>
-      <div class="pipe-step pending">
+      <div class="pipe-step failed">
         <div class="step-circle">
-          🚀
+          ❌
           <div class="step-num">7</div>
         </div>
         <div class="step-label">Push to GitHub</div>
-        <div class="step-detail">Waiting…</div>
-        <div class="step-time"></div>
+        <div class="step-detail">Command failed: git push
+To https://github.com/nikhilgupta-cloud/SalesforceE2E.git
+ ! [rejected]        main -&gt; main (fetch first)
+error: failed to push some refs to 'https://github.com/nikhilgupta-cloud/SalesforceE2E.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+</div>
+        <div class="step-time">09:46:28</div>
         
+        <div class="step-meta">
+          <span class="step-badge sb-time">⏱ 5s</span>
+          
+        </div>
         
       </div>
 <!-- PIPE-STEPS-END -->
