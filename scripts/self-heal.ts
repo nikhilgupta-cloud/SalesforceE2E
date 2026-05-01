@@ -238,15 +238,43 @@ async function healTest(failure: FailedTest): Promise<boolean> {
   for (let round = 1; round <= MAX_ROUNDS; round++) {
     console.log(`      → Round ${round}/${MAX_ROUNDS}`);
 
-    const fixedBlock = await askClaude(failure, testBlock);
-    if (!fixedBlock || fixedBlock.trim() === testBlock.trim()) {
+    const healResponse = await askClaude(failure, testBlock);
+    if (!healResponse) {
       console.log(`      ⚠ No change suggested in round ${round}`);
       continue;
     }
 
-    // Apply the fix
-    const newContent = originalContent.replace(testBlock, fixedBlock);
-    if (newContent === originalContent) {
+    // Extract optional locatorMap update block from the healer response
+    const locatorMapUpdateMatch = healResponse.match(
+      /===LOCATORMAP_UPDATE===\r?\n([\s\S]*?)\r?\n===END_LOCATORMAP_UPDATE===/
+    );
+    // The fixed test block is everything after the optional locatorMap section
+    const fixedBlock = healResponse
+      .replace(/===LOCATORMAP_UPDATE===[\s\S]*?===END_LOCATORMAP_UPDATE===\r?\n?/, '')
+      .trim();
+
+    if (!fixedBlock || fixedBlock === testBlock.trim()) {
+      console.log(`      ⚠ No change suggested in round ${round}`);
+      continue;
+    }
+
+    // Apply locatorMap patch first (if provided)
+    let workingContent = originalContent;
+    if (locatorMapUpdateMatch) {
+      const updatedMap = locatorMapUpdateMatch[1].trim();
+      // Replace the existing locatorMap block in the spec file
+      workingContent = workingContent.replace(
+        /const locatorMap\s*=\s*\{[\s\S]*?\};\s*\nlocatorUtils\.register\(locatorMap\);/,
+        `${updatedMap}\nlocatorUtils.register(locatorMap);`
+      );
+      if (workingContent !== originalContent) {
+        console.log(`      ✏ locatorMap patched with new XPath key(s)`);
+      }
+    }
+
+    // Apply the test block fix
+    const newContent = workingContent.replace(testBlock, fixedBlock);
+    if (newContent === workingContent) {
       console.log(`      ⚠ Fix could not be applied (pattern not matched in round ${round})`);
       continue;
     }
@@ -569,10 +597,36 @@ async function askClaude(
 
   const system = `You are a Salesforce Revenue Cloud QA automation engineer. Return only raw TypeScript code — never use markdown code fences, never add explanations.
 
+═══ LOCATOR STRATEGY — XPath FIRST (MANDATORY FOR ALL FIXES) ═══
+
+When fixing a failing test, ALL element locators MUST use the XPath locator map pattern:
+
+1. The spec file has a module-level \`locatorMap\` constant registered with locatorUtils:
+     import { locatorUtils } from '../utils/locator-utils';
+     import { getLocator }   from '../utils/core-actions';
+     const locatorMap = { key: \`//xpath\` };
+     locatorUtils.register(locatorMap);
+
+2. To locate elements in the fixed test, use:
+     page.locator(getLocator(locatorUtils.pick('key')))            // static
+     page.locator(getLocator(locatorUtils.pick('key').replace('{X}', val)))  // dynamic
+
+3. If the fix requires a NEW XPath that isn't in locatorMap yet:
+   - ADD the new key to the locatorMap at the top of the spec file
+   - Use \`locatorUtils.pick('newKey')\` in the fixed test body
+   - NEVER inline a raw xpath= string directly inside a test() block
+
+4. SFUtils is ONLY for navigation and loading:
+   - SFUtils.goto(page, url) — navigation
+   - SFUtils.waitForLoading(page) — spinner waits
+   - SFUtils.fillField / fillName / selectCombobox — modal field filling ONLY
+   - NEVER use SFUtils for click or locating actions
+
 ABSOLUTE RULES — violating any of these produces an invalid fix:
 - NEVER use waitForLoadState('networkidle') — it hangs on Salesforce Lightning SPAs
 - NEVER use optional chaining (?.) on TestData fields (data.account?.name) — all keys are guaranteed present; use data.account.Account_Name, data.contact.First_Name, etc.
-- NEVER invent camelCase key aliases (data.account.name, data.contact.firstName) — use the exact PascalCase/snake_case keys from the TestData interface${knowledgeContext}${scrapedContext}${sfUtilsSignatures}`;
+- NEVER invent camelCase key aliases (data.account.name, data.contact.firstName) — use the exact PascalCase/snake_case keys from the TestData interface
+- NEVER inline raw xpath= strings in test() bodies — always route through locatorMap + getLocator(locatorUtils.pick())${knowledgeContext}${scrapedContext}${sfUtilsSignatures}`;
 
   const userPrompt = `A Salesforce E2E Playwright test is failing. Return ONLY the fixed TypeScript test function.
 
@@ -599,10 +653,14 @@ ${testCode}
 
 ## Fix rules
 - Keep the same TC-ID and the exact test name string
-- Use \`SFUtils\` methods for all Salesforce field interactions
+- ALL element locators MUST use \`page.locator(getLocator(locatorUtils.pick('key')))\`
+- If a new XPath is needed, add it to locatorMap at module level AND use locatorUtils.pick() in the test body
+- NEVER inline raw xpath= strings inside the test() block
+- Use SFUtils ONLY for: goto(), waitForLoading(), fillField(), fillName(), selectCombobox() inside modals
 - NEVER use waitForLoadState('networkidle')
 - NEVER use optional chaining on TestData fields
 - Return the COMPLETE fixed test function from \`test(\` through the closing \`});\`
+- If locatorMap needs a new key, output the updated locatorMap block BEFORE the fixed test function, wrapped in: ===LOCATORMAP_UPDATE=== ... ===END_LOCATORMAP_UPDATE===
 `;
 
   try {
